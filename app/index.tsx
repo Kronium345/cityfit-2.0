@@ -1,12 +1,12 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React from 'react';
 import tw from 'twrnc';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { StatusBar } from 'expo-status-bar';
 import Animated, { FadeIn, FadeInDown, FadeOut } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 
-const index = () => {
+const Index = () => {
   const router = useRouter();
   return (
     <View style={tw`flex-1`}>
@@ -44,6 +44,6 @@ const index = () => {
   )
 }
 
-export default index
+export default Index;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

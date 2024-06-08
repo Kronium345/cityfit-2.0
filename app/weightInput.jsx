@@ -1,19 +1,62 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
+import { useNavigation } from '@react-navigation/native';
+import { auth, db } from '../config/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const WeightInput = () => {
+  const [weight, setWeight] = useState('');
+  const [unit, setUnit] = useState('kg');
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          setWeight(data.weight || '');
+          setUnit(data.unit || 'kg');
+        }
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const handleWeightPress = () => {
+    navigation.navigate('weightPicker', { weight, unit, setWeight });
+  };
+
+  const handleDone = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      const userDocRef = doc(db, 'users', user.uid);
+      await setDoc(userDocRef, { weight, unit }, { merge: true });
+      navigation.navigate('home');
+    }
+  };
+
+  const toggleUnit = () => {
+    setUnit((prevUnit) => (prevUnit === 'kg' ? 'lbs' : 'kg'));
+  };
+
   return (
     <View style={tw`flex-1 bg-gray-100 px-6 pt-10`}>
       <StatusBar style='dark' />
-      <TouchableOpacity style={tw`absolute top-5 left-5`}>
+      <TouchableOpacity style={tw`absolute top-5 left-5`} onPress={() => navigation.navigate('Home')}>
         <Text style={tw`text-blue-500`}>Back</Text>
       </TouchableOpacity>
       <Text style={tw`text-2xl font-bold mb-8`}>How much do you weigh?</Text>
       <View style={[styles.inputContainer, tw`mb-6`]}>
-        <Text style={tw`text-lg`}>Weight</Text>
-        <TextInput style={styles.input} placeholder="Please select" />
+        <TouchableOpacity onPress={handleWeightPress}>
+          <Text style={tw`text-lg`}>Weight</Text>
+          <Text style={tw`text-lg`}>{weight} {unit}</Text>
+        </TouchableOpacity>
       </View>
       <View style={[styles.inputContainer, tw`mb-6`]}>
         <Text style={tw`text-lg`}>Import</Text>
@@ -24,10 +67,10 @@ const WeightInput = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity style={tw`mt-6`}>
-        <Text style={tw`text-blue-500 text-center`}>Help</Text>
+      <TouchableOpacity onPress={toggleUnit}>
+        <Text style={tw`text-blue-500 text-center`}>Switch to {unit === 'kg' ? 'lbs' : 'kg'}</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[tw`w-full py-4 rounded-full mt-6`, { backgroundColor: '#ADD8E6' }]}>
+      <TouchableOpacity onPress={handleDone} style={[tw`w-full py-4 rounded-full mt-6`, { backgroundColor: '#ADD8E6' }]}>
         <Text style={tw`text-white text-center text-lg`}>Done</Text>
       </TouchableOpacity>
       <Text style={tw`text-center text-gray-500 mt-6`}>
@@ -47,12 +90,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     shadowRadius: 10,
     elevation: 5,
-  },
-  input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    padding: 5,
-    marginTop: 5,
   },
 });
 
