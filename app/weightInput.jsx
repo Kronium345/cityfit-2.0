@@ -1,27 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useRouter } from 'expo-router';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
-import { auth, db } from '../config/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const WeightInput = () => {
   const [weight, setWeight] = useState('');
   const [unit, setUnit] = useState('kg');
   const navigation = useNavigation();
+  const router = useRouter();
+
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const user = auth.currentUser;
+      const user = await AsyncStorage.getItem('user');
       if (user) {
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          setWeight(data.weight || '');
-          setUnit(data.unit || 'kg');
-        }
+        const parsedUser = JSON.parse(user);
+        setWeight(parsedUser.weight || '');
+        setUnit(parsedUser.unit || 'kg');
       }
     };
 
@@ -33,11 +31,13 @@ const WeightInput = () => {
   };
 
   const handleDone = async () => {
-    const user = auth.currentUser;
+    const user = await AsyncStorage.getItem('user');
     if (user) {
-      const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(userDocRef, { weight, unit }, { merge: true });
-      navigation.navigate('home');
+      const parsedUser = JSON.parse(user);
+      parsedUser.weight = weight;
+      parsedUser.unit = unit;
+      await AsyncStorage.setItem('user', JSON.stringify(parsedUser));
+      router.push('/tabs/home');
     }
   };
 
@@ -48,7 +48,7 @@ const WeightInput = () => {
   return (
     <View style={tw`flex-1 bg-gray-100 px-6 pt-10`}>
       <StatusBar style='dark' />
-      <TouchableOpacity style={tw`absolute top-5 left-5`} onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity style={tw`absolute top-5 left-5`} onPress={() => router.push('/tabs/home')}>
         <Text style={tw`text-blue-500`}>Back</Text>
       </TouchableOpacity>
       <Text style={tw`text-2xl font-bold mb-8`}>How much do you weigh?</Text>

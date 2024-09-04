@@ -3,20 +3,23 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { auth, db } from '../config/firebase';
 import { useRouter } from 'expo-router';
-import { doc, setDoc } from 'firebase/firestore';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LiftingExperience = () => {
   const router = useRouter();
 
   const handleExperienceSelection = async (experience) => {
-    const user = auth.currentUser;
+    const user = JSON.parse(await AsyncStorage.getItem('user'));
+    const token = await AsyncStorage.getItem('token');
     if (user) {
       try {
-        const userDocRef = doc(db, 'users', user.uid);
-        await setDoc(userDocRef, { experience }, { merge: true });
-        console.log('Experience updated:', experience);
+        const response = await axios.patch(`http://192.168.1.35:5000/user/${user._id}/experience`, { experience }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        console.log('Experience updated:', response.data);
         router.push('/weightInput'); // Navigate to the weight input page
       } catch (error) {
         console.error('Error updating experience:', error);

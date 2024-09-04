@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import tw from 'twrnc';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../config/firebase';
 import { useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -29,10 +29,19 @@ const Login = () => {
     }
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('User logged in:', userCredential.user);
+      const response = await axios.post('http://192.168.1.35:5000/auth/login', {
+        email,
+        password,
+      });
+
+      console.log('User logged in:', response.data);
+
+      // Save token and user data in AsyncStorage
+      await AsyncStorage.setItem('user', JSON.stringify(response.data.result));
+      await AsyncStorage.setItem('token', response.data.token);
+
       // Navigate to the home screen
-      router.push('/home');
+      router.push('/tabs/home');
     } catch (error) {
       console.error('Error logging in:', error);
       showToast('error', 'Invalid Credentials', 'Invalid credentials. Please try again');

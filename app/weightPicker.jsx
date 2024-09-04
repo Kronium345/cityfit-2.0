@@ -44,25 +44,6 @@ const WeightPicker = () => {
           );
         })}
       </View>
-      <View style={tw`flex-1 justify-end mb-10`}>
-        <View style={tw`flex-row justify-around`}>
-          {['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.', '✓'].map((num, idx) => (
-            <TouchableOpacity key={idx} style={styles.numberKey} onPress={() => {
-              if (num === '✓') {
-                handleWeightSelect(weight);
-              } else if (num === '.') {
-                if (!weight.toString().includes('.')) {
-                  setWeight(weight + num);
-                }
-              } else {
-                setWeight(parseFloat(weight + num));
-              }
-            }}>
-              <Text style={tw`text-2xl`}>{num}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
     </View>
   );
 }
@@ -71,20 +52,6 @@ const styles = StyleSheet.create({
   weightCard: {
     backgroundColor: 'white',
     padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 5 },
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  numberKey: {
-    width: '22%',
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFF',
-    margin: 5,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOpacity: 0.1,

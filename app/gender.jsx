@@ -3,20 +3,23 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import tw from 'twrnc';
-import { auth, db } from '../config/firebase';
 import { useRouter } from 'expo-router';
-import { doc, setDoc } from 'firebase/firestore';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const GenderSelection = () => {
   const router = useRouter();
 
   const handleGenderSelection = async (gender) => {
-    const user = auth.currentUser;
+    const user = JSON.parse(await AsyncStorage.getItem('user'));
+    const token = await AsyncStorage.getItem('token');
     if (user) {
       try {
-        const userDocRef = doc(db, 'users', user.uid);
-        await setDoc(userDocRef, { gender }, { merge: true });
-        console.log('Gender updated:', gender);
+        const response = await axios.patch(`http://192.168.1.35:5000/user/${user._id}/gender`, { gender }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        console.log('Gender updated:', response.data);
         router.push('/experience'); // Navigate to the experience page
       } catch (error) {
         console.error('Error updating gender:', error);

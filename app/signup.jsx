@@ -3,11 +3,10 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Platfo
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import tw from 'twrnc';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from '../config/firebase';
+import axios from 'axios';
 import { useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
-import { doc, setDoc } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Signup = () => {
   const [firstName, setFirstName] = useState('');
@@ -47,21 +46,23 @@ const Signup = () => {
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      console.log('User registered:', user);
-      
-      // Create user document in Firestore
-      const userDocRef = doc(db, 'users', user.uid);
-      await setDoc(userDocRef, {
+      const response = await axios.post('http://192.168.1.35:5000/auth/register', {
         firstName,
         lastName,
-        dob,
         email,
-        gender: null
+        password,
+        dob,
       });
 
-      // Navigate to the gender screen
+      const { result, token } = response.data;
+
+      // Store the user and token in AsyncStorage
+      await AsyncStorage.setItem('user', JSON.stringify(result));
+      await AsyncStorage.setItem('token', token);
+
+      console.log('User registered:', result);
+
+      // Navigate to the next screen
       router.push('/gender');
     } catch (error) {
       console.error('Error signing up:', error);
