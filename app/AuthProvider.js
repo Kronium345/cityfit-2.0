@@ -9,7 +9,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadUserFromStorage = async () => {
       try {
-        // Load the user from AsyncStorage on app startup
         const storedUser = await AsyncStorage.getItem('user');
         if (storedUser) {
           setUser(JSON.parse(storedUser));
@@ -24,7 +23,6 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (userData, token) => {
     try {
-      // Store user and token in AsyncStorage
       await AsyncStorage.setItem('user', JSON.stringify(userData));
       await AsyncStorage.setItem('token', token);
       setUser(userData);
@@ -35,7 +33,6 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      // Remove user and token from AsyncStorage
       await AsyncStorage.removeItem('user');
       await AsyncStorage.removeItem('token');
       setUser(null);

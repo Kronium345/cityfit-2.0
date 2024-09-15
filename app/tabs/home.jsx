@@ -43,12 +43,19 @@ const Home = () => {
     router.push('/tabs/planScreen'); // Ensure you're pointing to the correct route in tabs
   };
 
+  const navigateToExercises = () => {
+    router.push('/exercises'); // Ensure you're pointing to the correct route in tabs
+  };
+
   return (
     <View style={tw`flex-1 bg-gray-100 p-6`}>
       <Text style={tw`text-3xl font-bold mb-2`}>Welcome, {userData.firstName} {userData.lastName}</Text>
       <Text style={tw`text-lg mb-8`}>Your Fitness Journey starts here!</Text>
       <TouchableOpacity onPress={navigateToPlan} style={styles.planButton}>
         <Text style={styles.planText}>Create plan or workout</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={navigateToExercises} style={styles.planButton}>
+        <Text style={styles.planText}>Go to Exercises</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleLogout} style={[styles.logoutButton, tw`mt-4`]}>
         <Text style={tw`text-white text-center`}>Logout</Text>

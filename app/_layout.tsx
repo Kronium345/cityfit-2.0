@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { AuthProvider, useAuthContext } from '../app/AuthProvider'; // Assuming AuthProvider is in the root
+import { AuthProvider, useAuthContext } from '../app/AuthProvider';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import axios from 'axios';
@@ -12,14 +12,14 @@ const RootLayout = () => {
 
   useEffect(() => {
     const checkUser = async () => {
-      try {
-        if (user) {
-          const token = await AsyncStorage.getItem('token');
-          if (!token) {
-            setInitialRoute('/');
-            return;
-          }
+      if (user) {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          setInitialRoute('/');
+          return;
+        }
 
+        try {
           const response = await axios.get(`http://192.168.1.35:5000/user/${user._id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -33,13 +33,12 @@ const RootLayout = () => {
           } else if (!userData.weight) {
             setInitialRoute('/weightInput');
           } else {
-            setInitialRoute('/tabs/home');  // Set tab navigation route here
+            setInitialRoute('/tabs/home');
           }
-        } else {
+        } catch (error) {
           setInitialRoute('/');
         }
-      } catch (error) {
-        console.error('Error checking user data:', error);
+      } else {
         setInitialRoute('/');
       }
     };
