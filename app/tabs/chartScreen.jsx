@@ -21,7 +21,7 @@ const ChartScreen = () => {
 
   const fetchExerciseHistory = async () => {
     try {
-      const response = await axios.get(`http://192.168.1.35:5000/history/${user._id}`);
+      const response = await axios.get(`http://192.168.1.216:5000/history/${user._id}`);
       if (response.data) {
         setHistoryData(response.data.map(entry => ({
           date: new Date(entry.dateLogged).toLocaleDateString(),

@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import exerciseHistory from './routes/exerciseHistory.js'; // Ensure you have imported this
 import exerciseFetch from './routes/exerciseFetch.js'
+import caloriePreferences from './routes/caloriePreferences.js'
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/history', exerciseHistory); // Changed from '/exerciseHistory' to '/history'
 app.use('/exercise', exerciseFetch);
+app.use('/preferences', caloriePreferences);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))

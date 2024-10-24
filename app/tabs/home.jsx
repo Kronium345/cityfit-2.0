@@ -15,7 +15,7 @@ const Home = () => {
       const token = await AsyncStorage.getItem('token');
       if (user) {
         try {
-          const response = await axios.get(`http://192.168.1.35:5000/user/${user._id}`, {
+          const response = await axios.get(`http://192.168.1.216:5000/user/${user._id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
 
@@ -40,7 +40,7 @@ const Home = () => {
   };
 
   const navigateToPlan = () => {
-    router.push('/tabs/planScreen'); // Ensure you're pointing to the correct route in tabs
+    router.push('/foodScreen'); // Ensure you're pointing to the correct route in tabs
   };
 
   const navigateToExercises = () => {
@@ -52,7 +52,7 @@ const Home = () => {
       <Text style={tw`text-3xl font-bold mb-2`}>Welcome, {userData.firstName} {userData.lastName}</Text>
       <Text style={tw`text-lg mb-8`}>Your Fitness Journey starts here!</Text>
       <TouchableOpacity onPress={navigateToPlan} style={styles.planButton}>
-        <Text style={styles.planText}>Create plan or workout</Text>
+        <Text style={styles.planText}>Go to Food Screen</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={navigateToExercises} style={styles.planButton}>
         <Text style={styles.planText}>Go to Exercises</Text>

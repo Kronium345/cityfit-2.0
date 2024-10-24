@@ -15,7 +15,7 @@ const GenderSelection = () => {
     const token = await AsyncStorage.getItem('token');
     if (user) {
       try {
-        const response = await axios.patch(`http://192.168.1.35:5000/user/${user._id}/gender`, { gender }, {
+        const response = await axios.patch(`http://192.168.1.216:5000/user/${user._id}/gender`, { gender }, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
