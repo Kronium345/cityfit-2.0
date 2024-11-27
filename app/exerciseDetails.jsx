@@ -40,7 +40,7 @@ const ExerciseDetail = () => {
     };
 
     try {
-      const response = await axios.post(`http://192.168.1.45:5000/history/history`, logEntry);
+      const response = await axios.post(`http://192.168.1.216:5000/history/history`, logEntry);
       console.log('Exercise logged:', response.data);
       showToast('success', 'Exercise Logged Successfully', 'Your exercise has been logged.');
     } catch (error) {
