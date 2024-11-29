@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';  // Use expo-router's useRouter
 import tw from 'twrnc';
-import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const WeightInput = () => {
   const [weight, setWeight] = useState('');
   const [unit, setUnit] = useState('kg');
-  const navigation = useNavigation();
-  const router = useRouter();
-
+  const router = useRouter();  // Use expo-router's useRouter
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -26,8 +23,9 @@ const WeightInput = () => {
     fetchUserData();
   }, []);
 
+  // This function was previously using navigation, now uses router
   const handleWeightPress = () => {
-    navigation.navigate('weightPicker', { weight, unit, setWeight });
+    router.push('/weightPicker', { weight, unit, setWeight });  // Use router.push for navigation
   };
 
   const handleDone = async () => {
@@ -37,7 +35,7 @@ const WeightInput = () => {
       parsedUser.weight = weight;
       parsedUser.unit = unit;
       await AsyncStorage.setItem('user', JSON.stringify(parsedUser));
-      router.push('/tabs/home');
+      router.push('/tabs/home');  // Use router.push for navigation
     }
   };
 
@@ -78,7 +76,7 @@ const WeightInput = () => {
       </Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   inputContainer: {

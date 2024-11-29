@@ -7,9 +7,12 @@ const useTrackRoute = () => {
 
   useEffect(() => {
     const saveCurrentRoute = async () => {
-      const currentRoute = navigationRef.getCurrentRoute();
-      if (currentRoute) {
-        await AsyncStorage.setItem('lastPage', currentRoute.name);
+      // Ensure that the navigationRef is properly initialized and accessible
+      if (navigationRef.isReady()) {
+        const currentRoute = navigationRef.getCurrentRoute();
+        if (currentRoute) {
+          await AsyncStorage.setItem('lastPage', currentRoute.name);
+        }
       }
     };
 
