@@ -21,7 +21,7 @@ const ChartScreen = () => {
 
   const fetchExerciseHistory = async () => {
     try {
-      const response = await axios.get(`http://192.168.1.216:5000/history/${user._id}`);
+      const response = await axios.get(`http://192.168.1.45:5000/history/${user._id}`);
       if (response.data) {
         // Fetch the exercise details by exerciseId
         const updatedHistory = await Promise.all(
@@ -30,7 +30,7 @@ const ChartScreen = () => {
 
             let exerciseName = 'Unknown Exercise';
             try {
-              const exerciseResponse = await axios.get(`http://192.168.1.216:5000/exercises/${exerciseId}`);
+              const exerciseResponse = await axios.get(`http://192.168.1.45:5000/exercises/${exerciseId}`);
               if (exerciseResponse.data) {
                 exerciseName = exerciseResponse.data.name;
               }
