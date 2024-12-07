@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { AuthProvider, useAuthContext } from '../app/AuthProvider';
+import AuthProvider, { useAuthContext } from '../app/AuthProvider';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import axios from 'axios';
@@ -20,7 +20,7 @@ const RootLayout = () => {
         }
 
         try {
-          const response = await axios.get(`http://192.168.1.45:5000/user/${user._id}`, {
+          const response = await axios.get(`http://192.168.19.84:5000/user/${user._id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
 

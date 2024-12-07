@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native'
 import React from 'react'
-import { meditations } from './data/meditation-data';
+import { meditations } from './data/meditation-data'; // Corrected import
 import tw from 'twrnc';
 import MeditationListItem from '../components/MeditationListItem';
 

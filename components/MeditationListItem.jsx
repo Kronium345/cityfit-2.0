@@ -32,6 +32,6 @@ const MeditationListItem = ({ meditation }) => {
     )
 }
 
-export default MeditationListItem
+export default MeditationListItem;
 
 const styles = StyleSheet.create({})
