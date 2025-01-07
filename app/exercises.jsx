@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, FlatList, Image, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
+import { AIRTABLE_PAT, AIRTABLE_BASE_ID, AIRTABLE_TABLE_ID } from '@env';
 
 const Exercises = () => {
   const [exercises, setExercises] = useState([]); // All exercises
@@ -9,13 +10,6 @@ const Exercises = () => {
   const [page, setPage] = useState(0);
   const pageSize = 10; // 10 items per page
   const router = useRouter();
-
-  // Replace with your actual Base ID and Table ID
-  const baseId = 'appEvp74xDBTA1L3h';
-  const tableId = 'tblmQVqGhf9nmH1ka';
-
-  // Use your Personal Access Token (PAT) here
-  const pat = 'patJedjQ61fMK86W9.6d0f47f6139c2f22ae70bb1df9a622449a097d101bb59cfcef61523ebe86140d';
 
   useEffect(() => {
     fetchExercises();
@@ -27,9 +21,9 @@ const Exercises = () => {
       console.log(`Fetching data from offset: ${offset} and page size: ${pageSize}`);
 
       // Fetching exercises data from Airtable
-      const response = await axios.get(`https://api.airtable.com/v0/${baseId}/${tableId}`, {
+      const response = await axios.get(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}`, {
         headers: {
-          Authorization: `Bearer ${pat}`,
+          Authorization: `Bearer ${AIRTABLE_PAT}`,
         },
         params: {
           pageSize: pageSize, // Set the page size (number of records per request)
