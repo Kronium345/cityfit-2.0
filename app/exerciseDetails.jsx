@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, StyleSheet, Image, Button, Dimensions } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { ScrollView, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';  // Correct import for expo-router's useLocalSearchParams
 import axios from 'axios';
 import { useAuthContext } from '../app/AuthProvider';
 import NewSetInput from '../components/NewSetInput';
@@ -9,9 +9,21 @@ import Toast from 'react-native-toast-message';
 const { width: screenWidth } = Dimensions.get('window');
 
 const ExerciseDetail = () => {
-  const route = useRoute();
+  // Use useLocalSearchParams to access route parameters
+  const { id, name, description, image, videoUrl } = useLocalSearchParams();
   const { user } = useAuthContext();
-  const exerciseId = parseInt(route.params?.id, 10);
+  
+  // Ensure the id exists before proceeding
+  if (!id) {
+    return (
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}>Exercise details unavailable</Text>
+      </ScrollView>
+    );
+  }
+
+  // Ensure exerciseId is a valid number or ObjectId
+  const exerciseId = id ? parseInt(id, 10) : null;  // If it's a string, try converting it to number
 
   const showToast = (type, text1, text2) => {
     Toast.show({
@@ -28,19 +40,17 @@ const ExerciseDetail = () => {
       showToast('error', 'Exercise Logging Failed', 'User not logged in or ExerciseId is invalid');
       return;
     }
-
-    console.log(exerciseId);
-
+  
     const logEntry = {
       userId: user._id,
-      exerciseId,
+      exerciseId: exerciseId,  // Make sure exerciseId is correctly passed
       sets: parseInt(sets, 10),
       reps: parseInt(reps, 10),
       weight: parseFloat(weight),
     };
-
+  
     try {
-      const response = await axios.post(`http://192.168.19.84:5000/history/history`, logEntry);
+      const response = await axios.post(`http://192.168.1.216:5000/history/history`, logEntry);
       console.log('Exercise logged:', response.data);
       showToast('success', 'Exercise Logged Successfully', 'Your exercise has been logged.');
     } catch (error) {
@@ -48,12 +58,13 @@ const ExerciseDetail = () => {
       showToast('error', 'Exercise Logging Failed', 'Error occurred while logging exercise.');
     }
   };
+  
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>{route.params?.name || 'Exercise Details'}</Text>
-      <Image source={{ uri: route.params?.image }} style={styles.image} />
-      <Text style={styles.description}>{route.params?.description || 'No description available.'}</Text>
+      <Text style={styles.title}>{name || 'Exercise Details'}</Text>
+      <Image source={{ uri: image }} style={styles.image} />
+      <Text style={styles.description}>{description || 'No description available.'}</Text>
       <NewSetInput onLogExercise={handleLogExercise} />
       <Toast ref={(ref) => Toast.setRef(ref)} />  {/* Ensure Toast is set up at the root level of your component tree */}
     </ScrollView>

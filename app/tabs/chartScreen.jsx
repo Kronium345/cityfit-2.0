@@ -21,27 +21,26 @@ const ChartScreen = () => {
 
   const fetchExerciseHistory = async () => {
     try {
-      const response = await axios.get(`http://192.168.19.84:5000/history/${user._id}`);
+      const response = await axios.get(`http://192.168.1.216:5000/history/${user._id}`);
       if (response.data) {
         // Fetch the exercise details by exerciseId
         const updatedHistory = await Promise.all(
           response.data.map(async (entry) => {
-            const exerciseId = parseInt(entry.exerciseId, 10); // Convert exerciseId to number
-
+            const exerciseId = entry.exerciseId; // Now it's an ObjectId
+  
             let exerciseName = 'Unknown Exercise';
             try {
-              const exerciseResponse = await axios.get(`http://192.168.19.84:5000/exercises/${exerciseId}`);
+              const exerciseResponse = await axios.get(`http://192.168.1.216:5000/exercises/${exerciseId}`);
               if (exerciseResponse.data) {
                 exerciseName = exerciseResponse.data.name;
               }
             } catch (error) {
               console.error(`Error fetching exercise name for ID ${exerciseId}:`, error);
             }
-
-            // Return the updated entry with exercise name and date with time
+  
             return {
-              date: new Date(entry.dateLogged).toLocaleString(), // Including both date and time
-              exerciseId: entry.exerciseId,
+              date: new Date(entry.dateLogged).toLocaleString(),
+              exerciseId: exerciseId,
               exerciseName,
               value: entry.weight * entry.reps * entry.sets,
               detail: `${entry.weight} kg, ${entry.sets} sets, ${entry.reps} reps`
@@ -54,6 +53,7 @@ const ChartScreen = () => {
       console.error('Failed to fetch exercise history:', error);
     }
   };
+  
 
   const lineChartData = {
     labels: historyData.map(item => `${item.date} - ${item.exerciseName} (${item.exerciseId})`),

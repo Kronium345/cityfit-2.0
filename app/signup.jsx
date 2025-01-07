@@ -46,7 +46,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('http://192.168.19.84:5000/auth/register', {
+      const response = await axios.post('http://192.168.1.216:5000/auth/register', {
         firstName,
         lastName,
         email,

@@ -8,7 +8,7 @@ const exerciseHistorySchema = new mongoose.Schema({
     ref: 'User'
   },
   exerciseId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'Exercise'  // Only use this if you actually have an Exercise model to reference
   },   

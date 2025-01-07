@@ -18,7 +18,7 @@ const ProfileScreen = () => {
       const token = await AsyncStorage.getItem('token');
       if (user) {
         try {
-          const response = await axios.get(`http://192.168.19.84:5000/user/${user._id}`, {
+          const response = await axios.get(`http://192.168.1.216:5000/user/${user._id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
 
@@ -44,7 +44,7 @@ const ProfileScreen = () => {
     const token = await AsyncStorage.getItem('token');
     try {
       const updatedData = { weight, experience, gender };
-      const response = await axios.put(`http://192.168.19.84:5000/user/${user._id}`, updatedData, {
+      const response = await axios.put(`http://192.168.1.216:5000/user/${user._id}`, updatedData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
