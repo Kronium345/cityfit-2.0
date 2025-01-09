@@ -1,4 +1,3 @@
-// ExerciseHistory.js (MongoDB Model)
 import mongoose from 'mongoose';
 
 const exerciseHistorySchema = new mongoose.Schema({
@@ -7,17 +6,15 @@ const exerciseHistorySchema = new mongoose.Schema({
     required: true,
     ref: 'User'
   },
-  exerciseId: {
-    type: mongoose.Schema.Types.ObjectId,
+  exerciseName: {
+    type: String,  // Store the exercise name instead of ObjectId
     required: true,
-    ref: 'Exercise'  // Only use this if you actually have an Exercise model to reference
-  },   
+  },
   sets: Number,
   reps: Number,
   weight: Number,
   dateLogged: { type: Date, default: Date.now }
 });
-
 
 const ExerciseHistory = mongoose.model('ExerciseHistory', exerciseHistorySchema);
 

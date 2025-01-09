@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { ScrollView, Text, StyleSheet, Image, Dimensions } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';  // Correct import for expo-router's useLocalSearchParams
+import { ScrollView, Text, StyleSheet, Image, Dimensions, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
 import { useAuthContext } from '../app/AuthProvider';
 import NewSetInput from '../components/NewSetInput';
@@ -10,9 +10,9 @@ const { width: screenWidth } = Dimensions.get('window');
 
 const ExerciseDetail = () => {
   // Use useLocalSearchParams to access route parameters
-  const { id, name, description, image, videoUrl } = useLocalSearchParams();
+  const { id, name, description, image, equipment, exerciseType, majorMuscle, minorMuscle, modifications } = useLocalSearchParams();
   const { user } = useAuthContext();
-  
+
   // Ensure the id exists before proceeding
   if (!id) {
     return (
@@ -22,8 +22,8 @@ const ExerciseDetail = () => {
     );
   }
 
-  // Ensure exerciseId is a valid number or ObjectId
-  const exerciseId = id ? parseInt(id, 10) : null;  // If it's a string, try converting it to number
+  // ExerciseId is passed through the URL from the exercises.jsx component
+  const exerciseId = id;
 
   const showToast = (type, text1, text2) => {
     Toast.show({
@@ -36,14 +36,14 @@ const ExerciseDetail = () => {
   };
 
   const handleLogExercise = async (sets, reps, weight) => {
-    if (!user || isNaN(exerciseId)) {
-      showToast('error', 'Exercise Logging Failed', 'User not logged in or ExerciseId is invalid');
+    if (!user || !name) {  // Use name from localSearchParams instead of exerciseId
+      showToast('error', 'Exercise Logging Failed', 'User not logged in or Exercise name is invalid');
       return;
     }
   
     const logEntry = {
       userId: user._id,
-      exerciseId: exerciseId,  // Make sure exerciseId is correctly passed
+      exerciseName: name,  // Pass exercise name instead of exerciseId
       sets: parseInt(sets, 10),
       reps: parseInt(reps, 10),
       weight: parseFloat(weight),
@@ -65,6 +65,17 @@ const ExerciseDetail = () => {
       <Text style={styles.title}>{name || 'Exercise Details'}</Text>
       <Image source={{ uri: image }} style={styles.image} />
       <Text style={styles.description}>{description || 'No description available.'}</Text>
+
+      {/* Display Exercise Details */}
+      <View style={styles.detailsContainer}>
+        <Text style={styles.detailsTitle}>Exercise Details</Text>
+        <Text>Equipment: {equipment || 'Not specified'}</Text>
+        <Text>Exercise Type: {exerciseType || 'Not specified'}</Text>
+        <Text>Major Muscle: {majorMuscle || 'Not specified'}</Text>
+        <Text>Minor Muscle: {minorMuscle || 'Not specified'}</Text>
+        <Text>Modifications to Help: {modifications || 'Not specified'}</Text>
+      </View>
+
       <NewSetInput onLogExercise={handleLogExercise} />
       <Toast ref={(ref) => Toast.setRef(ref)} />  {/* Ensure Toast is set up at the root level of your component tree */}
     </ScrollView>
@@ -91,6 +102,15 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     color: '#666',
+    marginBottom: 20,
+  },
+  detailsContainer: {
+    marginBottom: 20,
+  },
+  detailsTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
 

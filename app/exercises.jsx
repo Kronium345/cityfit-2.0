@@ -59,6 +59,11 @@ const Exercises = () => {
         name: exercise.fields.Exercise,  // Assuming 'Exercise' is the field for exercise names
         description: exercise.fields.Notes || 'No description available',
         image: exercise.fields.Example ? exercise.fields.Example[0].url : null,  // Access the URL directly
+        equipment: exercise.fields.Equipment || 'Not specified', // Exercise equipment
+        exerciseType: exercise.fields['Exercise Type'] || 'Not specified',  // Exercise type
+        majorMuscle: exercise.fields['Major Muscle'] || 'Not specified',  // Major muscle
+        minorMuscle: exercise.fields['Minor Muscle'] || 'Not specified',  // Minor muscle
+        modifications: exercise.fields.Modifications || 'No modifications available'
       }
     });
   };

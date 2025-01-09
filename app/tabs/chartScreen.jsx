@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Dimensions, ScrollView, StyleSheet } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
+import { View, Text, Dimensions, ScrollView, StyleSheet, Image } from 'react-native';
 import axios from 'axios';
 import { useAuthContext } from '../AuthProvider';
+import resistanceIcon from "../../assets/tracker-images/resistance.png"; // Only using resistance icon
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -16,89 +16,61 @@ const ChartScreen = () => {
       return;
     }
     console.log('Fetching history for user:', user._id);
-    fetchExerciseHistory();
+    fetchExerciseHistory();  // Fetch data on mount
   }, [user]);
 
+  // Fetch the exercise history
   const fetchExerciseHistory = async () => {
     try {
-      const response = await axios.get(`http://192.168.1.216:5000/history/${user._id}`);
+      const response = await axios.get(`http://192.168.1.216:5000/exercise/${user._id}`);
+      console.log('Fetched history:', response.data);
+      
       if (response.data) {
-        // Fetch the exercise details by exerciseId
-        const updatedHistory = await Promise.all(
-          response.data.map(async (entry) => {
-            const exerciseId = entry.exerciseId; // Now it's an ObjectId
-  
-            let exerciseName = 'Unknown Exercise';
-            try {
-              const exerciseResponse = await axios.get(`http://192.168.1.216:5000/exercises/${exerciseId}`);
-              if (exerciseResponse.data) {
-                exerciseName = exerciseResponse.data.name;
-              }
-            } catch (error) {
-              console.error(`Error fetching exercise name for ID ${exerciseId}:`, error);
-            }
-  
-            return {
-              date: new Date(entry.dateLogged).toLocaleString(),
-              exerciseId: exerciseId,
-              exerciseName,
-              value: entry.weight * entry.reps * entry.sets,
-              detail: `${entry.weight} kg, ${entry.sets} sets, ${entry.reps} reps`
-            };
-          })
-        );
+        const updatedHistory = response.data.map((entry) => {
+          return {
+            date: new Date(entry.dateLogged).toLocaleString(),
+            exerciseName: entry.exerciseName,
+            weight: entry.weight,
+            sets: entry.sets,
+            reps: entry.reps,
+            detail: `${entry.weight} kg, ${entry.sets} sets, ${entry.reps} reps`
+          };
+        });
         setHistoryData(updatedHistory);
       }
     } catch (error) {
       console.error('Failed to fetch exercise history:', error);
     }
   };
-  
-
-  const lineChartData = {
-    labels: historyData.map(item => `${item.date} - ${item.exerciseName} (${item.exerciseId})`),
-    datasets: [{
-      data: historyData.map(item => item.value),
-      color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,  // Blue line
-      strokeWidth: 3,
-    }],
-  };
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Progress Charts</Text>
-      <LineChart
-        data={lineChartData}
-        width={screenWidth - 40}
-        height={220}
-        chartConfig={{
-          backgroundColor: 'transparent',  // Transparent background
-          backgroundGradientFrom: 'transparent',
-          backgroundGradientTo: 'transparent',
-          decimalPlaces: 2,
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          propsForDots: {
-            r: '6', // Dot size
-            strokeWidth: '2',
-            stroke: '#1E88E5',  // Dot border color
-          },
-        }}
-        bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16
-        }}
-      />
-      <View style={styles.historyList}>
-        {historyData.map((item, index) => (
-          <View key={index} style={styles.historyItem}>
-            <Text style={styles.historyText}>
-              {item.date} - (ID: {item.exerciseId}) - {item.exerciseName} - {item.detail}
-            </Text>
-          </View>
-        ))}
-      </View>
+      <Text style={styles.title}>Exercise History</Text>
+
+      {historyData.length ? (
+        <View style={styles.historyList}>
+          {historyData.map((item, index) => (
+            <View key={index} style={styles.historyItem}>
+              <View style={styles.dateWrapper}>
+                <Text style={styles.date}>{item.date}</Text>
+              </View>
+
+              <View style={styles.exerciseWrapper}>
+                <Image
+                  source={resistanceIcon} // Always using resistance icon
+                  style={styles.icon}
+                />
+                <View>
+                  <Text style={styles.exerciseName}>{item.exerciseName}</Text>
+                  <Text style={styles.exerciseDetail}>{item.detail}</Text>
+                </View>
+              </View>
+            </View>
+          ))}
+        </View>
+      ) : (
+        <Text>No exercise history available.</Text>
+      )}
     </ScrollView>
   );
 };
@@ -121,13 +93,35 @@ const styles = StyleSheet.create({
   },
   historyItem: {
     marginBottom: 10,
-    padding: 10,
+    padding: 15,
     backgroundColor: '#f1f1f1',
     borderRadius: 8,
   },
-  historyText: {
+  dateWrapper: {
+    marginBottom: 10,
+  },
+  date: {
     fontSize: 16,
+    fontWeight: 'bold',
     color: '#333',
+  },
+  exerciseWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    marginRight: 10,
+  },
+  exerciseName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  exerciseDetail: {
+    fontSize: 14,
+    color: '#555',
   },
 });
 

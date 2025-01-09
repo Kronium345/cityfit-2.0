@@ -1,22 +1,26 @@
 import express from 'express';
-import Exercise from '../models/Exercise.js';  // Assuming Exercise model is in the models folder
+import ExerciseHistory from '../models/ExerciseHistory.js';
 
 const router = express.Router();
 
-// Fetch exercise details by ID
-router.get('/exercises/:exerciseId', async (req, res) => {
-    const exerciseId = parseInt(req.params.exerciseId, 10);  // Ensure you convert param to a number
-    try {
-      const exercise = await Exercise.findById(exerciseId);
-      if (!exercise) {
-        return res.status(404).json({ message: 'Exercise not found' });
-      }
-      res.status(200).json(exercise);
-    } catch (error) {
-      console.error('Error fetching exercise details:', error);
-      res.status(500).json({ message: 'Failed to fetch exercise details', error: error.message });
+// Fetch all exercise history for a user (no filtering based on exerciseName)
+router.get('/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // Fetch all exercises for the user
+    const history = await ExerciseHistory.find({ userId });
+    
+    // If no history is found, return a message
+    if (history.length === 0) {
+      return res.status(404).json({ message: 'No exercises found for this user' });
     }
-  });
-  
+
+    res.json(history);
+  } catch (error) {
+    console.error("Failed to fetch exercise history:", error);
+    res.status(500).json({ message: 'Error fetching history', error });
+  }
+});
 
 export default router;
