@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import tw from 'twrnc';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRouter, useLocalSearchParams } from 'expo-router';  // Use useLocalSearchParams
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const WeightPicker = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const { weight: initialWeight, unit: initialUnit, setWeight: setParentWeight } = route.params;
+  const router = useRouter();
+  const { weight: initialWeight, unit: initialUnit } = useLocalSearchParams();  // Get weight and unit from params
   const [weight, setWeight] = useState(parseFloat(initialWeight) || 70);
   const [unit, setUnit] = useState(initialUnit || 'kg');
 
@@ -15,15 +15,22 @@ const WeightPicker = () => {
     setUnit((prevUnit) => (prevUnit === 'lbs' ? 'kg' : 'lbs'));
   };
 
-  const handleWeightSelect = (selectedWeight) => {
-    setParentWeight(selectedWeight);
-    navigation.goBack();
+  const handleWeightSelect = async (selectedWeight) => {
+    // Save the updated weight and unit in AsyncStorage
+    const user = await AsyncStorage.getItem('user');
+    if (user) {
+      const parsedUser = JSON.parse(user);
+      parsedUser.weight = selectedWeight;
+      parsedUser.unit = unit;
+      await AsyncStorage.setItem('user', JSON.stringify(parsedUser));
+    }
+    router.back();  // Go back to the previous screen
   };
 
   return (
     <View style={tw`flex-1 bg-gray-100 px-6 pt-10`}>
       <StatusBar style='dark' />
-      <TouchableOpacity style={tw`absolute top-5 left-5`} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={tw`absolute top-5 left-5`} onPress={() => router.back()}>
         <Text style={tw`text-blue-500`}>Cancel</Text>
       </TouchableOpacity>
       <TouchableOpacity style={tw`absolute top-5 right-5`} onPress={handleUnitSwitch}>
@@ -46,7 +53,7 @@ const WeightPicker = () => {
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   weightCard: {

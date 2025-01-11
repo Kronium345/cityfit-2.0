@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { useRouter } from 'expo-router';  // Use expo-router's useRouter
+import { useRouter } from 'expo-router';
 import tw from 'twrnc';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const WeightInput = () => {
   const [weight, setWeight] = useState('');
   const [unit, setUnit] = useState('kg');
-  const router = useRouter();  // Use expo-router's useRouter
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -25,7 +25,10 @@ const WeightInput = () => {
 
   // This function was previously using navigation, now uses router
   const handleWeightPress = () => {
-    router.push('/weightPicker', { weight, unit, setWeight });  // Use router.push for navigation
+    router.push({
+      pathname: '/weightPicker',  // Path to WeightPicker
+      query: { weight, unit },  // Pass weight and unit as params
+    });
   };
 
   const handleDone = async () => {
@@ -35,7 +38,7 @@ const WeightInput = () => {
       parsedUser.weight = weight;
       parsedUser.unit = unit;
       await AsyncStorage.setItem('user', JSON.stringify(parsedUser));
-      router.push('/tabs/home');  // Use router.push for navigation
+      router.push('/tabs/home');  // Navigate back to home screen
     }
   };
 
@@ -55,15 +58,6 @@ const WeightInput = () => {
           <Text style={tw`text-lg`}>Weight</Text>
           <Text style={tw`text-lg`}>{weight} {unit}</Text>
         </TouchableOpacity>
-      </View>
-      <View style={[styles.inputContainer, tw`mb-6`]}>
-        <Text style={tw`text-lg`}>Import</Text>
-        <View style={tw`flex-row items-center`}>
-          <Text style={tw`flex-1`}>Health Connect</Text>
-          <TouchableOpacity>
-            <Text style={tw`text-blue-500`}>Toggle</Text>
-          </TouchableOpacity>
-        </View>
       </View>
       <TouchableOpacity onPress={toggleUnit}>
         <Text style={tw`text-blue-500 text-center`}>Switch to {unit === 'kg' ? 'lbs' : 'kg'}</Text>
