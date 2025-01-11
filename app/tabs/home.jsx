@@ -15,7 +15,7 @@ const Home = () => {
       const token = await AsyncStorage.getItem('token');
       if (user) {
         try {
-          const response = await axios.get(`http://192.168.1.216:5000/user/${user._id}`, {
+          const response = await axios.get(`http://192.168.1.48:5000/user/${user._id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
 

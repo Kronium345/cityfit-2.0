@@ -21,9 +21,9 @@ const Signup = () => {
   const router = useRouter();
 
   const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || dob;
-    setShow(Platform.OS === 'ios');
-    setDob(currentDate);
+    const currentDate = selectedDate || dob;  // If no date selected, default to current DOB
+    setShow(Platform.OS === 'ios');  // For iOS, ensure the date picker remains visible
+    setDob(currentDate);  // Update the DOB with the selected date
   };
 
   const showToast = (type, text1, text2) => {
@@ -35,6 +35,20 @@ const Signup = () => {
     });
   };
 
+    // Function to calculate age and check if the user is 18 or older
+    const isUserOver18 = (dob) => {
+      const currentDate = new Date();
+      const age = currentDate.getFullYear() - dob.getFullYear();
+      const month = currentDate.getMonth() - dob.getMonth();
+      
+      // If the current month is before the birth month, subtract 1 from age
+      if (month < 0 || (month === 0 && currentDate.getDate() < dob.getDate())) {
+        return age - 1 >= 18; // Check if the user is at least 18 years old
+      }
+  
+      return age >= 18; // User is 18 or older
+    };
+
   const handleSignUp = async () => {
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
       showToast('error', 'Incomplete Fields', 'Please fill in all fields');
@@ -45,8 +59,14 @@ const Signup = () => {
       return;
     }
 
+    // Check if the user is 18 or older before proceeding
+    if (!isUserOver18(dob)) {
+      showToast('error', 'Age Restriction', 'You must be 18 or older to sign up');
+      return;
+    }
+
     try {
-      const response = await axios.post('http://192.168.1.216:5000/auth/register', {
+      const response = await axios.post('http://192.168.1.48:5000/auth/register', {
         firstName,
         lastName,
         email,
@@ -135,16 +155,19 @@ const Signup = () => {
         </View>
         <View style={tw`flex-row items-center mb-4 bg-white border border-gray-300 rounded-md p-3`}>
           <Icon name="calendar" size={20} color="#000" style={tw`mr-2`} />
-          <TouchableOpacity onPress={() => setShow(true)} style={tw`flex-1`}>
-            <Text>{dob.toDateString()}</Text>
+          <TouchableOpacity
+            onPress={() => setShow(true)}  // Toggle the date picker visibility
+            style={tw`flex-1`}
+          >
+            <Text>{dob.toDateString()}</Text>  {/* Display the selected DOB */}
           </TouchableOpacity>
-          {show && (
+          {show && (  // Show DateTimePicker when the 'show' state is true
             <DateTimePicker
               testID="dateTimePicker"
               value={dob}
               mode="date"
               display="default"
-              onChange={onChange}
+              onChange={onChange}  // When the user selects a date, update the dob
             />
           )}
         </View>
@@ -158,7 +181,7 @@ const Signup = () => {
         <Text style={tw`text-center text-gray-500 mt-6`}>
           Already have an account?
         </Text>
-        <TouchableOpacity onPress={() => router.push('/Login')}>
+        <TouchableOpacity onPress={() => router.push('/login')}>
           <Text style={tw`text-blue-500 text-center`}>Log in</Text>
         </TouchableOpacity>
         <Text style={tw`text-center text-gray-500 my-4`}>Or</Text>

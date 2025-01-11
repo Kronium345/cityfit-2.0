@@ -29,7 +29,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('http://192.168.1.216:5000/auth/login', {
+      const response = await axios.post('http://192.168.1.48:5000/auth/login', {
         email,
         password,
       });
@@ -87,7 +87,7 @@ const Login = () => {
         <Text style={tw`text-center text-gray-500 mt-6`}>
           Don't have an account?
         </Text>
-        <TouchableOpacity onPress={() => router.push('/Signup')}>
+        <TouchableOpacity onPress={() => router.push('/signup')}>
           <Text style={tw`text-blue-500 text-center`}>Sign up</Text>
         </TouchableOpacity>
         <Text style={tw`text-center text-gray-500 my-4`}>Or</Text>

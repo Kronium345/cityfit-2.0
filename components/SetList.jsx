@@ -13,7 +13,7 @@ const SetsList = ({ exerciseId }) => {
   React.useEffect(() => {
     const fetchSets = async () => {
       try {
-        const response = await axios.get(`http://192.168.1.216:5000/history/${user._id}`);
+        const response = await axios.get(`http://192.168.1.48:5000/history/${user._id}`);
         setSetsData(response.data);
         setIsLoading(false);
       } catch (error) {
