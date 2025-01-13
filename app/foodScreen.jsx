@@ -12,7 +12,7 @@ const FoodScreen = () => {
     const router = useRouter();
 
     const navigateToFoodHomeScreen = () => {
-        router.push('/foodHomeScreen'); // Ensure you're pointing to the correct route in tabs
+        router.push('/foodDetails'); // Ensure you're pointing to the correct route in tabs
       };
 
   const entries = [

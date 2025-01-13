@@ -1,13 +1,25 @@
 import { StyleSheet, Text, View, FlatList, TextInput, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import the icon package
+import { Ionicons } from '@expo/vector-icons';
 import FoodListItem from '../components/FoodListItem';
-import axios from 'axios'; // Import axios to make API requests
+import axios from 'axios';
+import * as BarCodeScanner from 'expo-barcode-scanner';
 
 const foodHomeScreen = () => {
   const [search, setSearch] = useState('');
   const [foodItems, setFoodItems] = useState([]);  // Store the fetched food items
   const [loading, setLoading] = useState(false);  // To show loading spinner when fetching
+  const [scannerActive, setScannerActive] = useState(false);
+  const [hasPermission, setHasPermission] = useState(null);
+
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    })();
+  }, []);
 
   // Perform search using Open Food Facts API
   const performSearch = async () => {
@@ -41,8 +53,35 @@ const foodHomeScreen = () => {
     }
   };
 
+const handleBarcodeScanned = ({ type, data }) => {
+    console.log('Scanned barcode data:', data);
+    setScannerActive(false);
+    // Here you can call your Open Food Facts barcode endpoint with the scanned data
+    axios.get(`https://world.openfoodfacts.org/api/v0/product/${data}.json`)
+      .then(response => {
+        console.log('Scanned product:', response.data.product);
+        // You can update your foodItems with the scanned product data
+      })
+      .catch(error => {
+        console.error('Error scanning barcode:', error);
+      });
+  };
+
+  if (scannerActive) {
+    return (
+      <View style={styles.scannerContainer}>
+        <BarCodeScanner
+          onBarCodeScanned={handleBarcodeScanned}
+          style={StyleSheet.absoluteFillObject}
+        />
+        <Ionicons onPress={() => setScannerActive(false)} name="close" size={24} color="black" style={{ position: "absolute", right: 10, top: 10 }} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
       {/* Search bar */}
       <View style={styles.searchContainer}>
         <TextInput
@@ -51,8 +90,10 @@ const foodHomeScreen = () => {
           placeholder='Search food...'
           style={styles.input}
         />
+        <Ionicons onPress={() => setScannerActive(true)} name="barcode-outline" size={32} color="black" />
+        </View>
         <TouchableOpacity onPress={performSearch} style={styles.searchIcon}>
-          <Icon name="search" size={20} color="#000" />
+          <Icon name="search" size={32} color="#000" />
         </TouchableOpacity>
       </View>
 
@@ -63,8 +104,9 @@ const foodHomeScreen = () => {
         <FlatList
           data={foodItems}
           renderItem={({ item }) => (
-            <FoodListItem item={item} />  // This should render a custom component for each food item
+            <FoodListItem item={item} showAddButton={true} />  // This should render a custom component for each food item
           )}
+          ListEmptyComponent={() => <Text>Search any food</Text>}
           keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={{ gap: 5 }}
         />
@@ -83,6 +125,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   searchContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F2F2F2',

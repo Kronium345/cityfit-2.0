@@ -30,7 +30,8 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-audio"
+      "expo-audio",
+      "expo-barcode-scanner"
     ],
     "experiments": {
       "typedRoutes": true
