@@ -39,6 +39,10 @@ const Home = () => {
     }
   };
 
+  const navigateToSteps = () => {
+    router.push('/stepCounter'); // Ensure you're pointing to the correct route in tabs
+  };
+
   const navigateToPlan = () => {
     router.push('/foodScreen'); // Ensure you're pointing to the correct route in tabs
   };
@@ -55,6 +59,9 @@ const Home = () => {
     <View style={tw`flex-1 bg-gray-100 p-6`}>
       <Text style={tw`text-3xl font-bold mb-2`}>Welcome, {userData.firstName} {userData.lastName}</Text>
       <Text style={tw`text-lg mb-8`}>Your Fitness Journey starts here!</Text>
+      <TouchableOpacity onPress={navigateToSteps} style={styles.planButton}>
+        <Text style={styles.planText}>Go to Step Counter</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={navigateToPlan} style={styles.planButton}>
         <Text style={styles.planText}>Go to Food Screen</Text>
       </TouchableOpacity>

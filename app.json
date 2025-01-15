@@ -20,7 +20,13 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.ACTIVITY_RECOGNITION",
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.BLUETOOTH_ADMIN"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -31,7 +37,8 @@
       "expo-router",
       "expo-font",
       "expo-audio",
-      "expo-barcode-scanner"
+      "expo-barcode-scanner",
+      "react-native-health-connect"
     ],
     "experiments": {
       "typedRoutes": true
