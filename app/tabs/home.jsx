@@ -59,6 +59,7 @@ const Home = () => {
     <View style={tw`flex-1 bg-gray-100 p-6`}>
       <Text style={tw`text-3xl font-bold mb-2`}>Welcome, {userData.firstName} {userData.lastName}</Text>
       <Text style={tw`text-lg mb-8`}>Your Fitness Journey starts here!</Text>
+
       <TouchableOpacity onPress={navigateToSteps} style={styles.planButton}>
         <Text style={styles.planText}>Go to Step Counter</Text>
       </TouchableOpacity>
@@ -77,6 +78,7 @@ const Home = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   logoutButton: {

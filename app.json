@@ -25,8 +25,19 @@
         "android.permission.ACTIVITY_RECOGNITION",
         "android.permission.BLUETOOTH",
         "android.permission.BLUETOOTH_ADMIN",
-        "android.permission.BLUETOOTH_ADMIN"
-      ]
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.ACTIVITY_RECOGNITION",
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
+      "package": "com.kronium.cityfit2.x0"
     },
     "web": {
       "bundler": "metro",
@@ -37,7 +48,6 @@
       "expo-router",
       "expo-font",
       "expo-audio",
-      "expo-barcode-scanner",
       "react-native-health-connect"
     ],
     "experiments": {

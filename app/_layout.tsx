@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Text } from 'react-native';
 
 const RootLayout = () => {
   const { user } = useAuthContext(); 
   const [initialRoute, setInitialRoute] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -16,6 +18,7 @@ const RootLayout = () => {
         const token = await AsyncStorage.getItem('token');
         if (!token) {
           setInitialRoute('/');
+          setLoading(false);
           return;
         }
 
@@ -41,6 +44,8 @@ const RootLayout = () => {
       } else {
         setInitialRoute('/');
       }
+
+      setLoading(false);
     };
 
     checkUser();
@@ -51,6 +56,10 @@ const RootLayout = () => {
       router.push(initialRoute);
     }
   }, [initialRoute]);
+
+  if (loading) {
+    return <Text>Loading...</Text>;  // Simple loading message or you could use a spinner here
+  }
 
   return (
     <Stack

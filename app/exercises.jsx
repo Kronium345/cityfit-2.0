@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, FlatList, Image, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
-import { AIRTABLE_PAT, AIRTABLE_BASE_ID, AIRTABLE_TABLE_ID } from '@env';
 
 const Exercises = () => {
   const [exercises, setExercises] = useState([]); // All exercises
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);  // To show loading spinner when fetching
   const [page, setPage] = useState(0);
+  const [offset, setOffset] = useState(null);  // Store the offset for pagination
   const pageSize = 10; // 10 items per page
   const router = useRouter();
 
@@ -16,20 +17,23 @@ const Exercises = () => {
   }, [page]);
 
   const fetchExercises = async () => {
+    setLoading(true); // Start loading
     try {
-      const offset = page * pageSize;
-      console.log(`Fetching data from offset: ${offset} and page size: ${pageSize}`);
+      const params = {
+        pageSize: pageSize, // Set the page size
+        ...(offset && { offset }), // Use the offset if available
+      };
 
       // Fetching exercises data from Airtable
-      const response = await axios.get(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_ID}`, {
-        headers: {
-          Authorization: `Bearer ${AIRTABLE_PAT}`,
-        },
-        params: {
-          pageSize: pageSize, // Set the page size (number of records per request)
-          offset: offset, // Pagination support (if needed)
-        },
-      });
+      const response = await axios.get(
+        `https://api.airtable.com/v0/${process.env.EXPO_PUBLIC_AIRTABLE_BASE_ID}/${process.env.EXPO_PUBLIC_AIRTABLE_TABLE_ID}`, 
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.EXPO_PUBLIC_AIRTABLE_PAT}`,
+          },
+          params: params,
+        }
+      );
 
       console.log("API Response:", response.data);
 
@@ -39,11 +43,16 @@ const Exercises = () => {
 
         // Set exercises directly without filtering
         setExercises(prevExercises => [...prevExercises, ...response.data.records]);  // Add the new exercises
+
+        // Update offset if available
+        setOffset(response.data.offset);
       } else {
         console.log("No results found in the API response.");
       }
     } catch (error) {
       console.error("Fetching exercises failed:", error);
+    } finally {
+      setLoading(false);  // End loading
     }
   };
 
@@ -63,7 +72,7 @@ const Exercises = () => {
         exerciseType: exercise.fields['Exercise Type'] || 'Not specified',  // Exercise type
         majorMuscle: exercise.fields['Major Muscle'] || 'Not specified',  // Major muscle
         minorMuscle: exercise.fields['Minor Muscle'] || 'Not specified',  // Minor muscle
-        modifications: exercise.fields.Modifications || 'No modifications available'
+        modifications: exercise.fields.Modifications || 'No modifications available',
       }
     });
   };
@@ -112,7 +121,7 @@ const Exercises = () => {
         {page > 0 && (
           <Button title="Previous" onPress={() => setPage(page - 1)} color="#007AFF" />
         )}
-        <Button title="Next" onPress={() => setPage(page + 1)} color="#007AFF" />
+        <Button title="More" onPress={() => setPage(page + 1)} color="#007AFF" />
       </View>
     </View>
   );
