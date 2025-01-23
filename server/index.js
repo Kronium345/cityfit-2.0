@@ -8,6 +8,7 @@ import exerciseHistory from './routes/exerciseHistory.js'; // Ensure you have im
 import exerciseFetch from './routes/exerciseFetch.js'
 import caloriePreferences from './routes/caloriePreferences.js'
 import foodLog from './routes/foodLog.js';
+import quiz from './routes/quiz.js';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use('/history', exerciseHistory); // Changed from '/exerciseHistory' to '/hi
 app.use('/exercise', exerciseFetch);
 app.use('/preferences', caloriePreferences);
 app.use('/food', foodLog);
+app.use('/quiz', quiz);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))

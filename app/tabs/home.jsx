@@ -48,7 +48,7 @@ const Home = () => {
   };
 
   const navigateToHeadspace = () => {
-    router.push('/headSpace'); // Ensure you're pointing to the correct route in tabs
+    router.push('/mental'); // Ensure you're pointing to the correct route in tabs
   };
 
   const navigateToExercises = () => {
@@ -67,7 +67,7 @@ const Home = () => {
         <Text style={styles.planText}>Go to Food Screen</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={navigateToHeadspace} style={styles.planButton}>
-        <Text style={styles.planText}>Go to Headspace</Text>
+        <Text style={styles.planText}>Go to Mental Health Screen</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={navigateToExercises} style={styles.planButton}>
         <Text style={styles.planText}>Go to Exercises</Text>
