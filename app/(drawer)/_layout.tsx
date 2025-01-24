@@ -16,7 +16,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     <DrawerContentScrollView {...props}>
       <View style={styles.userInfoWrapper}>
         <Image
-          source={{ uri: 'https://randomuser.me/api/portraits/women/26.jpg' }}
+          source={require('../../assets/images/cityfit-logo.png')} 
           width={80}
           height={80}
           style={styles.userImg}
