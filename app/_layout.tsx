@@ -36,7 +36,7 @@ const RootLayout = () => {
           } else if (!userData.weight) {
             setInitialRoute('/weightInput');
           } else {
-            setInitialRoute('/tabs/home');
+            setInitialRoute('/(drawer)/(tabs)/home');
           }
         } catch (error) {
           setInitialRoute('/');
@@ -68,7 +68,7 @@ const RootLayout = () => {
       }}
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="tabs" options={{ headerShown: false }} />
+      <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
     </Stack>
   );
 };

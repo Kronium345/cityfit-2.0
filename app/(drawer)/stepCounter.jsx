@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import StepValue from '../components/StepValue';
-import StepRingProgress from '../components/StepRingProgress';
+import StepValue from '../../components/StepValue';
+import StepRingProgress from '../../components/StepRingProgress';
 // import { initialize, requestPermission, readRecords } from 'react-native-health-connect';
 
 const StepCounter = () => {

@@ -41,7 +41,7 @@ const Login = () => {
       await AsyncStorage.setItem('token', response.data.token);
 
       // Navigate to the home screen
-      router.push('/tabs/home');
+      router.push('/(drawer)/(tabs)/home');
     } catch (error) {
       console.error('Error logging in:', error);
       showToast('error', 'Invalid Credentials', 'Invalid credentials. Please try again');

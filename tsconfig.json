@@ -2,6 +2,8 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "moduleResolution": "node",  // Ensures TypeScript resolves modules like Node.js
+    "esModuleInterop": true,
     "paths": {
       "@/*": [
         "./*"
@@ -13,5 +15,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "app/index.jsx", "app/tabs/home.jsx"  ]
+, "app/index.jsx", "app/(drawer)/tabs/home.jsx"  ]
 }

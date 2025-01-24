@@ -16,9 +16,9 @@ const FoodScreen = () => {
       };
 
   const entries = [
-    { title: "We’re with you all the way!", text: "Break free from the cycle of crash diets and quick fixes. Let's embrace a holistic approach to craft the vibrant health and resilient mindset you deserve.", image: require('../assets/images/food-image-1.jpg') },
-    { title: "Transforming your life and get healthier.", text: "Bite Back Coaching isn’t just about transforming your body. It is about transforming your life. Feeling better, more confident, happier, and best of all, HEALTHIER.", image: require('../assets/images/food-image-2.jpg') },
-    { title: "Results without any restrictions!", text: "No more yo-yo diets, no more fat burners, no more restrictive diets, no more fasting, no more food guilt. Instead, we work together to build the body and mindset of your dreams.", image: require('../assets/images/food-image-3.jpg') }
+    { title: "We’re with you all the way!", text: "Break free from the cycle of crash diets and quick fixes. Let's embrace a holistic approach to craft the vibrant health and resilient mindset you deserve.", image: require('../../assets/images/food-image-1.jpg') },
+    { title: "Transforming your life and get healthier.", text: "Bite Back Coaching isn’t just about transforming your body. It is about transforming your life. Feeling better, more confident, happier, and best of all, HEALTHIER.", image: require('../../assets/images/food-image-2.jpg') },
+    { title: "Results without any restrictions!", text: "No more yo-yo diets, no more fat burners, no more restrictive diets, no more fasting, no more food guilt. Instead, we work together to build the body and mindset of your dreams.", image: require('../../assets/images/food-image-3.jpg') }
   ];
 
   const [activeIndex, setActiveIndex] = useState(0);

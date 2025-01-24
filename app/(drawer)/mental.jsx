@@ -25,7 +25,7 @@ import {
     return (
       <KeyboardAvoidingView style={styles.container}>
         <View style={styles.logoContainer}>
-          <Image source={require("../assets/images/mental-health-logo.jpg")} style={styles.logo} />
+          <Image source={require("../../assets/images/mental-health-logo.jpg")} style={styles.logo} />
         </View>
         <View style={styles.bodyContainer}>
           {/* Welcome text */}

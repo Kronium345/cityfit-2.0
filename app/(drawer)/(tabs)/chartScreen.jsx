@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Dimensions, ScrollView, StyleSheet, Image } from 'react-native';
 import axios from 'axios';
-import { useAuthContext } from '../AuthProvider';
-import resistanceIcon from "../../assets/tracker-images/resistance.png"; // Only using resistance icon
+import { useAuthContext } from '../../AuthProvider';
+import resistanceIcon from "../../../assets/tracker-images/resistance.png"; // Only using resistance icon
 
 const screenWidth = Dimensions.get('window').width;
 

@@ -38,7 +38,7 @@ const WeightInput = () => {
       parsedUser.weight = weight;
       parsedUser.unit = unit;
       await AsyncStorage.setItem('user', JSON.stringify(parsedUser));
-      router.push('/tabs/home');  // Navigate back to home screen
+      router.push('/(drawer)/(tabs)/home');  // Navigate back to home screen
     }
   };
 
@@ -49,7 +49,7 @@ const WeightInput = () => {
   return (
     <View style={tw`flex-1 bg-gray-100 px-6 pt-10`}>
       <StatusBar style='dark' />
-      <TouchableOpacity style={tw`absolute top-5 left-5`} onPress={() => router.push('/tabs/home')}>
+      <TouchableOpacity style={tw`absolute top-5 left-5`} onPress={() => router.push('/(drawer)/(tabs)/home')}>
         <Text style={tw`text-blue-500`}>Back</Text>
       </TouchableOpacity>
       <Text style={tw`text-2xl font-bold mb-8`}>How much do you weigh?</Text>
