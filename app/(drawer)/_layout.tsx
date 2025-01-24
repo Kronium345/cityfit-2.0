@@ -33,9 +33,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         label={"Home"}
         labelStyle={[
           styles.navItemLabel, 
-          { color: pathname == "/home" ? "#fff" : "#000" },
+          { color: pathname == "/home" ? "#fff" : "#000", paddingLeft: 20 },
         ]}
-        style={{ backgroundColor: pathname == "/home" ? "#333" : "#fff" }}
+        style={{ backgroundColor: pathname == "/home" ? "#ADD8E6" : "#fff" }}
         onPress={() => {
           router.push("/(drawer)/(tabs)/home"); // Correct Home screen path
         }}
@@ -47,9 +47,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         label={"Exercises"}
         labelStyle={[
           styles.navItemLabel,
-          { color: pathname == "/exercises" ? "#fff" : "#000" },
+          { color: pathname == "/exercises" ? "#fff" : "#000", paddingLeft: 20 },
         ]}
-        style={{ backgroundColor: pathname == "/exercises" ? "#333" : "#fff" }}
+        style={{ backgroundColor: pathname == "/exercises" ? "#ADD8E6" : "#fff" }}
         onPress={() => {
           router.push("/exercises"); // Correct Exercises screen path
         }}
@@ -61,9 +61,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         label={"Mental"}
         labelStyle={[
           styles.navItemLabel,
-          { color: pathname == "/mental" ? "#fff" : "#000" },
+          { color: pathname == "/mental" ? "#fff" : "#000", paddingLeft: 20 },
         ]}
-        style={{ backgroundColor: pathname == "/mental" ? "#333" : "#fff" }}
+        style={{ backgroundColor: pathname == "/mental" ? "#ADD8E6" : "#fff" }}
         onPress={() => {
           router.push("/mental"); // Correct Mental screen path
         }}
@@ -75,9 +75,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         label={"Food Screen"}
         labelStyle={[
           styles.navItemLabel,
-          { color: pathname == "/foodScreen" ? "#fff" : "#000" },
+          { color: pathname == "/foodScreen" ? "#fff" : "#000", paddingLeft: 20 },
         ]}
-        style={{ backgroundColor: pathname == "/foodScreen" ? "#333" : "#fff" }}
+        style={{ backgroundColor: pathname == "/foodScreen" ? "#ADD8E6" : "#fff" }}
         onPress={() => {
           router.push("/foodScreen"); // Correct Food Screen path
         }}
@@ -89,9 +89,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         label={"Step Counter"}
         labelStyle={[
           styles.navItemLabel,
-          { color: pathname == "/stepCounter" ? "#fff" : "#000" },
+          { color: pathname == "/stepCounter" ? "#fff" : "#000", paddingLeft: 20 },
         ]}
-        style={{ backgroundColor: pathname == "/stepCounter" ? "#333" : "#fff" }}
+        style={{ backgroundColor: pathname == "/stepCounter" ? "#ADD8E6" : "#fff" }}
         onPress={() => {
           router.push("/stepCounter"); // Correct Step Counter path
         }}
