@@ -22,7 +22,7 @@ const ChartScreen = () => {
   // Fetch the exercise history
   const fetchExerciseHistory = async () => {
     try {
-      const response = await axios.get(`http://192.168.1.216:5000/exercise/${user._id}`);
+      const response = await axios.get(`http://192.168.1.212:5000/exercise/${user._id}`);
       console.log('Fetched history:', response.data);
       
       if (response.data) {

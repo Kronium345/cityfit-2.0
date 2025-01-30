@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import tw from 'twrnc';
 import { useRouter } from 'expo-router';
@@ -29,7 +29,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('http://192.168.1.216:5000/auth/login', {
+      const response = await axios.post('http://192.168.1.212:5000/auth/login', {
         email,
         password,
       });
@@ -49,65 +49,179 @@ const Login = () => {
   };
 
   return (
-    <>
-      <View style={tw`flex-1 bg-gray-100 p-6`}>
-        <View style={tw`flex-row justify-between items-center mb-6`}>
-          <TouchableOpacity>
-            <Text style={tw`text-blue-500`}>Later</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={tw`text-3xl font-bold mb-2`}>Log in</Text>
-        <Text style={tw`text-lg mb-8`}>Log in to access your account.</Text>
-        <View style={tw`flex-row items-center mb-4 bg-white border border-gray-300 rounded-md p-3`}>
-          <Icon name="envelope" size={20} color="#000" style={tw`mr-2`} />
-          <TextInput
-            style={tw`flex-1`}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
-        <View style={tw`flex-row items-center mb-4 bg-white border border-gray-300 rounded-md p-3`}>
-          <Icon name="lock" size={20} color="#000" style={tw`mr-2`} />
-          <TextInput
-            style={tw`flex-1`}
-            placeholder="Password"
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Icon name={showPassword ? "eye" : "eye-slash"} size={20} color="#000" />
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={tw`bg-blue-500 p-4 rounded-md flex-row justify-center items-center mb-4`} onPress={handleLogin}>
-          <Icon name="sign-in" size={20} color="#FFF" style={tw`mr-2`} />
-          <Text style={tw`text-white text-lg`}>Log in</Text>
+    <ScrollView style={tw`flex-1 bg-black p-6`}>
+      {/* Header */}
+      <View style={styles.headerContainer}>
+        <TouchableOpacity 
+          onPress={() => router.back()} 
+          style={styles.backButton}
+        >
+          <Icon name="arrow-left" size={20} color="#FFF" />
         </TouchableOpacity>
-        <Text style={tw`text-center text-gray-500 mt-6`}>
-          Don't have an account?
-        </Text>
-        <TouchableOpacity onPress={() => router.push('/signup')}>
-          <Text style={tw`text-blue-500 text-center`}>Sign up</Text>
-        </TouchableOpacity>
-        <Text style={tw`text-center text-gray-500 my-4`}>Or</Text>
-        <View style={tw`flex-row justify-center mb-6`}>
-          <TouchableOpacity style={tw`mx-2 bg-white p-2 rounded-full`}>
-            <Icon name="google" size={36} color="#DB4437" />
-          </TouchableOpacity>
-          <TouchableOpacity style={tw`mx-2 bg-white p-2 rounded-full`}>
-            <Icon name="apple" size={36} color="#000" />
-          </TouchableOpacity>
-          <TouchableOpacity style={tw`mx-2 bg-white p-2 rounded-full`}>
-            <Icon name="facebook" size={36} color="#3B5998" />
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.headerText}>Log in</Text>
       </View>
-      <Toast />
-    </>
+
+      {/* Email Input */}
+      <TextInput
+        style={tw`bg-gray-800 text-white p-4 rounded-md mb-4`}
+        placeholder="Email"
+        placeholderTextColor="#666"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
+
+      {/* Password Input */}
+      <View style={tw`mb-4`}>
+        <TextInput
+          style={tw`bg-gray-800 text-white p-4 rounded-md`}
+          placeholder="Password"
+          placeholderTextColor="#666"
+          secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity 
+          style={tw`absolute right-4 top-4`}
+          onPress={() => setShowPassword(!showPassword)}
+        >
+          <Icon name={showPassword ? "eye" : "eye-slash"} size={20} color="#666" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Login Button */}
+      <TouchableOpacity 
+        style={[
+          styles.loginButton,
+          email && password ? styles.loginButtonActive : styles.loginButtonInactive
+        ]}
+        onPress={handleLogin}
+        disabled={!email || !password}
+      >
+        <Text style={styles.loginButtonText}>Log in</Text>
+      </TouchableOpacity>
+
+      {/* Forgot Password Link */}
+      <TouchableOpacity style={styles.forgotPasswordContainer}>
+        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+      </TouchableOpacity>
+
+      {/* Or Divider using StyleSheet */}
+      <View style={styles.dividerContainer}>
+        <View style={styles.dividerLine} />
+        <Text style={styles.dividerText}>or</Text>
+        <View style={styles.dividerLine} />
+      </View>
+
+      {/* Social Login Buttons */}
+      <TouchableOpacity style={styles.socialButton}>
+        <Icon name="apple" size={20} color="#FFF" style={tw`mr-2`} />
+        <Text style={styles.socialButtonText}>Log in with Apple</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={[styles.socialButton, tw`mb-6`]}>
+        <Image 
+          source={require('../assets/images/logo-img/logo-google.png')}
+          style={styles.socialIcon}
+        />
+        <Text style={styles.socialButtonText}>Log in with Google</Text>
+      </TouchableOpacity>
+
+      {/* Sign Up Link */}
+      <View style={tw`flex-row justify-center items-center`}>
+        <Text style={tw`text-gray-400`}>Don't have an account? </Text>
+        <TouchableOpacity onPress={() => router.push('/signup')}>
+          <Text style={tw`text-blue-500`}>Sign up</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
-export default Login;
+const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    position: 'relative',
+    marginBottom: 24,
+  },
+  backButton: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 1,
+  },
+  headerText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    flex: 1,
+    textAlign: 'center',
+  },
+  socialButton: {
+    backgroundColor: '#1c1c1e',
+    borderColor: '#2c2c2e',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 8,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  socialButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 8,
+  },
+  socialIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
+  },
+  loginButton: {
+    padding: 10,
+    borderRadius: 12,
+    marginBottom: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loginButtonActive: {
+    backgroundColor: '#3B82F6',
+  },
+  loginButtonInactive: {
+    backgroundColor: '#9CA3AF',
+  },
+  loginButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#1f2937',
+  },
+  dividerText: {
+    color: '#6b7280',
+    paddingHorizontal: 12,
+  },
+  forgotPasswordContainer: {
+    marginBottom: 16,
+  },
+  forgotPasswordText: {
+    color: '#3B82F6',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+});
 
-const styles = StyleSheet.create({});
+export default Login;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Platform, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import tw from 'twrnc';
@@ -19,6 +19,8 @@ const Signup = () => {
   const [dob, setDob] = useState(new Date());
   const [show, setShow] = useState(false);
   const router = useRouter();
+  const [username, setUsername] = useState('');
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || dob;  // If no date selected, default to current DOB
@@ -51,7 +53,11 @@ const Signup = () => {
 
   const handleSignUp = async () => {
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
-      showToast('error', 'Incomplete Fields', 'Please fill in all fields');
+      showToast('error', 'Incomplete Fields', 'Please fill in all required fields');
+      return;
+    }
+    if (!acceptedTerms) {
+      showToast('error', 'Terms & Conditions', 'Please accept the terms and conditions');
       return;
     }
     if (password !== confirmPassword) {
@@ -66,7 +72,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('http://192.168.1.216:5000/auth/register', {
+      const response = await axios.post('http://192.168.1.212:5000/auth/register', {
         firstName,
         lastName,
         email,
@@ -90,118 +96,219 @@ const Signup = () => {
     }
   };
 
+  // Add this validation function
+  const isFormValid = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return (
+      firstName.trim() !== '' &&
+      lastName.trim() !== '' &&
+      emailRegex.test(email) &&
+      password.length >= 6 &&
+      password === confirmPassword &&
+      acceptedTerms
+    );
+  };
+
   return (
-    <>
-      <ScrollView style={tw`flex-1 bg-gray-100 p-6`}>
-        <View style={tw`flex-row justify-between items-center mb-6`}>
-          <TouchableOpacity>
-            <Text style={tw`text-blue-500`}>Later</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={tw`text-3xl font-bold mb-2`}>Create account</Text>
-        <Text style={tw`text-lg mb-8`}>Create an account to keep your workout data safe.</Text>
-        <View style={tw`flex-row items-center mb-4 bg-white border border-gray-300 rounded-md p-3`}>
-          <Icon name="user" size={20} color="#000" style={tw`mr-2`} />
+    <ScrollView style={tw`flex-1 bg-black p-6`}>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity 
+          onPress={() => router.back()} 
+          style={styles.backButton}
+        >
+          <Icon name="arrow-left" size={20} color="#FFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerText}>Sign up</Text>
+      </View>
+
+      {/* Name Fields Row */}
+      <View style={tw`flex-row gap-4 mb-4`}>
+        <View style={tw`flex-1`}>
           <TextInput
-            style={tw`flex-1`}
-            placeholder="First Name"
+            style={tw`bg-gray-800 text-white p-4 rounded-md`}
+            placeholder="First name"
+            placeholderTextColor="#666"
             value={firstName}
             onChangeText={setFirstName}
           />
         </View>
-        <View style={tw`flex-row items-center mb-4 bg-white border border-gray-300 rounded-md p-3`}>
-          <Icon name="user" size={20} color="#000" style={tw`mr-2`} />
+        <View style={tw`flex-1`}>
           <TextInput
-            style={tw`flex-1`}
-            placeholder="Last Name"
+            style={tw`bg-gray-800 text-white p-4 rounded-md`}
+            placeholder="Last name"
+            placeholderTextColor="#666"
             value={lastName}
             onChangeText={setLastName}
           />
         </View>
-        <View style={tw`flex-row items-center mb-4 bg-white border border-gray-300 rounded-md p-3`}>
-          <Icon name="envelope" size={20} color="#000" style={tw`mr-2`} />
-          <TextInput
-            style={tw`flex-1`}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
-        <View style={tw`flex-row items-center mb-4 bg-white border border-gray-300 rounded-md p-3`}>
-          <Icon name="lock" size={20} color="#000" style={tw`mr-2`} />
-          <TextInput
-            style={tw`flex-1`}
-            placeholder="Password"
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Icon name={showPassword ? "eye" : "eye-slash"} size={20} color="#000" />
-          </TouchableOpacity>
-        </View>
-        <View style={tw`flex-row items-center mb-4 bg-white border border-gray-300 rounded-md p-3`}>
-          <Icon name="lock" size={20} color="#000" style={tw`mr-2`} />
-          <TextInput
-            style={tw`flex-1`}
-            placeholder="Confirm Password"
-            secureTextEntry={!showConfirmPassword}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-          <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-            <Icon name={showConfirmPassword ? "eye" : "eye-slash"} size={20} color="#000" />
-          </TouchableOpacity>
-        </View>
-        <View style={tw`flex-row items-center mb-4 bg-white border border-gray-300 rounded-md p-3`}>
-          <Icon name="calendar" size={20} color="#000" style={tw`mr-2`} />
-          <TouchableOpacity
-            onPress={() => setShow(true)}  // Toggle the date picker visibility
-            style={tw`flex-1`}
-          >
-            <Text>{dob.toDateString()}</Text>  {/* Display the selected DOB */}
-          </TouchableOpacity>
-          {show && (  // Show DateTimePicker when the 'show' state is true
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={dob}
-              mode="date"
-              display="default"
-              onChange={onChange}  // When the user selects a date, update the dob
-            />
-          )}
-        </View>
-        <TouchableOpacity style={tw`bg-blue-500 p-4 rounded-md flex-row justify-center items-center mb-4`} onPress={handleSignUp}>
-          <Icon name="user-plus" size={20} color="#FFF" style={tw`mr-2`} />
-          <Text style={tw`text-white text-lg`}>Sign up</Text>
+      </View>
+
+      <TextInput
+        style={tw`bg-gray-800 text-white p-4 rounded-md mb-4`}
+        placeholder="Email"
+        placeholderTextColor="#666"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+      />
+
+      <TextInput
+        style={tw`bg-gray-800 text-white p-4 rounded-md mb-4`}
+        placeholder="Username (optional)"
+        placeholderTextColor="#666"
+        value={username}
+        onChangeText={setUsername}
+      />
+
+      <View style={tw`mb-4`}>
+        <TextInput
+          style={tw`bg-gray-800 text-white p-4 rounded-md`}
+          placeholder="Password (minimum 6 characters)"
+          placeholderTextColor="#666"
+          secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity 
+          style={tw`absolute right-4 top-4`}
+          onPress={() => setShowPassword(!showPassword)}
+        >
+          <Icon name={showPassword ? "eye" : "eye-slash"} size={20} color="#666" />
         </TouchableOpacity>
-        <Text style={tw`text-center text-gray-500 mt-6`}>
-          By continuing, you agree to our <Text style={tw`text-blue-500`}>terms of service</Text> and <Text style={tw`text-blue-500`}>privacy policy</Text>.
+      </View>
+
+      <View style={tw`mb-4`}>
+        <TextInput
+          style={tw`bg-gray-800 text-white p-4 rounded-md`}
+          placeholder="Confirm password"
+          placeholderTextColor="#666"
+          secureTextEntry={!showConfirmPassword}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
+        <TouchableOpacity 
+          style={tw`absolute right-4 top-4`}
+          onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+        >
+          <Icon name={showConfirmPassword ? "eye" : "eye-slash"} size={20} color="#666" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Terms and Conditions Checkbox */}
+      <View style={tw`flex-row items-start mb-6`}>
+        <TouchableOpacity 
+          style={tw`mr-2 mt-1`}
+          onPress={() => setAcceptedTerms(!acceptedTerms)}
+        >
+          <View style={[
+            tw`w-4 h-4 border border-gray-700 rounded-sm`,
+            acceptedTerms && tw`bg-blue-500 border-blue-500`
+          ]}>
+            {acceptedTerms && <Icon name="check" size={12} color="#FFF" style={tw`m-auto`} />}
+          </View>
+        </TouchableOpacity>
+        <Text style={tw`text-gray-400 text-sm flex-1`}>
+          I accept the <Text style={tw`text-blue-500`}>terms & conditions</Text> and the{' '}
+          <Text style={tw`text-blue-500`}>privacy policy</Text>
         </Text>
-        <Text style={tw`text-center text-gray-500 mt-6`}>
-          Already have an account?
-        </Text>
+      </View>
+
+      <TouchableOpacity 
+        style={[
+          styles.signUpButton,
+          isFormValid() ? styles.signUpButtonActive : styles.signUpButtonInactive
+        ]}
+        onPress={handleSignUp}
+        disabled={!isFormValid()}
+      >
+        <Text style={styles.signUpButtonText}>Sign Up</Text>
+      </TouchableOpacity>
+
+      {/* Updated Social Sign Up Buttons */}
+      <TouchableOpacity style={styles.socialButton}>
+        <Icon name="apple" size={20} color="#FFF" style={tw`mr-2`} />
+        <Text style={styles.socialButtonText}>Sign up with Apple</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={[styles.socialButton, tw`mb-6`]}>
+        <Image 
+          source={require('../assets/images/logo-img/logo-google.png')}
+          style={styles.socialIcon}
+        />
+        <Text style={styles.socialButtonText}>Sign up with Google</Text>
+      </TouchableOpacity>
+
+      <View style={tw`flex-row justify-center items-center`}>
+        <Text style={tw`text-gray-400`}>Already have an account? </Text>
         <TouchableOpacity onPress={() => router.push('/login')}>
-          <Text style={tw`text-blue-500 text-center`}>Log in</Text>
+          <Text style={tw`text-blue-500`}>Log in</Text>
         </TouchableOpacity>
-        <Text style={tw`text-center text-gray-500 my-4`}>Or</Text>
-        <View style={tw`flex-row justify-center mb-6`}>
-          <TouchableOpacity style={tw`mx-2 bg-white p-2 rounded-full`}>
-            <Icon name="google" size={36} color="#DB4437" />
-          </TouchableOpacity>
-          <TouchableOpacity style={tw`mx-2 bg-white p-2 rounded-full`}>
-            <Icon name="apple" size={36} color="#000" />
-          </TouchableOpacity>
-          <TouchableOpacity style={tw`mx-2 bg-white p-2 rounded-full`}>
-            <Icon name="facebook" size={36} color="#3B5998" />
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-      <Toast />
-    </>
+      </View>
+    </ScrollView>
   );
 };
 
 export default Signup;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  socialButton: {
+    backgroundColor: '#1c1c1e',
+    borderColor: '#2c2c2e',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 8,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  socialButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 8,
+  },
+  socialIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
+  },
+  signUpButton: {
+    padding: 10,
+    borderRadius: 12,
+    marginBottom: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  signUpButtonActive: {
+    backgroundColor: '#3B82F6',
+  },
+  signUpButtonInactive: {
+    backgroundColor: '#9CA3AF',
+  },
+  signUpButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    position: 'relative',
+    marginBottom: 24,
+  },
+  backButton: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 1,
+  },
+  headerText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    flex: 1,
+    textAlign: 'center',
+  },
+});

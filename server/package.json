@@ -12,13 +12,18 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@react-native-community/datetimepicker": "8.2.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "expo-image-picker": "~16.0.4",
     "express": "^4.19.2",
+    "firebase": "^11.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.8.0",
-    "mongoose": "^8.6.0"
+    "mongoose": "^8.6.0",
+    "react-native-reanimated": "^3.16.7",
+    "react-native-reanimated-carousel": "^3.5.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
