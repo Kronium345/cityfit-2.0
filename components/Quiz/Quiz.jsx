@@ -121,7 +121,7 @@ const handleSubmit = async () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {prediction ? (
         <Result prediction={prediction} resetQuiz={resetQuiz} />  // Show the result if prediction is available
       ) : (
@@ -129,7 +129,7 @@ const handleSubmit = async () => {
           {questions.map((question) => (
             <QuestionCard key={question.name} question={question} />  // Render each question
           ))}
-          {err && <Text style={styles.errText}>{err}</Text>}  // Display error if there's one
+          {err && <Text style={styles.errText}>{err}</Text>} 
 
           {/* Submit Button */}
           <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
@@ -137,7 +137,7 @@ const handleSubmit = async () => {
           </TouchableOpacity>
         </ScrollView>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
