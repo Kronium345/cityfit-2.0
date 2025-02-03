@@ -9,13 +9,26 @@ const router = express.Router();
 
 // Register route
 router.post('/register', async (req, res) => {
-  const { firstName, lastName, email, password, dob } = req.body;
+  const { firstName, lastName, email, password, dob, username } = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: 'User already exists' });
 
+    // Check if username is provided and not already taken
+    if (username) {
+      const existingUsername = await User.findOne({ username });
+      if (existingUsername) return res.status(400).json({ message: 'Username already taken' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12);
-    const newUser = new User({ firstName, lastName, email, password: hashedPassword, dob });
+    const newUser = new User({ 
+      firstName, 
+      lastName, 
+      email, 
+      password: hashedPassword, 
+      dob,
+      username 
+    });
     await newUser.save();
 
     const token = jwt.sign(
@@ -50,6 +63,8 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1h' }
     );
 
+    console.log('Generated Token:', token);  // This will log the token to the console for testing
+
     // Respond with the user data and token
     res.status(200).json({ result: existingUser, token });
   } catch (error) {
@@ -57,6 +72,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Something went wrong on the server.', error: error.message || error });
   }
 });
+
 
 // In your routes/auth.js
 

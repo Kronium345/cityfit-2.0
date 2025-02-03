@@ -48,7 +48,12 @@
       "expo-router",
       "expo-font",
       "expo-audio",
-      "react-native-health-connect"
+      "react-native-health-connect",
+      "expo-image-picker",
+        {
+          "photosPermission": "Select and upload images.",
+          "cameraPermissions": "Allow $(PRODUCT_NAME) to access your camera."
+        }
     ],
     "experiments": {
       "typedRoutes": true

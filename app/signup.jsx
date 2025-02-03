@@ -23,9 +23,23 @@ const Signup = () => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || dob;  // If no date selected, default to current DOB
-    setShow(Platform.OS === 'ios');  // For iOS, ensure the date picker remains visible
-    setDob(currentDate);  // Update the DOB with the selected date
+    if (event.type === 'dismissed') {
+      setShow(false);
+      return;
+    }
+    
+    const currentDate = selectedDate || dob;
+    setShow(Platform.OS === 'ios');
+    setDob(currentDate);
+
+    // Show toast if user is under 18
+    if (!isUserOver18(currentDate)) {
+      showToast(
+        'error',
+        'Age Restriction',
+        'You must be 18 or older to sign up'
+      );
+    }
   };
 
   const showToast = (type, text1, text2) => {
@@ -64,20 +78,19 @@ const Signup = () => {
       showToast('error', 'Password Mismatch', 'Passwords do not match');
       return;
     }
-
-    // Check if the user is 18 or older before proceeding
     if (!isUserOver18(dob)) {
       showToast('error', 'Age Restriction', 'You must be 18 or older to sign up');
       return;
     }
 
     try {
-      const response = await axios.post('http://192.168.1.212:5000/auth/register', {
+      const response = await axios.post('http://192.168.1.216:5000/auth/register', {
         firstName,
         lastName,
         email,
         password,
         dob,
+        username: username || undefined,
       });
 
       const { result, token } = response.data;
@@ -99,13 +112,24 @@ const Signup = () => {
   // Add this validation function
   const isFormValid = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValidAge = isUserOver18(dob);
+    
+    if (!isValidAge) {
+      showToast(
+        'error',
+        'Age Restriction',
+        'You must be 18 or older to sign up'
+      );
+    }
+
     return (
       firstName.trim() !== '' &&
       lastName.trim() !== '' &&
       emailRegex.test(email) &&
       password.length >= 6 &&
       password === confirmPassword &&
-      acceptedTerms
+      acceptedTerms &&
+      isValidAge
     );
   };
 
@@ -159,6 +183,44 @@ const Signup = () => {
         value={username}
         onChangeText={setUsername}
       />
+
+      <View style={tw`mb-4`}>
+        <Text style={tw`text-white mb-2`}>Date of Birth</Text>
+        {Platform.OS === 'ios' ? (
+          <View style={tw`bg-gray-800 rounded-md overflow-hidden`}>
+            <DateTimePicker
+              style={tw`h-12 w-full`}
+              value={dob}
+              mode="date"
+              display="spinner"
+              onChange={onChange}
+              maximumDate={new Date()}
+              textColor="white"
+            />
+          </View>
+        ) : (
+          <>
+            <TouchableOpacity 
+              style={tw`bg-gray-800 p-4 rounded-md flex-row justify-between items-center`}
+              onPress={() => setShow(true)}
+            >
+              <Text style={tw`text-white`}>
+                {dob.toLocaleDateString()}
+              </Text>
+              <Icon name="calendar" size={20} color="#666" />
+            </TouchableOpacity>
+            {show && (
+              <DateTimePicker
+                value={dob}
+                mode="date"
+                display="default"
+                onChange={onChange}
+                maximumDate={new Date()}
+              />
+            )}
+          </>
+        )}
+      </View>
 
       <View style={tw`mb-4`}>
         <TextInput

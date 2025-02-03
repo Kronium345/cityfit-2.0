@@ -15,12 +15,12 @@ const LiftingExperience = () => {
     const token = await AsyncStorage.getItem('token');
     if (user) {
       try {
-        const response = await axios.patch(`http://192.168.1.212:5000/user/${user._id}/experience`, { experience }, {
+        const response = await axios.patch(`http://192.168.1.216:5000/user/${user._id}/experience`, { experience }, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
         console.log('Experience updated:', response.data);
-        router.push('/weightInput'); // Navigate to the weight input page
+        router.push('/avatar');// Navigate to the weight input page
       } catch (error) {
         console.error('Error updating experience:', error);
         alert('Failed to update experience. Please try again.');

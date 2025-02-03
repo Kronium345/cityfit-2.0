@@ -37,7 +37,7 @@ const foodDetails = () => {
 
     try {
       const today = new Date().toISOString().split('T')[0];  // Get today's date in YYYY-MM-DD format
-      const response = await axios.get(`http://192.168.1.212:5000/food/log/${user._id}?date=${today}`);
+      const response = await axios.get(`http://192.168.1.216:5000/food/log/${user._id}?date=${today}`);
       setFoodLogs(response.data);
       const totalKcal = response.data.reduce((sum, item) => sum + item.cal, 0);
       setTotalCalories(totalKcal); // Set total calories for the day
