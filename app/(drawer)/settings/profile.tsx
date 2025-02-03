@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -27,52 +27,56 @@ const Profile = () => {
         <Text style={styles.headerTitle}>Edit Profile</Text>
       </View>
 
-      <View style={styles.profileImageContainer}>
-        <TouchableOpacity>
-          <View style={styles.placeholderImage}>
-            <Ionicons name="person" size={40} color="#666" />
-          </View>
-          <Text style={styles.changePictureText}>Change Picture</Text>
+      <ScrollView style={styles.scrollContainer}>
+        <View style={styles.profileImageContainer}>
+          <TouchableOpacity>
+            <View style={styles.placeholderImage}>
+              <Ionicons name="person" size={40} color="#666" />
+            </View>
+            <Text style={styles.changePictureText}>Change Picture</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.form}>
+          <Text style={styles.label}>Name</Text>
+          <TextInput
+            style={styles.input}
+            value={name}
+            onChangeText={setName}
+            placeholder="Your full name"
+            placeholderTextColor="#666"
+          />
+
+          <Text style={styles.label}>Bio</Text>
+          <TextInput
+            style={[styles.input, styles.bioInput]}
+            value={bio}
+            onChangeText={setBio}
+            placeholder="Describe yourself"
+            placeholderTextColor="#666"
+            multiline
+          />
+
+          <Text style={styles.label}>Link</Text>
+          <TextInput
+            style={styles.input}
+            value={link}
+            onChangeText={setLink}
+            placeholder="https://example.com"
+            placeholderTextColor="#666"
+            keyboardType="url"
+          />
+        </View>
+
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={handleSave}
+        >
+          <Text style={styles.saveButtonText}>Save Changes</Text>
         </TouchableOpacity>
-      </View>
-
-      <View style={styles.form}>
-        <Text style={styles.label}>Name</Text>
-        <TextInput
-          style={styles.input}
-          value={name}
-          onChangeText={setName}
-          placeholder="Your full name"
-          placeholderTextColor="#666"
-        />
-
-        <Text style={styles.label}>Bio</Text>
-        <TextInput
-          style={[styles.input, styles.bioInput]}
-          value={bio}
-          onChangeText={setBio}
-          placeholder="Describe yourself"
-          placeholderTextColor="#666"
-          multiline
-        />
-
-        <Text style={styles.label}>Link</Text>
-        <TextInput
-          style={styles.input}
-          value={link}
-          onChangeText={setLink}
-          placeholder="https://example.com"
-          placeholderTextColor="#666"
-          keyboardType="url"
-        />
-      </View>
-
-      <TouchableOpacity
-        style={styles.saveButton}
-        onPress={handleSave}
-      >
-        <Text style={styles.saveButtonText}>Save Changes</Text>
-      </TouchableOpacity>
+        
+        <View style={styles.bottomPadding} />
+      </ScrollView>
     </View>
   );
 };
@@ -146,6 +150,12 @@ const styles = StyleSheet.create({
     color: '#007AFF',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  bottomPadding: {
+    height: 20,
   },
 });
 
