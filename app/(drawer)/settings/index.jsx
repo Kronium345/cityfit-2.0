@@ -43,7 +43,7 @@ const Settings = () => {
           {renderSettingItem('person-outline', 'Profile', '/(drawer)/settings/profile')}
           {renderSettingItem('lock-closed-outline', 'Account', '/(drawer)/settings/account')}
           {renderSettingItem('card-outline', 'Manage Subscription', '/settings/subscription')}
-          {renderSettingItem('notifications-outline', 'Notifications', '/notifications')}
+          {renderSettingItem('notifications-outline', 'Notifications', '/(drawer)/settings/notifications')}
         </View>
 
         <View style={styles.section}>

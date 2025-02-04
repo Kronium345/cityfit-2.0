@@ -162,7 +162,7 @@ const ProfileScreen = () => {
     <View style={styles.container}>
       <View style={styles.bannerContainer}>
         <Image
-          source={require('../../../assets/images/food-image-2.jpg')}
+          source={require('../../../assets/images/green-background.png')}
           style={styles.bannerImage}
         />
         

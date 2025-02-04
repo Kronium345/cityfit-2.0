@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 
 const Subscription = () => {
   const router = useRouter();
@@ -23,7 +24,7 @@ const Subscription = () => {
       <ScrollView style={styles.scrollContainer}>
         {/* Hero Section */}
         <View style={styles.heroSection}>
-          <Text style={styles.heroTitle}>Train Smarter. Achieve Faster.</Text>
+          <Text style={styles.heroTitle}>One Goal. Achieve Faster.</Text>
           <Text style={styles.heroSubtitle}>
           Experience personalised training, AI-driven nutrition, and distraction-free progress - all designed to accelerate your fitness goals.
           </Text>
@@ -41,7 +42,7 @@ const Subscription = () => {
         {/* Benefits Section */}
         <View style={styles.benefitsSection}>
           <View style={styles.benefitItem}>
-            <Ionicons name="crown" size={24} color="#FFD700" />
+            <MaterialCommunityIcons name="crown" size={24} color="#FFD700" />
             <View style={styles.benefitText}>
               <Text style={styles.benefitTitle}>AI-Powered Training</Text>
               <Text style={styles.benefitDescription}>Get personalised workout plans, meal guidance, and intelligent insights tailored by Fitness One AI.</Text>
@@ -49,7 +50,7 @@ const Subscription = () => {
           </View>
 
           <View style={styles.benefitItem}>
-            <Ionicons name="crown" size={24} color="#FFD700" />
+            <MaterialCommunityIcons name="crown" size={24} color="#FFD700" />
             <View style={styles.benefitText}>
               <Text style={styles.benefitTitle}>Smart Macro Tracking:</Text>
               <Text style={styles.benefitDescription}>Use the full power of our AI to guide you through your macros.</Text>
@@ -57,7 +58,7 @@ const Subscription = () => {
           </View>
 
           <View style={styles.benefitItem}>
-            <Ionicons name="crown" size={24} color="#FFD700" />
+            <MaterialCommunityIcons name="crown" size={24} color="#FFD700" />
             <View style={styles.benefitText}>
               <Text style={styles.benefitTitle}>Zero Ads:</Text>
               <Text style={styles.benefitDescription}>Stay fitness focused with zero distractions.</Text>
@@ -87,7 +88,7 @@ const Subscription = () => {
                 <Text style={styles.planName}>YEARLY</Text>
                 <View style={styles.radioContainer}>
                   {selectedPlan === 'yearly' ? (
-                    <Ionicons name="radio-button-on" size={24} color="#007AFF" />
+                    <Ionicons name="radio-button-on" size={24} color="#0c6329" />
                   ) : (
                     <Ionicons name="radio-button-off" size={24} color="#666" />
                   )}
@@ -110,7 +111,7 @@ const Subscription = () => {
                 <Text style={styles.planName}>MONTHLY</Text>
                 <View style={styles.radioContainer}>
                   {selectedPlan === 'monthly' ? (
-                    <Ionicons name="radio-button-on" size={24} color="#007AFF" />
+                    <Ionicons name="radio-button-on" size={24} color="#0c6329" />
                   ) : (
                     <Ionicons name="radio-button-off" size={24} color="#666" />
                   )}
@@ -137,64 +138,20 @@ const Subscription = () => {
           <View style={styles.support}>
             <Text style={styles.supportText}>Having issues with your subscription?</Text>
             <TouchableOpacity>
-              <Text style={styles.supportLink}>Contact us at hello@hevyapp.com</Text>
+              <Text style={styles.supportLink}>Contact us at support@fitnessoneltd.com</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* Original Subscription Cards */}
-        <Text style={styles.sectionTitle}>Additional Options</Text>
-        <TouchableOpacity style={styles.subscriptionCard}>
-          <View style={styles.subscriptionHeader}>
-            <View style={styles.planNameContainer}>
-              <Text style={styles.proText}>PRO</Text>
-              <Text style={styles.planType}>Monthly</Text>
-            </View>
-            <View style={styles.priceContainer}>
-              <Text style={styles.price}>£2.99</Text>
-              <Text style={styles.billingPeriod}>Billed Monthly</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.subscriptionCard}>
-          <View style={styles.subscriptionHeader}>
-            <View style={styles.planNameContainer}>
-              <Text style={styles.proText}>PRO</Text>
-              <Text style={styles.planType}>Yearly</Text>
-            </View>
-            <View style={styles.priceContainer}>
-              <Text style={styles.price}>£23.49</Text>
-              <Text style={styles.billingPeriod}>Billed Annually</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.subscriptionCard}>
-          <View style={styles.subscriptionHeader}>
-            <View style={styles.planNameContainer}>
-              <Text style={styles.proText}>PRO</Text>
-              <Text style={styles.planType}>Lifetime</Text>
-            </View>
-            <View style={styles.priceContainer}>
-              <Text style={styles.price}>£74.99</Text>
-              <Text style={styles.billingPeriod}>Pay Once</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        
 
         <View style={styles.bottomPadding} />
       </ScrollView>
 
-      <TouchableOpacity style={styles.trialButton}>
-        <Text style={styles.trialButtonText}>Start 2-Week Free Trial</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.finePrint}>
-        Billing starts at the end of your free trial unless you cancel. Plans renew automatically. Cancel via the App Store.
-      </Text>
+      <BlurView intensity={10} tint="light" style={styles.buttonBackground}>
+        <TouchableOpacity style={styles.trialButton}>
+          <Text style={styles.trialButtonText}>Start 2-Week Free Trial</Text>
+        </TouchableOpacity>
+      </BlurView>
     </View>
   );
 };
@@ -235,7 +192,7 @@ const styles = StyleSheet.create({
   },
   freeTitle: {
     fontSize: 18,
-    color: '#007AFF',
+    color: '#0c6329',
     marginBottom: 4,
   },
   freeDescription: {
@@ -259,7 +216,7 @@ const styles = StyleSheet.create({
   },
   planType: {
     fontSize: 18,
-    color: '#007AFF',
+    color: '#0c6329',
   },
   priceContainer: {
     alignItems: 'flex-end',
@@ -274,20 +231,19 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   infoSection: {
-    padding: 24,
-    marginTop: 16,
+    paddingBottom: 24,
+    paddingHorizontal: 24,
     backgroundColor: '#121212',
-  },
-  infoTitle: {
-    fontSize: 16,
-    color: '#007AFF',
-    marginBottom: 8,
+    alignItems: 'center',
   },
   infoText: {
-    fontSize: 14,
+    fontSize: 10,
+    fontWeight: 600,
+    width: '80%',
     color: '#666',
-    marginBottom: 16,
-    lineHeight: 20,
+    marginBottom: 6,
+    lineHeight: 16,
+    textAlign: 'center',
   },
   links: {
     flexDirection: 'row',
@@ -295,8 +251,8 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   link: {
-    fontSize: 14,
-    color: '#007AFF',
+    fontSize: 10,
+    color: '#0c6329',
   },
   support: {
     alignItems: 'center',
@@ -308,7 +264,7 @@ const styles = StyleSheet.create({
   },
   supportLink: {
     fontSize: 14,
-    color: '#007AFF',
+    color: '#0c6329',
   },
   bottomPadding: {
     height: 100,
@@ -318,7 +274,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   heroTitle: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 12,
@@ -353,14 +309,13 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   planSelection: {
-    padding: 24,
-    paddingTop: 8,
+    paddingHorizontal: 24,
     backgroundColor: '#121212',
   },
   planTitle: {
     fontSize: 20,
     color: '#fff',
-    marginBottom: 16,
+    marginBottom: 4,
     fontWeight: '600',
   },
   planCardsRow: {
@@ -377,7 +332,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   selectedPlan: {
-    borderColor: '#007AFF',
+    borderColor: '#0c6329',
     borderWidth: 2,
   },
   savingsBadgeContainer: {
@@ -387,7 +342,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   savingsBadge: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#0c6329',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
@@ -424,33 +379,36 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-  trialButton: {
+  buttonBackground: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#007AFF',
-    padding: 16,
-    margin: 16,
+    padding: 8,
+    marginHorizontal: 40,
+    marginBottom: 22,
+    borderRadius: 12,
+
+  },
+  trialButton: {
+    backgroundColor: '#0c6329',
+    width: '98%',
+    alignSelf: 'center',
+    padding: 12,
     borderRadius: 12,
     alignItems: 'center',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+
+
   },
   trialButtonText: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   benefitsSection: {
-    padding: 24,
+    paddingHorizontal: 24,
     paddingTop: 8,
+    paddingBottom: 8,
     backgroundColor: '#121212',
   },
   planCardFlex: {
@@ -462,14 +420,6 @@ const styles = StyleSheet.create({
     height: 24,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  finePrint: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'center',
-    marginTop: 16,
-    marginHorizontal: 24,
-    lineHeight: 18,
   },
 });
 
