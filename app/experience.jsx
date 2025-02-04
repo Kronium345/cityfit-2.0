@@ -15,7 +15,7 @@ const LiftingExperience = () => {
     const token = await AsyncStorage.getItem('token');
     if (user) {
       try {
-        const response = await axios.patch(`http://192.168.1.216:5000/user/${user._id}/experience`, { experience }, {
+        const response = await axios.patch(`http://localhost:5000/user/${user._id}/experience`, { experience }, {
           headers: { Authorization: `Bearer ${token}` }
         });
 

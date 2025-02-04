@@ -66,7 +66,7 @@ const Profile = () => {
 
     try {
       const response = await axios.put(
-        `http://192.168.1.212:5000/user/${user._id}/avatar`,
+        `http://localhost:5000/user/${user._id}/avatar`,
         formData,
         {
           headers: {
@@ -110,7 +110,7 @@ const Profile = () => {
                 source={{
                   uri: avatar.includes('http')
                     ? avatar
-                    : `http://192.168.1.212:5000/${avatar.replace(/\\/g, '/')}`
+                    : `http://localhost:5000/${avatar.replace(/\\/g, '/')}`
                 }}
                 style={styles.profileImage}
               />

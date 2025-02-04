@@ -25,7 +25,7 @@ const ProfileScreen = () => {
       const token = await AsyncStorage.getItem('token');
       if (user) {
         try {
-          const response = await axios.get(`http://192.168.1.212:5000/user/${user._id}`, {
+          const response = await axios.get(`http://localhost:5000/user/${user._id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
 
@@ -56,7 +56,7 @@ const ProfileScreen = () => {
     const token = await AsyncStorage.getItem('token');
     try {
       const updatedData = { weight, experience, gender };
-      const response = await axios.put(`http://192.168.1.212:5000/user/${user._id}`, updatedData, {
+      const response = await axios.put(`http://localhost:5000/user/${user._id}`, updatedData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -136,7 +136,7 @@ const ProfileScreen = () => {
     try {
       // Sending the image file to the backend using PUT request
       const response = await axios.put(
-        `http://192.168.1.212:5000/user/${user._id}/avatar`,  // Your backend endpoint
+        `http://localhost:5000/user/${user._id}/avatar`,  // Your backend endpoint
         formData,
         {
           headers: {
@@ -173,7 +173,7 @@ const ProfileScreen = () => {
                 source={{
                   uri: avatar.includes('http')
                     ? avatar
-                    : `http://192.168.1.212:5000/${avatar.replace(/\\/g, '/')}`
+                    : `http://localhost:5000/${avatar.replace(/\\/g, '/')}`
                 }}
                 style={styles.profileImage}
                 resizeMode="cover"
