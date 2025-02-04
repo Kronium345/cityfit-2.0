@@ -2,16 +2,70 @@ import { Tabs } from 'expo-router'; // Import Link from expo-router
 import { Feather, AntDesign, Ionicons } from '@expo/vector-icons'; // For tab icons
 import { DrawerToggleButton } from '@react-navigation/drawer'; // For drawer toggle button
 import { useRouter } from 'expo-router'; // For navigation
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BlurView } from 'expo-blur';
 
 export default function _layout() {
   const router = useRouter();  // Set up router for navigation
 
+  const IconWithBlur = ({ children, intensity = 20, style = {}, backgroundColor = 'rgba(0, 0, 0, 0.3)' }: { 
+    children: ReactNode; 
+    intensity?: number; 
+    style?: object;
+    backgroundColor?: string;
+  }) => (
+    <BlurView 
+      intensity={intensity} 
+      tint="light"  // You can use "light", "dark", or "default"
+      style={{
+        borderRadius: 12,
+        overflow: 'hidden',
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor,  
+        ...style
+      }}
+    >
+      {children}
+    </BlurView>
+  );
+
   return (
     <Tabs screenOptions={{ 
-      headerLeft: () => <DrawerToggleButton tintColor='#000' />,
+      headerStyle: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        borderBottomWidth: 0,
+      },
+      headerTitleStyle: {
+        color: '#fff',
+      },
+      headerLeft: () => (
+        <IconWithBlur>
+          <DrawerToggleButton tintColor='#fff' />
+        </IconWithBlur>
+      ),
+      headerRight: () => (
+        <View style={{ 
+          flexDirection: 'row', 
+          gap: 8,
+          marginRight: 16,
+        }}>
+          <IconWithBlur>
+            <TouchableOpacity onPress={() => router.push('/(drawer)/settings')}>
+              <Ionicons name="settings-outline" size={24} color="#fff" />
+            </TouchableOpacity>
+          </IconWithBlur>
+          <IconWithBlur>
+            <TouchableOpacity>
+              <Ionicons name="share-outline" size={24} color="#fff" />
+            </TouchableOpacity>
+          </IconWithBlur>
+        </View>
+      ),
     }}>
       {/* Tab for Home */}
       <Tabs.Screen 
@@ -59,30 +113,41 @@ export default function _layout() {
             <AntDesign name="user" size={size} color={color} />
           ),
           tabBarLabel: 'Profile',
-          headerTitle: 'Profile',
+          headerTitle: '',
           headerTitleAlign: 'center',
+          headerLeft: () => (
+            <View style={{ marginLeft: 12 }}>
+              <IconWithBlur>
+                <DrawerToggleButton tintColor='#fff' />
+              </IconWithBlur>
+            </View>
+          ),
           headerRight: () => (
-            <View style={{ flexDirection: 'row', marginRight: 15 }}>
-              <TouchableOpacity 
-                onPress={() => router.push('../settings')}
-                style={{ marginRight: 15, padding: 5 }}
-              >
-                <Ionicons name="settings-outline" size={24} color="#333" />
-              </TouchableOpacity>
-              <TouchableOpacity 
-                onPress={async () => {
-                  try {
-                    await AsyncStorage.removeItem('token');
-                    await AsyncStorage.removeItem('user');
-                    router.replace('/login');
-                  } catch (error) {
-                    console.error('Error logging out:', error);
-                  }
-                }}
-                style={{ padding: 5 }}
-              >
-                <Ionicons name="log-out-outline" size={24} color="#333" />
-              </TouchableOpacity>
+            <View style={{ 
+              flexDirection: 'row', 
+              gap: 8,
+              marginRight: 12 
+            }}>
+              <IconWithBlur>
+                <TouchableOpacity onPress={() => router.push('../settings')}>
+                  <Ionicons name="settings-outline" size={24} color="#fff" />
+                </TouchableOpacity>
+              </IconWithBlur>
+              <IconWithBlur>
+                <TouchableOpacity 
+                  onPress={async () => {
+                    try {
+                      await AsyncStorage.removeItem('token');
+                      await AsyncStorage.removeItem('user');
+                      router.replace('/login');
+                    } catch (error) {
+                      console.error('Error logging out:', error);
+                    }
+                  }}
+                >
+                  <Ionicons name="log-out-outline" size={24} color="#fff" />
+                </TouchableOpacity>
+              </IconWithBlur>
             </View>
           ),
         }} 
