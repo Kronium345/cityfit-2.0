@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function NotificationsScreen() {
   const router = useRouter();
@@ -24,18 +26,24 @@ export default function NotificationsScreen() {
     }));
   };
 
-  
-
   return (
-    <View style={styles.container}>
-      {/* Header */}
+    <LinearGradient
+      colors={['#000000', '#004d00', '#003300']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+        <TouchableOpacity 
+          onPress={() => router.push('/(drawer)/settings')} 
+          style={styles.backButton}
+        >
+          <BlurView intensity={20} tint="light" style={styles.blurContainer}>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
+          </BlurView>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Push Notifications</Text>
       </View>
-
 
       {/* Notification settings */}
       <View style={styles.settingsContainer}>
@@ -117,24 +125,30 @@ export default function NotificationsScreen() {
           />
         </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000000',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     paddingTop: 20,
-    backgroundColor: '#1A1A1A',
   },
   backButton: {
     marginRight: 16,
+  },
+  blurContainer: {
+    borderRadius: 14,
+    overflow: 'hidden',
+    paddingVertical: 8,
+    paddingRight: 10,
+    paddingLeft: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   headerTitle: {
     fontSize: 20,

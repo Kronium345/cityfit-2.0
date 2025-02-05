@@ -18,7 +18,7 @@ export default function _layout() {
   }) => (
     <BlurView 
       intensity={intensity} 
-      tint="light"  // You can use "light", "dark", or "default"
+      tint="light"
       style={{
         borderRadius: 12,
         overflow: 'hidden',
@@ -35,38 +35,41 @@ export default function _layout() {
   );
 
   return (
-    <Tabs screenOptions={{ 
-      headerStyle: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        borderBottomWidth: 0,
-      },
-      headerTitleStyle: {
-        color: '#fff',
-      },
-      headerLeft: () => (
-        <IconWithBlur>
-          <DrawerToggleButton tintColor='#fff' />
-        </IconWithBlur>
-      ),
-      headerRight: () => (
-        <View style={{ 
-          flexDirection: 'row', 
-          gap: 8,
-          marginRight: 16,
-        }}>
-          <IconWithBlur>
-            <TouchableOpacity onPress={() => router.push('/(drawer)/settings')}>
-              <Ionicons name="settings-outline" size={24} color="#fff" />
-            </TouchableOpacity>
-          </IconWithBlur>
-          <IconWithBlur>
-            <TouchableOpacity>
-              <Ionicons name="share-outline" size={24} color="#fff" />
-            </TouchableOpacity>
-          </IconWithBlur>
-        </View>
-      ),
-    }}>
+    <Tabs
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: 'transparent',
+          borderBottomWidth: 0,
+        
+        },
+        headerTitleStyle: {
+          color: '#fff',
+        },
+        headerLeft: () => (
+          <View style={{ marginLeft: 12 }}>
+            <IconWithBlur>
+              <DrawerToggleButton tintColor='#000' />
+            </IconWithBlur>
+          </View>
+        ),
+        tabBarStyle: {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          elevation: 0,
+          borderTopWidth: 0,
+          height: 60,
+          backdropFilter: 'blur(10px)',
+        },
+        tabBarActiveTintColor: '#fff',
+        tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.6)',
+        tabBarLabelStyle: {
+          fontSize: 12,
+        },
+      }}
+    >
       {/* Tab for Home */}
       <Tabs.Screen 
         name="home" 
@@ -105,7 +108,8 @@ export default function _layout() {
           headerTitle: 'Charts',
         }} 
       />
-      
+
+      {/* Tab for ProfileScreen */}
       <Tabs.Screen 
         name="profileScreen" 
         options={{
@@ -113,7 +117,7 @@ export default function _layout() {
             <AntDesign name="user" size={size} color={color} />
           ),
           tabBarLabel: 'Profile',
-          headerTitle: '',
+          headerTitle: 'My Profile',
           headerTitleAlign: 'center',
           headerLeft: () => (
             <View style={{ marginLeft: 12 }}>
@@ -133,7 +137,7 @@ export default function _layout() {
                   <Ionicons name="settings-outline" size={24} color="#fff" />
                 </TouchableOpacity>
               </IconWithBlur>
-              <IconWithBlur>
+              {/* <IconWithBlur>
                 <TouchableOpacity 
                   onPress={async () => {
                     try {
@@ -147,7 +151,7 @@ export default function _layout() {
                 >
                   <Ionicons name="log-out-outline" size={24} color="#fff" />
                 </TouchableOpacity>
-              </IconWithBlur>
+              </IconWithBlur> */}
             </View>
           ),
         }} 

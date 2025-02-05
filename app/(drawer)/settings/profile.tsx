@@ -5,6 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Profile = () => {
   const router = useRouter();
@@ -94,10 +96,20 @@ const Profile = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#000000', '#004d00', '#003300']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+        <TouchableOpacity 
+          onPress={() => router.push('/(drawer)/settings')} 
+          style={styles.backButton}
+        >
+          <BlurView intensity={20} tint="light" style={styles.blurContainer}>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
+          </BlurView>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Edit Profile</Text>
       </View>
@@ -165,14 +177,13 @@ const Profile = () => {
         
         <View style={styles.bottomPadding} />
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
   },
   header: {
     flexDirection: 'row',
@@ -182,6 +193,14 @@ const styles = StyleSheet.create({
   },
   backButton: {
     marginRight: 16,
+  },
+  blurContainer: {
+    borderRadius: 14,
+    overflow: 'hidden',
+    paddingVertical: 8,
+    paddingRight: 10,
+    paddingLeft: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   headerTitle: {
     fontSize: 20,

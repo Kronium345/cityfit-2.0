@@ -5,6 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import DateTimePickerAndroid from '@react-native-community/datetimepicker';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 
 const AccountSettings = () => {
   const router = useRouter();
@@ -22,6 +24,9 @@ const AccountSettings = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     fetchUserData();
@@ -102,43 +107,53 @@ const AccountSettings = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#000000', '#004d00', '#003300']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <BlurView intensity={20} tint="light" style={styles.blurContainer}>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
+          </BlurView>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Account Settings</Text>
       </View>
 
       <ScrollView style={styles.scrollContainer}>
-        {/* Username Section */}
-        <View style={styles.section}>
+
+        {/* Username Tab Start */}
+        <View style={styles.settingsTab}>
           <TouchableOpacity
-            style={styles.sectionHeader}
+            style={styles.settingsTabHeader}
             onPress={() => toggleSection('username')}
           >
-            <View style={styles.sectionHeaderContent}>
+            <View style={styles.settingsTabContent}>
               <Ionicons name="person-outline" size={24} color="#fff" style={styles.icon} />
-              <View style={styles.sectionHeaderText}>
-                <Text style={styles.sectionTitle}>Change Username</Text>
-                <Text style={styles.currentValue}>{userData.username}</Text>
+              <View style={styles.settingsTabHeaderText}>
+                <Text style={styles.settingsTabTitle}>Change Username</Text>
+                <Text style={styles.settingsTabCurrentValue}>{userData.username}</Text>
               </View>
             </View>
             <Ionicons
               name={expandedSection === 'username' ? 'chevron-up' : 'chevron-forward'}
               size={24}
-              color="#666"
+              color="rgba(255, 255, 255, 0.8)"
             />
           </TouchableOpacity>
           {expandedSection === 'username' && (
             <View style={styles.expandedContent}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter new username"
-                placeholderTextColor="#666"
-                value={newUsername}
-                onChangeText={setNewUsername}
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter new username"
+                  placeholderTextColor="rgba(255, 255, 255, 0.65)"
+                  value={newUsername}
+                  onChangeText={setNewUsername}
+                />
+              </View>
               <TouchableOpacity
                 style={styles.updateButton}
                 onPress={handleUpdateUsername}
@@ -148,36 +163,39 @@ const AccountSettings = () => {
             </View>
           )}
         </View>
+        {/* Username Tab End */}
 
-        {/* Email Section */}
-        <View style={styles.section}>
+        {/* Email Tab Start */}
+        <View style={styles.settingsTab}>
           <TouchableOpacity
-            style={styles.sectionHeader}
+            style={styles.settingsTabHeader}
             onPress={() => toggleSection('email')}
           >
-            <View style={styles.sectionHeaderContent}>
+            <View style={styles.settingsTabContent}>
               <Ionicons name="mail-outline" size={24} color="#fff" style={styles.icon} />
-              <View style={styles.sectionHeaderText}>
-                <Text style={styles.sectionTitle}>Change Email</Text>
-                <Text style={styles.currentValue}>{userData.email}</Text>
+              <View style={styles.settingsTabHeaderText}>
+                <Text style={styles.settingsTabTitle}>Change Email</Text>
+                <Text style={styles.settingsTabCurrentValue}>{userData.email}</Text>
               </View>
             </View>
             <Ionicons
               name={expandedSection === 'email' ? 'chevron-up' : 'chevron-forward'}
               size={24}
-              color="#666"
+              color="rgba(255, 255, 255, 0.8)"
             />
           </TouchableOpacity>
           {expandedSection === 'email' && (
             <View style={styles.expandedContent}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter new email"
-                placeholderTextColor="#666"
-                value={newEmail}
-                onChangeText={setNewEmail}
-                keyboardType="email-address"
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter new email"
+                  placeholderTextColor="rgba(255, 255, 255, 0.65)"
+                  value={newEmail}
+                  onChangeText={setNewEmail}
+                  keyboardType="email-address"
+                />
+              </View>
               <TouchableOpacity
                 style={styles.updateButton}
                 onPress={handleUpdateEmail}
@@ -187,24 +205,25 @@ const AccountSettings = () => {
             </View>
           )}
         </View>
+        {/* Email Tab End */}
 
-        {/* Gender Section */}
-        <View style={styles.section}>
+        {/* Gender Tab Start */}
+        <View style={styles.settingsTab}>
           <TouchableOpacity
-            style={styles.sectionHeader}
+            style={styles.settingsTabHeader}
             onPress={() => toggleSection('gender')}
           >
-            <View style={styles.sectionHeaderContent}>
+            <View style={styles.settingsTabContent}>
               <Ionicons name="person-circle-outline" size={24} color="#fff" style={styles.icon} />
-              <View style={styles.sectionHeaderText}>
-                <Text style={styles.sectionTitle}>Change Gender</Text>
-                <Text style={styles.currentValue}>{userData.gender || 'Not set'}</Text>
+              <View style={styles.settingsTabHeaderText}>
+                <Text style={styles.settingsTabTitle}>Change Gender</Text>
+                <Text style={styles.settingsTabCurrentValue}>{userData.gender || 'Not set'}</Text>
               </View>
             </View>
             <Ionicons
               name={expandedSection === 'gender' ? 'chevron-up' : 'chevron-forward'}
               size={24}
-              color="#666"
+              color="rgba(255, 255, 255, 0.8)"
             />
           </TouchableOpacity>
           {expandedSection === 'gender' && (
@@ -226,35 +245,38 @@ const AccountSettings = () => {
             </View>
           )}
         </View>
+        {/* Gender Tab End */}
 
-        {/* Date of Birth Section */}
-        <View style={styles.section}>
+        {/* Date of Birth Tab Start */}
+        <View style={styles.settingsTab}>
           <TouchableOpacity
-            style={styles.sectionHeader}
+            style={styles.settingsTabHeader}
             onPress={() => toggleSection('dob')}
           >
-            <View style={styles.sectionHeaderContent}>
+            <View style={styles.settingsTabContent}>
               <Ionicons name="calendar-outline" size={24} color="#fff" style={styles.icon} />
-              <View style={styles.sectionHeaderText}>
-                <Text style={styles.sectionTitle}>Change Date of Birth</Text>
-                <Text style={styles.currentValue}>{userData.dateOfBirth}</Text>
+              <View style={styles.settingsTabHeaderText}>
+                <Text style={styles.settingsTabTitle}>Change Date of Birth</Text>
+                <Text style={styles.settingsTabCurrentValue}>{userData.dateOfBirth}</Text>
               </View>
             </View>
             <Ionicons
               name={expandedSection === 'dob' ? 'chevron-up' : 'chevron-forward'}
               size={24}
-              color="#666"
+              color="rgba(255, 255, 255, 0.8)"
             />
           </TouchableOpacity>
           {expandedSection === 'dob' && (
             <View style={styles.expandedContent}>
-              <TextInput
-                style={styles.input}
-                placeholder="YYYY-MM-DD"
-                placeholderTextColor="#666"
-                value={userData.dateOfBirth}
-                onChangeText={(text) => setUserData(prev => ({ ...prev, dateOfBirth: text }))}
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="YYYY-MM-DD"
+                  placeholderTextColor="rgba(255, 255, 255, 0.65)"
+                  value={userData.dateOfBirth}
+                  onChangeText={(text) => setUserData(prev => ({ ...prev, dateOfBirth: text }))}
+                />
+              </View>
               <TouchableOpacity
                 style={styles.calendarButton}
                 onPress={() => setShowDatePicker(true)}
@@ -278,52 +300,92 @@ const AccountSettings = () => {
             </View>
           )}
         </View>
+        {/* Date of Birth Tab End */}
 
-        {/* Password Section */}
-        <View style={styles.section}>
+        {/* Password Tab Start */}
+        <View style={styles.settingsTab}>
           <TouchableOpacity
-            style={styles.sectionHeader}
+            style={styles.settingsTabHeader}
             onPress={() => toggleSection('password')}
           >
-            <View style={styles.sectionHeaderContent}>
+            <View style={styles.settingsTabContent}>
               <Ionicons name="lock-closed-outline" size={24} color="#fff" style={styles.icon} />
-              <View style={styles.sectionHeaderText}>
-                <Text style={styles.sectionTitle}>Update Password</Text>
-                <Text style={styles.currentValue}>••••••••</Text>
+              <View style={styles.settingsTabHeaderText}>
+                <Text style={styles.settingsTabTitle}>Update Password</Text>
+                <Text style={styles.settingsTabCurrentValue}>••••••••</Text>
               </View>
             </View>
             <Ionicons
               name={expandedSection === 'password' ? 'chevron-up' : 'chevron-forward'}
               size={24}
-              color="#666"
+              color="rgba(255, 255, 255, 0.8)"
             />
           </TouchableOpacity>
           {expandedSection === 'password' && (
             <View style={styles.expandedContent}>
-              <TextInput
-                style={styles.input}
-                placeholder="Current password"
-                placeholderTextColor="#666"
-                secureTextEntry
-                value={currentPassword}
-                onChangeText={setCurrentPassword}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="New password"
-                placeholderTextColor="#666"
-                secureTextEntry
-                value={newPassword}
-                onChangeText={setNewPassword}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Confirm new password"
-                placeholderTextColor="#666"
-                secureTextEntry
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Current password"
+                  placeholderTextColor="rgba(255, 255, 255, 0.65)"
+                  secureTextEntry={!showCurrentPassword}
+                  value={currentPassword}
+                  onChangeText={setCurrentPassword}
+                />
+                <TouchableOpacity 
+                  style={styles.eyeIcon}
+                  onPress={() => setShowCurrentPassword(!showCurrentPassword)}
+                >
+                  <Ionicons 
+                    name={showCurrentPassword ? "eye-outline" : "eye-off-outline"} 
+                    size={20} 
+                    color="rgba(255, 255, 255, 0.65)" 
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="New password"
+                  placeholderTextColor="rgba(255, 255, 255, 0.65)"
+                  secureTextEntry={!showNewPassword}
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                />
+                <TouchableOpacity 
+                  style={styles.eyeIcon}
+                  onPress={() => setShowNewPassword(!showNewPassword)}
+                >
+                  <Ionicons 
+                    name={showNewPassword ? "eye-outline" : "eye-off-outline"} 
+                    size={20} 
+                    color="rgba(255, 255, 255, 0.65)" 
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Confirm new password"
+                  placeholderTextColor="rgba(255, 255, 255, 0.65)"
+                  secureTextEntry={!showConfirmPassword}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                />
+                <TouchableOpacity 
+                  style={styles.eyeIcon}
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  <Ionicons 
+                    name={showConfirmPassword ? "eye-outline" : "eye-off-outline"} 
+                    size={20} 
+                    color="rgba(255, 255, 255, 0.65)" 
+                  />
+                </TouchableOpacity>
+              </View>
+
               <TouchableOpacity
                 style={styles.updateButton}
                 onPress={handleUpdatePassword}
@@ -333,26 +395,25 @@ const AccountSettings = () => {
             </View>
           )}
         </View>
+        {/* Password Tab End */}
 
-        {/* Delete Account */}
+        {/* Delete Account Tab Start */}
         <TouchableOpacity
           style={styles.deleteButton}
           onPress={handleDeleteAccount}
         >
           <Text style={styles.deleteButtonText}>Delete Account</Text>
         </TouchableOpacity>
+        {/* Delete Account Tab End */}
 
-        {/* Add some bottom padding for better scrolling */}
-        <View style={styles.bottomPadding} />
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212',
   },
   header: {
     flexDirection: 'row',
@@ -363,118 +424,154 @@ const styles = StyleSheet.create({
   backButton: {
     marginRight: 16,
   },
+  blurContainer: {
+    borderRadius: 14,
+    overflow: 'hidden',
+    paddingVertical: 8,
+    paddingRight: 10,
+    paddingLeft: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
   },
-  section: {
-    marginBottom: 8,
+  scrollContainer: {
+    flex: 1,
+    marginTop: 10,
   },
-  sectionHeader: {
+  icon: {
+    width: 24,
+    height: 24,
+    color: '#fff',
+  },
+  
+  // General Setting Tab Start
+  settingsTab: {
+    marginBottom: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 12,
+    marginHorizontal: 20,
+  },
+  settingsTabHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
-    backgroundColor: '#1c1c1c',
   },
-  sectionHeaderContent: {
+  settingsTabContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
-  sectionHeaderText: {
+  settingsTabHeaderText: {
     marginLeft: 16,
+    flex: 1,
   },
-  icon: {
-    marginRight: 8,
-  },
-  sectionTitle: {
-    fontSize: 16,
+  settingsTabTitle: {
     color: '#fff',
-    marginBottom: 4,
+    fontSize: 16,
+    fontWeight: '500',
   },
-  currentValue: {
+  settingsTabCurrentValue: {
+    color: 'rgba(255, 255, 255, 0.6)',
     fontSize: 14,
-    color: '#666',
+    marginTop: 2,
   },
   expandedContent: {
     padding: 16,
-    backgroundColor: '#1c1c1c',
-    borderTopWidth: 1,
-    borderTopColor: '#2c2c2c',
+    paddingTop: 0,
+    backgroundColor: 'transparent',
+  },
+  inputContainer: {
+    position: 'relative',
+    marginBottom: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 8,
   },
   input: {
-    backgroundColor: '#2c2c2c',
-    padding: 12,
-    borderRadius: 8,
     color: '#fff',
-    marginBottom: 12,
+    padding: 12,
+    paddingHorizontal: 12,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 12,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40,
   },
   updateButton: {
-    backgroundColor: '#007AFF',
-    padding: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 8,
+    padding: 12,
     alignItems: 'center',
   },
   updateButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
-  deleteButton: {
-    margin: 16,
-    padding: 16,
-    backgroundColor: '#1c1c1c',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  deleteButtonText: {
-    color: '#FF3B30',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  calendarButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#2c2c2c',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  calendarButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    marginLeft: 8,
-  },
-  calendarIcon: {
-    marginRight: 4,
-  },
+  // General Setting Tab End
+
+  // Gender Tab Start
   genderRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 10,
+    gap: 12,
   },
   genderButton: {
     flex: 1,
-    backgroundColor: '#2c2c2c',
-    padding: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 8,
+    padding: 12,
     alignItems: 'center',
   },
   selectedGender: {
-    backgroundColor: '#007AFF',
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
   },
   genderButtonText: {
     color: '#fff',
     fontSize: 16,
   },
-  scrollContainer: {
-    flex: 1,
+  // Gender Tab End
+
+  // Date of Birth Tab Start
+  calendarButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
   },
-  bottomPadding: {
-    height: 20, // Adds some padding at the bottom of the scroll
+  calendarButtonText: {
+    color: '#fff',
+    marginLeft: 8,
+    fontSize: 16,
   },
+  calendarIcon: {
+    marginRight: 4,
+  },
+  // Date of Birth Tab End
+
+  // Delete Account Tab Start
+  deleteButton: {
+    backgroundColor: 'rgba(255, 0, 0, 0.2)',
+    marginHorizontal: 20,
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+  },
+  deleteButtonText: {
+    color: '#ff4444',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  // Delete Account Tab End
+
 });
 
 export default AccountSettings;
