@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Platform, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker'; // Native version
+import DatePicker from 'react-datepicker'; // Web version
+import 'react-datepicker/dist/react-datepicker.css'; // For Web
 import tw from 'twrnc';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
@@ -34,11 +36,7 @@ const Signup = () => {
 
     // Show toast if user is under 18
     if (!isUserOver18(currentDate)) {
-      showToast(
-        'error',
-        'Age Restriction',
-        'You must be 18 or older to sign up'
-      );
+      showToast('error', 'Age Restriction', 'You must be 18 or older to sign up');
     }
   };
 
@@ -51,19 +49,18 @@ const Signup = () => {
     });
   };
 
-    // Function to calculate age and check if the user is 18 or older
-    const isUserOver18 = (dob) => {
-      const currentDate = new Date();
-      const age = currentDate.getFullYear() - dob.getFullYear();
-      const month = currentDate.getMonth() - dob.getMonth();
-      
-      // If the current month is before the birth month, subtract 1 from age
-      if (month < 0 || (month === 0 && currentDate.getDate() < dob.getDate())) {
-        return age - 1 >= 18; // Check if the user is at least 18 years old
-      }
+  // Function to calculate age and check if the user is 18 or older
+  const isUserOver18 = (dob) => {
+    const currentDate = new Date();
+    const age = currentDate.getFullYear() - dob.getFullYear();
+    const month = currentDate.getMonth() - dob.getMonth();
+    
+    if (month < 0 || (month === 0 && currentDate.getDate() < dob.getDate())) {
+      return age - 1 >= 18; // Check if the user is at least 18 years old
+    }
   
-      return age >= 18; // User is 18 or older
-    };
+    return age >= 18; // User is 18 or older
+  };
 
   const handleSignUp = async () => {
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
@@ -115,11 +112,7 @@ const Signup = () => {
     const isValidAge = isUserOver18(dob);
     
     if (!isValidAge) {
-      showToast(
-        'error',
-        'Age Restriction',
-        'You must be 18 or older to sign up'
-      );
+      showToast('error', 'Age Restriction', 'You must be 18 or older to sign up');
     }
 
     return (
@@ -136,10 +129,7 @@ const Signup = () => {
   return (
     <ScrollView style={tw`flex-1 bg-black p-6`}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity 
-          onPress={() => router.back()} 
-          style={styles.backButton}
-        >
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Icon name="arrow-left" size={20} color="#FFF" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Sign up</Text>
@@ -186,27 +176,22 @@ const Signup = () => {
 
       <View style={tw`mb-4`}>
         <Text style={tw`text-white mb-2`}>Date of Birth</Text>
-        {Platform.OS === 'ios' ? (
-          <View style={tw`bg-gray-800 rounded-md overflow-hidden`}>
-            <DateTimePicker
-              style={tw`h-12 w-full`}
-              value={dob}
-              mode="date"
-              display="spinner"
-              onChange={onChange}
-              maximumDate={new Date()}
-              textColor="white"
-            />
-          </View>
+        {Platform.OS === 'web' ? (
+          <DatePicker
+            selected={dob}
+            onChange={(date) => setDob(date)}
+            dateFormat="yyyy/MM/dd"
+            maxDate={new Date()}
+            showMonthDropdown
+            showYearDropdown
+          />
         ) : (
           <>
             <TouchableOpacity 
               style={tw`bg-gray-800 p-4 rounded-md flex-row justify-between items-center`}
               onPress={() => setShow(true)}
             >
-              <Text style={tw`text-white`}>
-                {dob.toLocaleDateString()}
-              </Text>
+              <Text style={tw`text-white`}>{dob.toLocaleDateString()}</Text>
               <Icon name="calendar" size={20} color="#666" />
             </TouchableOpacity>
             {show && (
@@ -374,3 +359,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
