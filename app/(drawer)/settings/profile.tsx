@@ -351,9 +351,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     paddingTop: 20,
+    position: 'relative',
   },
   backButton: {
-    marginRight: 16,
+    position: 'absolute',
+    left: 16,
+    zIndex: 1,
   },
   blurContainer: {
     borderRadius: 14,
@@ -365,8 +368,11 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    letterSpacing: 0.5,
     color: '#fff',
+    flex: 1,
+    textAlign: 'center',
   },
   scrollContainer: {
     flex: 1,
@@ -378,6 +384,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     paddingBottom: 20,
   },
+
+  // Profile Image Start
   profileImageContainer: {
     alignItems: 'center',
     marginBottom: 30,
@@ -409,6 +417,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 12,
   },
+  // Profile Image End
+
+  // Input Fields Start
   inputSection: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
@@ -454,17 +465,25 @@ const styles = StyleSheet.create({
   verifiedIcon: {
     marginLeft: 8,
   },
+  // Input Fields End
+
+  // Save Button Start
   saveButton: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
   },
+
   saveButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '500',
   },
+  // Save Button End
+
+  // Loading Overlay Start
   overlay: {
     position: 'absolute',
     top: 0,
@@ -506,6 +525,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+  // Loading Overlay End
 });
 
 export default Profile;

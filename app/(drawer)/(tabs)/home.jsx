@@ -159,8 +159,8 @@ const Home = () => {
           <Carousel
             data={carouselData}
             renderItem={renderCarouselItem}
-            sliderWidth={width - 48}
-            itemWidth={width - 48}
+            sliderWidth={width - 40}
+            itemWidth={width - 40}
             onSnapToItem={setActiveSlide}
           />
         </View>

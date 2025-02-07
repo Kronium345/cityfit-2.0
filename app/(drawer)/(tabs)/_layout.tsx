@@ -54,6 +54,7 @@ export default function _layout() {
             </IconWithBlur>
           </View>
         ),
+
         tabBarStyle: {
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
           position: 'absolute',
@@ -137,7 +138,7 @@ export default function _layout() {
               onPress={() => router.push('/(drawer)/settings')}
             >
               <IconWithBlur>
-                <Feather name="settings" size={24} color="#fff" />
+                <Feather name="settings" size={20} color="#fff" />
               </IconWithBlur>
             </TouchableOpacity>
           ),

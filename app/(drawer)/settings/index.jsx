@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -35,8 +35,8 @@ const Settings = () => {
       style={styles.container}
     >
       <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => router.push('/(drawer)/(tabs)/profileScreen')} 
+        <TouchableOpacity
+          onPress={() => router.push('/(drawer)/(tabs)/profileScreen')}
           style={styles.backButton}
         >
           <BlurView intensity={20} tint="light" style={styles.blurContainer}>
@@ -47,20 +47,20 @@ const Settings = () => {
       </View>
 
       {/* New Premium Promo Cell */}
-      <TouchableOpacity style={styles.premiumPromoContainer}>
-          <View style={styles.premiumPromoContent}>
-            <View style={styles.premiumPromoTextContainer}>
-              <Text style={styles.premiumPromoTitle}>Get the all in one experience</Text>
-              <Text style={styles.premiumPromoSubtitle}>For less than a cup of coffee</Text>
-            </View>
-            <TouchableOpacity 
-              style={styles.tryPremiumButton}
-              onPress={() => router.push('/(drawer)/settings/subscription')}
-            >
-              <Text style={styles.tryPremiumText}>Try Premium</Text>
-            </TouchableOpacity>
+      <BlurView intensity={20} tint="dark" style={styles.premiumPromoContainer}>
+        <View style={styles.premiumPromoContent}>
+          <View style={styles.premiumPromoTextContainer}>
+            <Text style={styles.premiumPromoTitle}>Get the all in one experience</Text>
+            <Text style={styles.premiumPromoSubtitle}>For less than a cup of coffee</Text>
           </View>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.tryPremiumButton}
+            onPress={() => router.push('/(drawer)/settings/subscription')}
+          >
+            <Text style={styles.tryPremiumText}>Try Premium</Text>
+          </TouchableOpacity>
+        </View>
+      </BlurView>
 
       <ScrollView style={styles.scrollView}>
         {/* Account Settings Tab Start*/}
@@ -70,23 +70,24 @@ const Settings = () => {
           {renderSettingItem('lock-closed-outline', 'Account', '/(drawer)/settings/account')}
           {renderSettingItem('card-outline', 'Manage Subscription', '/settings/subscription')}
           {renderSettingItem('notifications-outline', 'Notifications', '/(drawer)/settings/notifications')}
+          {renderSettingItem('star-outline', 'Rate Fitness One', '/(drawer)/settings/rate')}
         </View>
         {/* Account Settings Tab End*/}
 
         {/* Appearance Selection Start*/}
-        <View style={[styles.section, {marginBottom: 20}]}>
-          <Text style={[styles.sectionTitle, {border: 'none', paddingBottom: 0}]}>Appearance</Text>
+        <View style={[styles.section, { marginBottom: 20 }]}>
+          <Text style={[styles.sectionTitle, { border: 'none', paddingBottom: 0 }]}>Appearance</Text>
           <View style={styles.appearanceContainer}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.themeButton, 
+                styles.themeButton,
                 selectedTheme === 'automatic' && styles.themeButtonActive
               ]}
               onPress={() => handleThemeSelect('automatic')}
             >
               <Text style={styles.themeButtonText}>Automatic</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
                 styles.themeButton,
                 selectedTheme === 'light' && styles.themeButtonActive
@@ -95,7 +96,7 @@ const Settings = () => {
             >
               <Text style={styles.themeButtonText}>Light</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
                 styles.themeButton,
                 selectedTheme === 'dark' && styles.themeButtonActive
@@ -108,6 +109,7 @@ const Settings = () => {
         </View>
         {/* Appearance Selection End*/}
 
+
         {/* Information Tab Start*/}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Information</Text>
@@ -118,6 +120,50 @@ const Settings = () => {
           {renderSettingItem('heart-outline', 'Health', '/health')}
         </View>
         {/* Information Tab End*/}
+
+
+        {/* Social Links Start */}
+        <View style={styles.socialSection}>
+          <View style={styles.socialIconsContainer}>
+          <TouchableOpacity
+              style={styles.socialIcon}
+              onPress={() => Linking.openURL('https://fitnessoneltd.com')}
+            >
+              <Ionicons name="globe-outline" size={24} color="#fff" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.socialIcon}
+              onPress={() => Linking.openURL('https://chat.whatsapp.com/CQhtTVwImtp2XRyoJFTg1v')}
+            >
+              <Ionicons name="logo-whatsapp" size={24} color="#fff" />
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={styles.socialIcon}
+              onPress={() => Linking.openURL('https://instagram.com/fitnessoneltd')}
+            >
+              <Ionicons name="logo-instagram" size={24} color="#fff" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.socialIcon}
+              onPress={() => Linking.openURL('https://linkedin.com/company/fitness-one/')}
+            >
+              <Ionicons name="logo-linkedin" size={24} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        {/* Social Links End */}
+
+
+        {/* Logout Button Start */}
+        <TouchableOpacity
+          style={styles.logoutButton}
+        >
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
+        {/* Logout Button End */}
 
       </ScrollView>
     </LinearGradient>
@@ -133,15 +179,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     paddingTop: 20,
+    position: 'relative',
   },
   backButton: {
-    marginRight: 16,
+    position: 'absolute',
+    left: 16,
+    zIndex: 1,
   },
+
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
     textShadow: 'rgba(0, 0, 0, 0.8)',
+    flex: 1,
+    textAlign: 'center',
   },
   scrollView: {
     flex: 1,
@@ -156,13 +208,16 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 30,
     borderRadius: 12,
-    paddingHorizontal: 15,
-    paddingVertical: 20,
+
+    overflow: 'hidden',
   },
   premiumPromoContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+    backgroundColor: 'rgba(102, 102, 102, 0.4)',
   },
   premiumPromoTextContainer: {
     flex: 1,
@@ -178,8 +233,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   tryPremiumButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 50,
@@ -241,6 +295,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
     borderRadius: 20,
     padding: 4,
     marginHorizontal: 20,
@@ -261,6 +316,46 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   // Appearance Tab Styling End
+
+  // Social Links Start
+  socialSection: {
+    marginBottom: 24,
+  },
+  socialIconsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  socialIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 0 14px rgba(0, 0, 0, 0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 10,
+  },
+  // Social Links End
+
+  // Logout Button Start
+  logoutButton: {
+    backgroundColor: 'rgba(255, 0, 0, 0.2)',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+    marginHorizontal: 60,
+    marginBottom: 40,
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center',
+
+  },
+  logoutButtonText: {
+    color: '#ff4444',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  // Logout Button End
 });
 
 export default Settings;

@@ -530,9 +530,7 @@ const styles = StyleSheet.create({
   // Edit Profile Button Start
   editProfileButton: {
     backgroundColor: 'rgba(102, 102, 102, 0.4)',
-    boxShadow: '0 0 14px rgba(0, 0, 0, 0.4)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
+    boxShadow: '0 0 12px rgba(0, 0, 0, 0.25)',
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 20,
@@ -551,7 +549,7 @@ const styles = StyleSheet.create({
   premiumPromoContainer: {
     backgroundColor: 'rgba(102, 102, 102, 0.4)',
     backdropFilter: 'blur(4px)',
-    boxShadow: '0 0 14px rgba(0, 0, 0, 0.5)',
+    boxShadow: '0 0 12px rgba(0, 0, 0, 0.3)',
     marginHorizontal: 20,
     marginTop: 10,
     marginBottom: 30,
@@ -614,7 +612,7 @@ const styles = StyleSheet.create({
   selectedIcon: {
     backgroundColor: 'rgba(102, 102, 102, 0.4)',
     backdropFilter: 'blur(4px)',
-    boxShadow: '0 0 8px rgba(0, 0, 0, 0.5)',
+    boxShadow: '0 0 12px rgba(0, 0, 0, 0.3)',
     borderRadius: 12,
   },
   iconText: {
@@ -629,7 +627,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 18,
     paddingTop: 8,
-    paddingBottom: 15,
+    paddingBottom: 10,
     paddingHorizontal: 0,
     alignItems: 'center',
     justifyContent: 'center',
@@ -646,7 +644,8 @@ const styles = StyleSheet.create({
   calendarContainer: {
     width: '100%',
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingTop: 10,
+    paddingBottom: 0,
   },
   calendarTitle: {
     color: '#fff',
@@ -660,8 +659,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingBottom: 6,
   },
-
-
   weekDayText: {
     color: 'rgba(255, 255, 255, 0.6)',
     fontSize: 12,

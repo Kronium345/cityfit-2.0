@@ -8,158 +8,154 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Linking } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { DrawerToggleButton } from '@react-navigation/drawer';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const pathname = usePathname();
-  const [userData, setUserData] = useState({
-    firstName: '',
-    lastName: '',
-    email: ''
-  });
 
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const userJson = await AsyncStorage.getItem('user');
-        if (userJson) {
-          const user = JSON.parse(userJson);
-          setUserData({
-            firstName: user.firstName || '',
-            lastName: user.lastName || '',
-            email: user.email || ''
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
+  const menuItems = [
+    {
+      icon: "home",
+      label: "Home",
+      route: "/(drawer)/(tabs)/home",
+      color: 'rgba(102, 102, 102, 0.4)',
+      iconComponent: Feather,
+      image: require('../../assets/images/menu-img/steps.jpg')
+    },
+    {
+      icon: "activity",
+      label: "Exercises",
+      route: "/exercises",
+      color: 'rgba(102, 102, 102, 0.4)',
+      iconComponent: Feather,
+      image: require('../../assets/images/menu-img/exercises.jpg')
+    },
+    {
+      icon: "appstore-o",
+      label: "Mental",
+      route: "/mental",
+      color: 'rgba(102, 102, 102, 0.4)',
+      iconComponent: AntDesign,
+      image: require('../../assets/images/menu-img/mental.jpg')
+    },
+    {
+      icon: "fastfood",
+      label: "Food Screen",
+      route: "/foodScreen",
+      color: 'rgba(102, 102, 102, 0.4)',
+      iconComponent: MaterialIcons,
+      image: require('../../assets/images/menu-img/food.jpg')
+    },
+    {
+      icon: "fitness",
+      label: "Step Counter",
+      route: "/stepCounter",
+      color: 'rgba(102, 102, 102, 0.4)',
+      iconComponent: Ionicons,
+      image: require('../../assets/images/menu-img/terrain.jpg')
+    }
+  ];
 
-    getUserData();
-  }, []);
+  const renderMenuItem = (item, index) => (
+    <TouchableOpacity
+      key={item.label}
+      style={[
+        styles.menuItem,
+        { backgroundColor: pathname === item.route ? 'rgba(255, 255, 255, 0.1)' : 'transparent' }
+      ]}
+      onPress={() => router.push(item.route)}
+    >
+      <View style={[styles.menuItemCard, { backgroundColor: item.color }]}>
+        <View style={styles.imageContainer}>
+          <Image 
+            source={item.image}
+            style={styles.menuImage}
+            resizeMode="cover"
+          />
+        </View>
+        <View style={styles.itemFooter}>
+          <item.iconComponent name={item.icon} size={20} color="white" />
+          <Text style={styles.menuItemLabel}>{item.label}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
   const handleAppReview = () => {
     // Implement the logic to handle app review
   };
 
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContainer}>
-      <View style={styles.mainContent}>
-        <View style={styles.userInfoWrapper}>
-          <Image
-            source={require('../../assets/images/cityfit-logo.png')} 
-            width={80}
-            height={80}
-            style={styles.userImg}
-          />
-          <View style={styles.userDetailsWrapper}>
-            <Text style={styles.userName}>{`${userData.firstName} ${userData.lastName}`}</Text>
-            <Text style={styles.userEmail}>{userData.email}</Text>
+    <View style={styles.drawerWrapper}>
+      <LinearGradient
+        colors={[
+          'rgba(0, 0, 0, 0.7)',
+          'rgba(0, 77, 0, 0.7)',
+          'rgba(0, 51, 0, 0.7)',
+        ]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[StyleSheet.absoluteFill, styles.overlay]}
+      />
+      <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
+      <View style={styles.drawerContent}>
+        {/* Header Section */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Menu</Text>
+          <TouchableOpacity 
+            style={styles.closeButton}
+            onPress={() => props.navigation.closeDrawer()}
+          >
+            <Feather name="x" size={18} color="white" />
+          </TouchableOpacity>
+        </View>
+
+        <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContainer}>
+          <View style={styles.menuGrid}>
+            {menuItems.map((item, index) => renderMenuItem(item, index))}
           </View>
-        </View>
-        <DrawerItem
-          icon={({ color, size }) => (
-            <Feather name="home" size={size} color={color} />
-          )}
-          label={"Home"}
-          labelStyle={[
-            styles.navItemLabel, 
-            { color: pathname == "/home" ? "#fff" : "#000", paddingLeft: 20 },
-          ]}
-          style={{ backgroundColor: pathname == "/home" ? "#ADD8E6" : "#fff" }}
-          onPress={() => {
-            router.push("/(drawer)/(tabs)/home"); // Correct Home screen path
-          }}
-        />
-        <DrawerItem
-          icon={({ color, size }) => (
-            <Feather name="activity" size={size} color={color} />
-          )}
-          label={"Exercises"}
-          labelStyle={[
-            styles.navItemLabel,
-            { color: pathname == "/exercises" ? "#fff" : "#000", paddingLeft: 20 },
-          ]}
-          style={{ backgroundColor: pathname == "/exercises" ? "#ADD8E6" : "#fff" }}
-          onPress={() => {
-            router.push("/exercises"); // Correct Exercises screen path
-          }}
-        />
-        <DrawerItem
-          icon={({ color, size }) => (
-            <AntDesign name="appstore-o" size={size} color={color} />
-          )}
-          label={"Mental"}
-          labelStyle={[
-            styles.navItemLabel,
-            { color: pathname == "/mental" ? "#fff" : "#000", paddingLeft: 20 },
-          ]}
-          style={{ backgroundColor: pathname == "/mental" ? "#ADD8E6" : "#fff" }}
-          onPress={() => {
-            router.push("/mental"); // Correct Mental screen path
-          }}
-        />
-        <DrawerItem
-          icon={({ color, size }) => (
-            <MaterialIcons name="fastfood" size={size} color={color} />
-          )}
-          label={"Food Screen"}
-          labelStyle={[
-            styles.navItemLabel,
-            { color: pathname == "/foodScreen" ? "#fff" : "#000", paddingLeft: 20 },
-          ]}
-          style={{ backgroundColor: pathname == "/foodScreen" ? "#ADD8E6" : "#fff" }}
-          onPress={() => {
-            router.push("/foodScreen"); // Correct Food Screen path
-          }}
-        />
-        <DrawerItem
-          icon={({ color, size }) => (
-            <Ionicons name="fitness" size={size} color={color} />
-          )}
-          label={"Step Counter"}
-          labelStyle={[
-            styles.navItemLabel,
-            { color: pathname == "/stepCounter" ? "#fff" : "#000", paddingLeft: 20 },
-          ]}
-          style={{ backgroundColor: pathname == "/stepCounter" ? "#ADD8E6" : "#000" }}
-          onPress={() => {
-            router.push("/stepCounter"); // Correct Step Counter path
-          }}
-        />
+
+          <View style={styles.socialSection}>
+            <View style={styles.dividerContainer}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>TAKE THIS FURTHER</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <View style={styles.socialIconsContainer}>
+              <TouchableOpacity
+                style={styles.socialIcon}
+                onPress={() => Linking.openURL('https://fitnessoneltd.com')}
+              >
+                <Ionicons name="globe-outline" size={24} color="#fff" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.socialIcon}
+                onPress={() => Linking.openURL('https://chat.whatsapp.com/CQhtTVwImtp2XRyoJFTg1v')}
+              >
+                <Ionicons name="logo-whatsapp" size={24} color="#fff" />
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                style={styles.socialIcon}
+                onPress={() => Linking.openURL('https://instagram.com/fitnessoneltd')}
+              >
+                <Ionicons name="logo-instagram" size={24} color="#fff" />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.socialIcon}
+                onPress={() => Linking.openURL('https://linkedin.com/company/fitness-one/')}
+              >
+                <Ionicons name="logo-linkedin" size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </DrawerContentScrollView>
       </View>
-
-      <View style={styles.socialSection}>
-        <View style={styles.dividerContainer}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>TAKE THIS FURTHER</Text>
-          <View style={styles.dividerLine} />
-        </View>
-
-        <View style={styles.socialIconsContainer}>
-          <TouchableOpacity 
-            style={styles.socialIcon}
-            onPress={() => Linking.openURL('https://fitnessoneltd.com')}
-          >
-            <Feather name="globe" size={24} color="#666" />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.socialIcon}
-            onPress={() => Linking.openURL('https://instagram.com/fitnessoneltd')}
-          >
-            <AntDesign name="instagram" size={24} color="#666" />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.socialIcon}
-            onPress={handleAppReview}
-          >
-            <AntDesign name="star" size={24} color="#666" />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </DrawerContentScrollView>
+    </View>
   );
 };
 
@@ -187,6 +183,13 @@ export default function DrawerLayout() {
       drawerContent={(props) => <CustomDrawerContent {...props} />} 
       screenOptions={{
         headerShown: false,
+        drawerType: 'front',
+        drawerStyle: {
+          backgroundColor: 'transparent',
+          width: '100%',
+        },
+        overlayColor: 'transparent',
+
       }}
     >
       <Drawer.Screen 
@@ -219,41 +222,95 @@ export default function DrawerLayout() {
 }
 
 const styles = StyleSheet.create({
-  navItemLabel: {
-    marginLeft: -20,
-    fontSize: 18,
-  },
-  userInfoWrapper: {
-    flexDirection: 'row',
-    paddingHorizontal: 10,
-    paddingVertical: 20,
-    borderBottomColor: '#ccc',
-    borderBottomWidth: 1,
-    marginBottom: 10,
+  drawerWrapper: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  userImg: {
-    width: 80,
-    height: 80,
-    borderRadius: 20,
+  overlay: {
+    zIndex: 1,
   },
-  userDetailsWrapper: {
-    marginLeft: 10,
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  userEmail: {
-    fontSize: 14,
-    fontStyle: 'italic',
+  drawerContent: {
+    width: '90%',
+    height: '98%',
+    zIndex: 2,
+    backgroundColor: 'transparent',
+    borderRadius: 24,
+    overflow: 'hidden',
   },
   drawerContainer: {
     flex: 1,
-    justifyContent: 'space-between',
   },
-  mainContent: {
-    flex: 1,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    position: 'relative',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: 'white',
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 6,
+    top: 16,
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  menuItem: {
+    width: '48%',
+    marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    boxShadow: '0 0 12px rgba(0, 0, 0, 0.5)',
+  },
+  menuItemCard: {
+    width: '100%',
+    height: 140,
+    borderRadius: 16,
+    overflow: 'hidden',
+    padding: 6,
+  },
+  imageContainer: {
+    width: '100%',
+    height: '65%',
+    marginBottom: 8,
+    boxShadow: '0 0 6px rgba(0, 0, 0, 0.5)',
+    borderRadius: 12,
+  },
+  menuImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 12,
+  },
+  itemFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  menuItemLabel: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
   },
   socialSection: {
     paddingVertical: 20,
@@ -263,16 +320,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    marginBottom: 15,
+    marginBottom: 20,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
   },
   dividerText: {
     paddingHorizontal: 10,
-    color: '#666',
+    color: '#fff',
     fontSize: 12,
     fontWeight: '600',
   },
@@ -283,5 +340,8 @@ const styles = StyleSheet.create({
   },
   socialIcon: {
     padding: 10,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 0 14px rgba(0, 0, 0, 0.15)',
   },
 });

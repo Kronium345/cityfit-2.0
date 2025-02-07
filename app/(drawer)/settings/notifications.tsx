@@ -47,82 +47,90 @@ export default function NotificationsScreen() {
 
       {/* Notification settings */}
       <View style={styles.settingsContainer}>
-        <View style={styles.settingRow}>
-          <Text style={styles.settingText}>Follows</Text>
-          <Switch
-            value={notificationStates.follows}
-            onValueChange={() => toggleSwitch('follows')}
-            color={theme.colors.primary}
-          />
-        </View>
-
-        <View style={styles.settingRow}>
-          <Text style={styles.settingText}>Likes on your workouts</Text>
-          <Switch
-            value={notificationStates.workoutLikes}
-            onValueChange={() => toggleSwitch('workoutLikes')}
-            color={theme.colors.primary}
-          />
-        </View>
-
-        <View style={styles.settingRow}>
-          <Text style={styles.settingText}>Comments on your workouts</Text>
-          <Switch
-            value={notificationStates.workoutComments}
-            onValueChange={() => toggleSwitch('workoutComments')}
-            color={theme.colors.primary}
-          />
-        </View>
-
-        <View style={styles.settingRow}>
-          <View>
-            <Text style={styles.settingText}>Comment Mentions</Text>
-            <Text style={styles.settingDescription}>
-              Get a notification when someone @ mentions you in a comment.
-            </Text>
+        <Text style={styles.sectionTitle}>Push Notifications</Text>
+        <View style={styles.section}>
+          <View style={styles.settingRow}>
+            <Text style={styles.settingText}>Follows</Text>
+            <Switch
+              value={notificationStates.follows}
+              onValueChange={() => toggleSwitch('follows')}
+            />
           </View>
-          <Switch
-            value={notificationStates.commentMentions}
-            onValueChange={() => toggleSwitch('commentMentions')}
-            color={theme.colors.primary}
-          />
-        </View>
 
-        <View style={styles.settingRow}>
-          <View>
-            <Text style={styles.settingText}>Workout Discussions</Text>
-            <Text style={styles.settingDescription}>
-              Get a notification when someone comments on a workout that you've also commented on.
-            </Text>
+          <View style={styles.settingRow}>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingText}>Step Streak Reminders</Text>
+              <Text style={styles.settingDescription}>
+                Get a notification when you're about to miss a step streak.
+              </Text>
+            </View>
+            <Switch
+              value={notificationStates.workoutLikes}
+              onValueChange={() => toggleSwitch('workoutLikes')}
+            />
           </View>
-          <Switch
-            value={notificationStates.workoutDiscussions}
-            onValueChange={() => toggleSwitch('workoutDiscussions')}
-            color={theme.colors.primary}
-          />
-        </View>
 
-        <View style={styles.settingRow}>
-          <View>
-            <Text style={styles.settingText}>Subscribe to Hevy emails</Text>
-            <Text style={styles.settingDescription}>
-              Tips, new feature announcements, offers and more.
-            </Text>
+          <View style={styles.settingRow}>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingText}>Leaderboard Alerts</Text>
+              <Text style={styles.settingDescription}> 
+                Get a notification when your friends are about to beat your step streak.
+              </Text>
+            </View>
+            <Switch
+              value={notificationStates.workoutComments}
+              onValueChange={() => toggleSwitch('workoutComments')} 
+            />
+
           </View>
-          <Switch
-            value={notificationStates.emailSubscription}
-            onValueChange={() => toggleSwitch('emailSubscription')}
-            color={theme.colors.primary}
-          />
-        </View>
 
-        <View style={styles.settingRow}>
-          <Text style={styles.settingText}>Rest Timer</Text>
-          <Switch
-            value={notificationStates.restTimer}
-            onValueChange={() => toggleSwitch('restTimer')}
-            color={theme.colors.primary}
-          />
+          <View style={styles.settingRow}>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingText}>Run Reminders</Text>
+              <Text style={styles.settingDescription}>
+                Get notification alerts on all upcoming community runs.
+              </Text>
+
+            </View>
+            <Switch
+              value={notificationStates.commentMentions}
+              onValueChange={() => toggleSwitch('commentMentions')}
+            />
+          </View>
+
+          <View style={styles.settingRow}>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingText}>Workout Discussions</Text>
+              <Text style={styles.settingDescription}>
+                Get a notification when someone comments on a workout that you've also commented on.
+              </Text>
+            </View>
+            <Switch
+              value={notificationStates.workoutDiscussions}
+              onValueChange={() => toggleSwitch('workoutDiscussions')}
+            />
+          </View>
+
+          <View style={styles.settingRow}>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingText}>Subscribe to Fitness One emails</Text>
+              <Text style={styles.settingDescription}>
+                Tips, new feature announcements, offers and more.
+              </Text>
+            </View>
+            <Switch
+              value={notificationStates.emailSubscription}
+              onValueChange={() => toggleSwitch('emailSubscription')} 
+            />
+          </View>
+
+          <View style={styles.settingRow}>
+            <Text style={styles.settingText}>Rest Preferences</Text>
+            <Switch
+              value={notificationStates.restTimer}
+              onValueChange={() => toggleSwitch('restTimer')}
+            />
+          </View>
         </View>
       </View>
     </LinearGradient>
@@ -138,9 +146,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     paddingTop: 20,
+    position: 'relative',
   },
   backButton: {
-    marginRight: 16,
+    position: 'absolute',
+    left: 16,
+    zIndex: 1,
   },
   blurContainer: {
     borderRadius: 14,
@@ -152,34 +163,52 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    letterSpacing: 0.5,
     color: '#fff',
+    flex: 1,
+    textAlign: 'center',
   },
   link: {
     color: '#007AFF',
     textDecorationLine: 'underline',
   },
   settingsContainer: {
-    paddingHorizontal: 16,
-    backgroundColor: '#000000',
+    flex: 1,
+    paddingTop: 16,
+  },
+  sectionTitle: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.6)',
+    textTransform: 'uppercase',
+    marginHorizontal: 20,
+    paddingBottom: 12,
+  },
+  section: {
+    marginBottom: 24,
   },
   settingRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#2c2c2c',
-    backgroundColor: '#000000',
+    alignItems: 'flex-start',
+    padding: 16,
+    marginHorizontal: 20,
+    marginBottom: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 12,
   },
   settingText: {
-    color: '#FFFFFF',
     fontSize: 16,
+    color: '#fff',
   },
   settingDescription: {
-    color: '#666666',
+    color: 'rgba(255, 255, 255, 0.6)',
     fontSize: 13,
     marginTop: 4,
-    maxWidth: '90%',
+    width: '90%',
+  },
+  settingContent: {
+    flex: 1,
+    paddingRight: 16,
   },
 });

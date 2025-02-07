@@ -420,9 +420,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     paddingTop: 20,
+    position: 'relative',
   },
   backButton: {
-    marginRight: 16,
+    position: 'absolute',
+    left: 16,
+    zIndex: 1,
   },
   blurContainer: {
     borderRadius: 14,
@@ -434,8 +437,11 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    letterSpacing: 0.5,
     color: '#fff',
+    flex: 1,
+    textAlign: 'center',
   },
   scrollContainer: {
     flex: 1,
@@ -449,7 +455,7 @@ const styles = StyleSheet.create({
   
   // General Setting Tab Start
   settingsTab: {
-    marginBottom: 20,
+    marginBottom: 16,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 12,
     marginHorizontal: 20,
