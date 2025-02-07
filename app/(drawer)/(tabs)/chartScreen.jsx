@@ -3,6 +3,7 @@ import { View, Text, Dimensions, ScrollView, StyleSheet, Image } from 'react-nat
 import axios from 'axios';
 import { useAuthContext } from '../../AuthProvider';
 import resistanceIcon from "../../../assets/tracker-images/resistance.png"; // Only using resistance icon
+import { LinearGradient } from 'expo-linear-gradient';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -44,34 +45,41 @@ const ChartScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Exercise History</Text>
+    <LinearGradient
+      colors={['#000000', '#004d00', '#003300']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
+      <ScrollView style={[styles.container, { backgroundColor: 'transparent' }]}>
+        <Text style={styles.title}>Exercise History</Text>
 
-      {historyData.length ? (
-        <View style={styles.historyList}>
-          {historyData.map((item, index) => (
-            <View key={index} style={styles.historyItem}>
-              <View style={styles.dateWrapper}>
-                <Text style={styles.date}>{item.date}</Text>
-              </View>
+        {historyData.length ? (
+          <View style={styles.historyList}>
+            {historyData.map((item, index) => (
+              <View key={index} style={styles.historyItem}>
+                <View style={styles.dateWrapper}>
+                  <Text style={styles.date}>{item.date}</Text>
+                </View>
 
-              <View style={styles.exerciseWrapper}>
-                <Image
-                  source={resistanceIcon} // Always using resistance icon
-                  style={styles.icon}
-                />
-                <View>
-                  <Text style={styles.exerciseName}>{item.exerciseName}</Text>
-                  <Text style={styles.exerciseDetail}>{item.detail}</Text>
+                <View style={styles.exerciseWrapper}>
+                  <Image
+                    source={resistanceIcon} // Always using resistance icon
+                    style={styles.icon}
+                  />
+                  <View>
+                    <Text style={styles.exerciseName}>{item.exerciseName}</Text>
+                    <Text style={styles.exerciseDetail}>{item.detail}</Text>
+                  </View>
                 </View>
               </View>
-            </View>
-          ))}
-        </View>
-      ) : (
-        <Text>No exercise history available.</Text>
-      )}
-    </ScrollView>
+            ))}
+          </View>
+        ) : (
+          <Text>No exercise history available.</Text>
+        )}
+      </ScrollView>
+    </LinearGradient>
   );
 };
 

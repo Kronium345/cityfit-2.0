@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,25 +11,64 @@ import { LinearGradient } from 'expo-linear-gradient';
 const Profile = () => {
   const router = useRouter();
   const [name, setName] = useState('');
+  const [weight, setWeight] = useState('');
+  const [experienceLevel, setExperienceLevel] = useState('');
   const [bio, setBio] = useState('');
   const [link, setLink] = useState('');
   const [avatar, setAvatar] = useState('');
   const [loadingImage, setLoadingImage] = useState(false);
 
+  const [userData, setUserData] = useState({
+    name: '',
+    weight: '',
+    experienceLevel: '',
+    email: '',
+    bio: '',
+    avatar: '',
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
   useEffect(() => {
-    const fetchUserData = async () => {
-      const user = JSON.parse(await AsyncStorage.getItem('user'));
-      if (user?.avatar) {
-        setAvatar(user.avatar);
-      }
-    };
     fetchUserData();
   }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const userJson = await AsyncStorage.getItem('user');
+      const token = await AsyncStorage.getItem('token');
+      if (userJson) {
+        const user = JSON.parse(userJson);
+        if (user) {
+          const response = await axios.get(`http://localhost:5000/user/${user._id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+
+          console.log("Fetched user data:", response.data);
+
+          setUserData({
+            name: response.data.firstName + ' ' + response.data.lastName || '',
+            weight: response.data.weight?.toString() || '',
+            email: response.data.email || '',
+            bio: response.data.bio || '',
+            avatar: response.data.avatar || '',
+          });
+
+          if (response.data.avatar) {
+            setAvatar(response.data.avatar);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
 
   const pickImage = async () => {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
+
       if (status !== 'granted') {
         Alert.alert('Permission Denied', 'You need to grant permission to access your photos.');
         return;
@@ -57,7 +96,7 @@ const Profile = () => {
     setLoadingImage(true);
     const user = JSON.parse(await AsyncStorage.getItem('user'));
     const token = await AsyncStorage.getItem('token');
-    
+
     const fileType = uri.split('.').pop() === 'png' ? 'image/png' : 'image/jpeg';
     const formData = new FormData();
     formData.append('avatar', {
@@ -86,9 +125,44 @@ const Profile = () => {
     }
   };
 
-  const handleSave = () => {
-    // TODO: Implement save functionality
-    router.back();
+  const handleSave = async () => {
+    setIsSaving(true);
+
+    try {
+      const userJson = await AsyncStorage.getItem('user');
+      const token = await AsyncStorage.getItem('token');
+      if (userJson) {
+        const user = JSON.parse(userJson);
+
+        // First, show loading state for 3 seconds
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
+        // Then make the API call
+        await axios.put(
+          `http://localhost:5000/user/${user._id}`,
+          {
+            firstName: userData.name.split(' ')[0],
+            lastName: userData.name.split(' ')[1] || '',
+            weight: userData.weight,
+            bio: userData.bio,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+
+        setIsSaving(false);
+        setShowSuccess(true);
+
+        // Hide success message after 3 seconds
+        setTimeout(() => {
+          setShowSuccess(false);
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Error saving changes:', error);
+      setIsSaving(false);
+    }
   };
 
   const handleBack = () => {
@@ -103,8 +177,8 @@ const Profile = () => {
       style={styles.container}
     >
       <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => router.push('/(drawer)/settings')} 
+        <TouchableOpacity
+          onPress={() => router.push('/(drawer)/settings')}
           style={styles.backButton}
         >
           <BlurView intensity={20} tint="light" style={styles.blurContainer}>
@@ -114,72 +188,159 @@ const Profile = () => {
         <Text style={styles.headerTitle}>Edit Profile</Text>
       </View>
 
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.profileImageContainer}>
-          <TouchableOpacity onPress={pickImage}>
-            {avatar ? (
-              <Image
-                source={{
-                  uri: avatar.includes('http')
-                    ? avatar
-                    : `http://localhost:5000/${avatar.replace(/\\/g, '/')}`
-                }}
-                style={styles.profileImage}
-              />
-            ) : (
-              <View style={styles.placeholderImage}>
-                <Ionicons name="person" size={40} color="#666" />
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.scrollContentContainer}
+      >
+        <View style={styles.section}>
+          <View style={styles.profileImageContainer}>
+            <TouchableOpacity onPress={pickImage}>
+              {avatar ? (
+                <Image
+                  source={{
+                    uri: avatar.includes('http')
+                      ? avatar
+                      : `http://localhost:5000/${avatar.replace(/\\/g, '/')}`
+                  }}
+                  style={styles.profileImage}
+                />
+              ) : (
+                <View style={styles.placeholderImage}>
+                  <Ionicons name="person" size={40} color="#666" />
+                </View>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity onPress={pickImage}>
+              <Text style={styles.changeAvatarText}>Change Avatar</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Input Fields Start */}
+          <View style={styles.form}>
+            {/* Name Start */}
+            <View style={styles.inputSection}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>Name</Text>
+                <Text style={styles.required}>*</Text>
               </View>
-            )}
-            <View style={styles.editIconContainer}>
-              <Ionicons name="add-circle" size={24} color="#007AFF" />
+              <TextInput
+                style={styles.input}
+                value={userData.name}
+                onChangeText={(text) => setUserData(prev => ({ ...prev, name: text }))}
+                placeholder="Your full name"
+                placeholderTextColor="rgba(255, 255, 255, 0.45)"
+              />
             </View>
+            {/* Name End */}
+
+            {/* Weight Start */}
+            <View style={styles.inputSection}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>Weight (kg)</Text>
+                <Text style={styles.required}>*</Text>
+              </View>
+              <TextInput
+                style={styles.input}
+                value={userData.weight}
+                onChangeText={(text) => setUserData(prev => ({ ...prev, weight: text }))}
+                placeholder="Your weight"
+                placeholderTextColor="rgba(255, 255, 255, 0.45)"
+                keyboardType="numeric"
+              />
+            </View>
+            {/* Weight End */}
+
+            {/* Experience Level Start */}
+            <View style={styles.inputSection}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>Experience Level</Text>
+                <Text style={styles.required}>*</Text>
+              </View>
+              <TextInput
+                style={styles.input}
+                value={userData.experienceLevel}
+                onChangeText={(text) => setUserData(prev => ({ ...prev, experienceLevel: text }))}
+                placeholder="Level"
+                placeholderTextColor="rgba(255, 255, 255, 0.45)"
+                keyboardType="numeric"
+              />
+            </View>
+            {/* Experience Level End */}
+
+            {/* Email Start */}
+            <View style={styles.inputSection}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>Email</Text>
+                <Text style={styles.required}>*</Text>
+              </View>
+              <View style={styles.emailContainer}>
+                <TextInput
+                  style={[styles.input, styles.emailInput]}
+                  value={userData.email}
+                  editable={false}
+                  placeholder="Your email"
+                  placeholderTextColor="rgba(255, 255, 255, 0.45)"
+                />
+                <View style={styles.verifiedIcon}>
+                  <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+                </View>
+              </View>
+            </View>
+            {/* Email End */}
+
+            {/* Description Start */}
+            <View style={styles.inputSection}>
+              <Text style={styles.label}>Description</Text>
+              <TextInput
+                style={[styles.input, styles.bioInput]}
+                value={userData.bio}
+                onChangeText={(text) => setUserData(prev => ({ ...prev, bio: text }))}
+                placeholder="Add a description"
+                placeholderTextColor="rgba(255, 255, 255, 0.45)"
+                multiline
+              />
+            </View>
+            {/* Description End */}
+          </View>
+          {/* Input Fields End */}
+
+
+          {/* Save Button Start */}
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>Save Changes</Text>
           </TouchableOpacity>
+          {/* Save Button End */}
+
+
+          {/* Success Message Start */}
+          {showSuccess && (
+            <View style={styles.successContainer}>
+              <BlurView intensity={20} tint="dark" style={styles.successBlur}>
+                <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+                <Text style={styles.successText}>Changes saved successfully!</Text>
+              </BlurView>
+            </View>
+          )}
+          {/* Success Message End */}
         </View>
-
-        <View style={styles.form}>
-          <Text style={styles.label}>Name</Text>
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="Your full name"
-            placeholderTextColor="#666"
-          />
-
-          <Text style={styles.label}>Bio</Text>
-          <TextInput
-            style={[styles.input, styles.bioInput]}
-            value={bio}
-            onChangeText={setBio}
-            placeholder="Describe yourself"
-            placeholderTextColor="#666"
-            multiline
-          />
-
-          <Text style={styles.label}>Link</Text>
-          <TextInput
-            style={styles.input}
-            value={link}
-            onChangeText={setLink}
-            placeholder="https://example.com"
-            placeholderTextColor="#666"
-            keyboardType="url"
-          />
-        </View>
-
-        <TouchableOpacity
-          style={styles.saveButton}
-          onPress={handleSave}
-        >
-          <Text style={styles.saveButtonText}>Save Changes</Text>
-        </TouchableOpacity>
-        
-        <View style={styles.bottomPadding} />
       </ScrollView>
+
+
+      {/* Loading Overlay Start */}
+      {isSaving && (
+        <View style={styles.overlay}>
+          <BlurView intensity={20} tint="dark" style={styles.blurOverlay}>
+            <ActivityIndicator size="large" color="#fff" />
+            <Text style={styles.loadingText}>Saving your changes...</Text>
+          </BlurView>
+        </View>
+      )}
+      {/* Loading Overlay End */}
+
     </LinearGradient>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -207,71 +368,143 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollContentContainer: {
+    paddingBottom: 100,
+  },
+  section: {
+    marginHorizontal: 20,
+    paddingBottom: 20,
+  },
   profileImageContainer: {
     alignItems: 'center',
-    marginTop: 20,
     marginBottom: 30,
-    position: 'relative',
   },
   profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#2c2c2c',
+    marginBottom: 10,
+    borderWidth: 3,
+    borderColor: 'rgba(255, 255, 255, 0.75)',
   },
   placeholderImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#2c2c2c',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  editIconContainer: {
-    position: 'absolute',
-    bottom: -10,
-    right: -10,
-    backgroundColor: '#fff',
+  changeAvatarText: {
+    color: '#fff',
+    fontSize: 14,
+    opacity: 0.8,
+    marginTop: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.35)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     borderRadius: 12,
-    padding: 2,
   },
-  form: {
-    padding: 16,
+  inputSection: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+    borderRadius: 12,
+    marginBottom: 16,
+    paddingTop: 6,
+    paddingBottom: 10,
+    paddingHorizontal: 16,
+  },
+  labelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 2,
   },
   label: {
-    color: '#666',
+    color: '#fff',
+    fontSize: 12,
+    opacity: 0.6,
+    letterSpacing: 0.65,
+  },
+  required: {
+    color: '#ff4444',
+    marginLeft: 4,
     fontSize: 14,
-    marginBottom: 8,
   },
   input: {
-    backgroundColor: '#1c1c1c',
-    borderRadius: 8,
-    padding: 12,
     color: '#fff',
     fontSize: 16,
-    marginBottom: 20,
+    padding: 0,
   },
   bioInput: {
+    paddingTop: 2,
     height: 100,
     textAlignVertical: 'top',
   },
+  emailContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  emailInput: {
+    flex: 1,
+  },
+  verifiedIcon: {
+    marginLeft: 8,
+  },
   saveButton: {
-    margin: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 12,
     padding: 16,
-    backgroundColor: '#1c1c1c',
-    borderRadius: 8,
     alignItems: 'center',
   },
   saveButtonText: {
-    color: '#007AFF',
+    color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
-  scrollContainer: {
-    flex: 1,
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
-  bottomPadding: {
-    height: 20,
+  blurOverlay: {
+    padding: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  loadingText: {
+    color: '#fff',
+    fontSize: 16,
+    marginTop: 10,
+  },
+  successContainer: {
+    marginTop: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  successBlur: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 12,
+    gap: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    width: '100%',
+  },
+  successText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 

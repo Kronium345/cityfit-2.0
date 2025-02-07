@@ -6,6 +6,9 @@ import { router, usePathname } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Linking } from 'react-native';
+import { BlurView } from 'expo-blur';
+import { DrawerToggleButton } from '@react-navigation/drawer';
+
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const pathname = usePathname();
@@ -119,7 +122,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
             styles.navItemLabel,
             { color: pathname == "/stepCounter" ? "#fff" : "#000", paddingLeft: 20 },
           ]}
-          style={{ backgroundColor: pathname == "/stepCounter" ? "#ADD8E6" : "#fff" }}
+          style={{ backgroundColor: pathname == "/stepCounter" ? "#ADD8E6" : "#000" }}
           onPress={() => {
             router.push("/stepCounter"); // Correct Step Counter path
           }}
@@ -161,14 +164,56 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 };
 
 export default function DrawerLayout() {
+  const IconWithBlur = ({ children }) => (
+    <BlurView 
+      intensity={20} 
+      tint="light"
+      style={{
+        borderRadius: 12,
+        overflow: 'hidden',
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      }}
+    >
+      {children}
+    </BlurView>
+  );
+
   return (
-    <Drawer drawerContent={(props) => <CustomDrawerContent {...props} />} screenOptions={{ headerShown: false }}>
-      {/* Add the screens you want inside the Drawer */}
-      <Drawer.Screen name="home" options={{ headerShown: true }} />
-      <Drawer.Screen name="exercises" options={{ headerShown: true }} />
-      <Drawer.Screen name="mental" options={{ headerShown: true }} />
-      <Drawer.Screen name="foodScreen" options={{ headerShown: true }} />
-      <Drawer.Screen name="stepCounter" options={{ headerShown: true }} />
+    <Drawer 
+      drawerContent={(props) => <CustomDrawerContent {...props} />} 
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Drawer.Screen 
+        name="stepCounter" 
+        options={{
+          headerShown: true,
+          headerTransparent: true,
+          headerStyle: {
+            backgroundColor: 'transparent',
+          },
+          headerTitleStyle: {
+            color: '#fff',
+            fontSize: 20,
+            fontWeight: '500',
+          },
+          headerTitleAlign: 'center',
+          headerLeft: () => (
+            <View style={{ marginLeft: 12 }}>
+              <IconWithBlur>
+                <DrawerToggleButton tintColor='#fff' />
+              </IconWithBlur>
+            </View>
+          ),
+          headerTitle: ""
+        }} 
+      />
+      <Drawer.Screen name="(tabs)" options={{ headerShown: false }} />
     </Drawer>
   );
 }

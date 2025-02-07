@@ -5,6 +5,9 @@ import { useRouter } from 'expo-router';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Carousel from 'react-native-snap-carousel';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -57,26 +60,26 @@ const Home = () => {
   ];
 
   const renderCarouselItem = ({ item }) => (
-    <View style={tw`bg-white rounded-xl p-6 shadow-md`}>
-      <Text style={tw`text-xl font-bold mb-2`}>{item.title}</Text>
-      <Text style={tw`text-sm text-gray-500 mb-4`}>{item.subtitle}</Text>
+    <BlurView intensity={20} tint="light" style={styles.carouselItem}>
+      <Text style={styles.carouselTitle}>{item.title}</Text>
+      <Text style={styles.carouselSubtitle}>{item.subtitle}</Text>
 
-      <View style={tw`items-center mb-4`}>
-        <View style={tw`w-32 h-32 rounded-full border-4 border-blue-500 items-center justify-center`}>
-          <Text style={tw`text-2xl font-bold`}>{item.value}</Text>
-          <Text style={tw`text-sm text-gray-500`}>{item.title}</Text>
+      <View style={styles.circleContainer}>
+        <View style={styles.circle}>
+          <Text style={styles.circleValue}>{item.value}</Text>
+          <Text style={styles.circleLabel}>{item.title}</Text>
         </View>
       </View>
 
-      <View style={tw`flex-row justify-between`}>
+      <View style={styles.detailsContainer}>
         {item.details.map((detail, index) => (
           <View key={index}>
-            <Text style={tw`text-gray-500`}>{detail.label}</Text>
-            <Text style={tw`font-bold`}>{detail.value}</Text>
+            <Text style={styles.detailLabel}>{detail.label}</Text>
+            <Text style={styles.detailValue}>{detail.value}</Text>
           </View>
         ))}
       </View>
-    </View>
+    </BlurView>
   );
 
   useEffect(() => {
@@ -126,112 +129,164 @@ const Home = () => {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.headerTitle}>Welcome, {userData.firstName} {userData.lastName}</Text>
-      <Text style={styles.headerSubtitle}>Your Fitness Journey starts here!</Text>
+    <LinearGradient
+      colors={['#000000', '#004d00', '#003300']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
+      <ScrollView style={styles.scrollView}>
+        <Text style={styles.welcomeText}>Welcome, {userData.firstName || 'User'}</Text>
+        <Text style={styles.subText}>Let's check your daily stats</Text>
 
-      {/* Carousel */}
-      <View style={styles.carouselContainer}>
-        <Carousel
-          data={carouselData}
-          renderItem={renderCarouselItem}
-          sliderWidth={width - 48}
-          itemWidth={width - 48}
-          onSnapToItem={setActiveSlide}
-          useScrollView={true}
-        />
-        <View style={styles.paginationContainer}>
-          {carouselData.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.paginationDot,
-                activeSlide === index ? styles.activeDot : styles.inactiveDot
-              ]}
-            />
-          ))}
-        </View>
-      </View>
+        {/* New Run Club Card */}
+        <TouchableOpacity style={styles.promoCardContainer}>
+          <BlurView intensity={20} tint="light" style={styles.promoCardBlur} />
+          <View style={styles.promoContent}>
+            <View>
+              <Text style={styles.promoTitle}>Join the Run Club</Text>
+              <Text style={styles.promoSubtitle}>Become part of our growing fitness community for totally free!</Text>
+              <TouchableOpacity style={styles.promoButton}>
+                <Text style={styles.promoButtonText}>See More</Text>
+                <Ionicons name="arrow-forward" size={16} color="#fff" />
+              </TouchableOpacity>
+            </View>
 
-      {/* Steps Card */}
-      <TouchableOpacity onPress={navigateToSteps} style={styles.card}>
-        <Text style={styles.cardTitle}>Steps</Text>
-        <View style={styles.cardRow}>
-          <View style={styles.valueContainer}>
-            <Text style={styles.valueText}>0</Text>
-            <Text style={styles.labelText}>steps</Text>
           </View>
-          <Text style={styles.labelText}>Goal: 10,000 steps</Text>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
 
-      {/* Exercise Card */}
-      <TouchableOpacity onPress={navigateToExercises} style={styles.card}>
-        <Text style={styles.cardTitle}>Exercise</Text>
-        <View style={styles.cardRow}>
-          <View style={styles.valueContainer}>
-            <Text>🔥</Text>
-            <Text style={styles.labelText}>0 cal</Text>
-          </View>
-          <View style={styles.valueContainer}>
-            <Text>⏱️</Text>
-            <Text style={styles.labelText}>00:00 hr</Text>
-          </View>
+        <View style={styles.carouselContainer}>
+          <Carousel
+            data={carouselData}
+            renderItem={renderCarouselItem}
+            sliderWidth={width - 48}
+            itemWidth={width - 48}
+            onSnapToItem={setActiveSlide}
+          />
         </View>
-      </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        {/* Steps Card */}
+        <BlurView intensity={20} tint="light" style={styles.card}>
+          <View style={styles.cardRow}>
+            <Text style={styles.cardTitle}>Steps</Text>
+            <View style={styles.valueContainer}>
+              <Text style={styles.valueText}>0</Text>
+              <Text style={styles.labelText}>steps</Text>
+            </View>
+          </View>
+          <Text style={styles.goalText}>Goal: 10,000 steps</Text>
+        </BlurView>
+
+        {/* Exercise Card */}
+        <BlurView intensity={20} tint="light" style={styles.card}>
+          <View style={styles.cardRow}>
+            <Text style={styles.cardTitle}>Exercise</Text>
+            <View style={styles.valueContainer}>
+              <Text style={styles.valueText}>0</Text>
+              <Text style={styles.labelText}>cal</Text>
+            </View>
+          </View>
+          <Text style={styles.goalText}>Duration: 0:00 hr</Text>
+        </BlurView>
+
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  // Container Styles
   container: {
     flex: 1,
-    backgroundColor: '#f3f4f6', // bg-gray-100
   },
-  contentContainer: {
-    padding: 24, // p-6
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 20,
+    marginTop: 50,
   },
-
-  // Header Styles
-  headerTitle: {
-    fontSize: 22,
+  welcomeText: {
+    fontSize: 24,
     fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 20,
     marginBottom: 8,
     textAlign: 'center',
   },
-  headerSubtitle: {
-    fontSize: 14,
-    marginBottom: 32,
+  subText: {
+    fontSize: 16,
+    color: '#fff',
+    marginBottom: 20,
+    marginBottom: 8,
     textAlign: 'center',
   },
-
-  // Carousel Styles
   carouselContainer: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
-  carouselCard: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+  carouselItem: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 15,
+    padding: 20,
+    marginVertical: 10,
   },
+  card: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 15,
+  },
+  cardRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  valueContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  valueText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginRight: 8,
+  },
+  labelText: {
+    color: '#fff',
+    opacity: 0.7,
+  },
+  goalText: {
+    color: '#fff',
+    opacity: 0.7,
+    marginTop: 5,
+  },
+  logoutButton: {
+    backgroundColor: '#FF6347',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 20,
+  },
+  logoutText: {
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  // Carousel specific styles
   carouselTitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#fff',
     marginBottom: 8,
   },
   carouselSubtitle: {
     fontSize: 14,
-    color: '#6b7280', // text-gray-500
+    color: '#fff',
+    opacity: 0.7,
     marginBottom: 16,
   },
   circleContainer: {
@@ -243,97 +298,79 @@ const styles = StyleSheet.create({
     height: 128,
     borderRadius: 64,
     borderWidth: 4,
-    borderColor: '#3b82f6', // border-blue-500
+    borderColor: '#3b82f6',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   circleValue: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#fff',
   },
   circleLabel: {
     fontSize: 14,
-    color: '#6b7280', // text-gray-500
+    color: '#fff',
+    opacity: 0.7,
   },
   detailsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   detailLabel: {
-    color: '#6b7280', // text-gray-500
+    color: '#fff',
+    opacity: 0.7,
   },
   detailValue: {
     fontWeight: 'bold',
+    color: '#fff',
   },
-  paginationContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 8,
+  promoCardContainer: {
+    marginVertical: 16,
+    borderRadius: 20,
+    overflow: 'hidden',
+    position: 'relative',
   },
-  paginationDot: {
-    height: 8,
-    width: 8,
-    borderRadius: 4,
-    marginHorizontal: 4,
+  promoCardBlur: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
-  activeDot: {
-    backgroundColor: '#3b82f6', // bg-blue-500
+  promoContent: {
+    padding: 24,
+    zIndex: 1,
   },
-  inactiveDot: {
-    backgroundColor: '#d1d5db', // bg-gray-300
-  },
-
-  // Card Styles (Steps & Exercise)
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  cardRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  valueContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  valueText: {
+  promoTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginRight: 8,
+    color: '#fff',
+    marginBottom: 8,
   },
-  labelText: {
-    color: '#6b7280', // text-gray-500
+  promoSubtitle: {
+    fontSize: 16,
+    color: '#fff',
+    opacity: 0.8,
+    marginBottom: 16,
+    lineHeight: 22,
   },
+  promoButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
 
-  // Logout Button
-  logoutButton: {
-    backgroundColor: '#FF6347',
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 16,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 5 },
-    shadowRadius: 10,
-    elevation: 5,
+    gap: 8,
   },
-  logoutText: {
-    color: 'white',
-    textAlign: 'center',
+  promoButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 14,
   },
 });
 

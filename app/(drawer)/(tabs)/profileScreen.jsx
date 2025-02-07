@@ -431,10 +431,10 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: -70,
   },
   scrollView: {
     flex: 1,
+
   },
   // Profile Info Start
   profileSection: {

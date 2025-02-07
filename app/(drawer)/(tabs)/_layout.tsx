@@ -37,18 +37,20 @@ export default function _layout() {
   return (
     <Tabs
       screenOptions={{
+        headerTransparent: true,
         headerStyle: {
           backgroundColor: 'transparent',
-          borderBottomWidth: 0,
-        
         },
         headerTitleStyle: {
           color: '#fff',
+          fontSize: 20,
+          fontWeight: '500',
         },
+        headerTitleAlign: 'center',
         headerLeft: () => (
           <View style={{ marginLeft: 12 }}>
             <IconWithBlur>
-              <DrawerToggleButton tintColor='#000' />
+              <DrawerToggleButton tintColor='#fff' />
             </IconWithBlur>
           </View>
         ),
@@ -59,18 +61,29 @@ export default function _layout() {
           left: 0,
           right: 0,
           elevation: 0,
-          borderTopWidth: 0,
-          height: 60,
-          backdropFilter: 'blur(10px)',
+          borderTopWidth: 1,
+          borderTopColor: 'rgba(255, 255, 255, 0.35)',
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          height: 70,
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          paddingHorizontal: 20,
+          paddingVertical: 10,
         },
         tabBarActiveTintColor: '#fff',
         tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.6)',
         tabBarLabelStyle: {
           fontSize: 12,
+          fontWeight: '700',
         },
       }}
     >
       {/* Tab for Home */}
+
       <Tabs.Screen 
         name="home" 
         options={{
@@ -79,11 +92,6 @@ export default function _layout() {
           ),
           tabBarLabel: 'Home',
           headerTitle: 'City Fit',
-          headerTitleAlign: 'center',
-          headerTitleStyle: {
-            fontSize: 18,
-            fontWeight: 'bold',
-          },
         }} 
       />
       {/* Tab for PlanScreen */}
@@ -114,45 +122,24 @@ export default function _layout() {
         name="profileScreen" 
         options={{
           tabBarIcon: ({ color, size }) => (
-            <AntDesign name="user" size={size} color={color} />
+            <Feather name="user" size={size} color={color} />
           ),
           tabBarLabel: 'Profile',
           headerTitle: 'My Profile',
-          headerTitleAlign: 'center',
-          headerLeft: () => (
-            <View style={{ marginLeft: 12 }}>
-              <IconWithBlur>
-                <DrawerToggleButton tintColor='#fff' />
-              </IconWithBlur>
-            </View>
-          ),
+          headerTitleStyle: {
+            color: '#fff',
+            fontSize: 20,
+            fontWeight: '500',
+          },
           headerRight: () => (
-            <View style={{ 
-              flexDirection: 'row', 
-              gap: 8,
-              marginRight: 12 
-            }}>
+            <TouchableOpacity 
+              style={{ marginRight: 12 }}
+              onPress={() => router.push('/(drawer)/settings')}
+            >
               <IconWithBlur>
-                <TouchableOpacity onPress={() => router.push('../settings')}>
-                  <Ionicons name="settings-outline" size={24} color="#fff" />
-                </TouchableOpacity>
+                <Feather name="settings" size={24} color="#fff" />
               </IconWithBlur>
-              {/* <IconWithBlur>
-                <TouchableOpacity 
-                  onPress={async () => {
-                    try {
-                      await AsyncStorage.removeItem('token');
-                      await AsyncStorage.removeItem('user');
-                      router.replace('/login');
-                    } catch (error) {
-                      console.error('Error logging out:', error);
-                    }
-                  }}
-                >
-                  <Ionicons name="log-out-outline" size={24} color="#fff" />
-                </TouchableOpacity>
-              </IconWithBlur> */}
-            </View>
+            </TouchableOpacity>
           ),
         }} 
       />
