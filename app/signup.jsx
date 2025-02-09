@@ -121,6 +121,7 @@ const Signup = () => {
     return (
       firstName.trim() !== '' &&
       lastName.trim() !== '' &&
+      username.trim() !== '' &&
       emailRegex.test(email) &&
       password.length >= 6 &&
       password === confirmPassword &&
@@ -181,6 +182,7 @@ const Signup = () => {
         </View>
         {/* Name Fields End */}
 
+
         {/* Email Field Start */}
         <View style={styles.inputSection}>
           <View style={styles.labelContainer}>
@@ -198,6 +200,7 @@ const Signup = () => {
         </View>
         {/* Email Field End */}
 
+
         {/* Username Field Start */}
         <View style={styles.inputSection}>
           <View style={styles.labelContainer}>
@@ -213,6 +216,7 @@ const Signup = () => {
           />
         </View>
         {/* Username Field End */}
+
 
         {/* Date of Birth Field Start */}
         <View style={styles.inputSection}>
@@ -251,6 +255,7 @@ const Signup = () => {
           )}
         </View>
         {/* Date of Birth Field End */}
+
 
         {/* Password Field Start */}
         <View style={styles.inputSection}>
@@ -300,6 +305,7 @@ const Signup = () => {
         </View>
         {/* Password Field End */}
 
+
         {/* Terms and Conditions Checkbox Start */}
         <View style={styles.termsContainer}>
           <TouchableOpacity 
@@ -317,6 +323,7 @@ const Signup = () => {
         </View>
         {/* Terms and Conditions Checkbox End */}
 
+
         {/* Sign Up Button Start */}
         <TouchableOpacity 
           style={[
@@ -330,6 +337,7 @@ const Signup = () => {
         </TouchableOpacity>
         {/* Sign Up Button End */}
 
+
         {/* Divider Start */}
         <View style={styles.dividerContainer}>
           <View style={styles.dividerLine} />
@@ -337,6 +345,7 @@ const Signup = () => {
           <View style={styles.dividerLine} />
         </View>
         {/* Divider End */}
+
 
         {/* Integrations Buttons Start */}
         <TouchableOpacity style={styles.integrationButton}>
@@ -352,6 +361,7 @@ const Signup = () => {
           <Text style={styles.integrationButtonText}>Sign up with Google</Text>
         </TouchableOpacity>
         {/* Integrations Buttons End */}
+
 
         {/* Login Prompt Start */}
         <View style={styles.loginPromptContainer}>
@@ -379,6 +389,8 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 0,
   },
+
+  // Header Component Start
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -406,6 +418,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     textShadow: 'rgba(0, 0, 0, 0.8)',
   },
+  // Header Component End
 
   // Fields Container Start
   nameFieldsRow: {

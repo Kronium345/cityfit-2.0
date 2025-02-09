@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, FlatList, Image, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
+import { Ionicons, Feather } from '@expo/vector-icons';
 
 const Exercises = () => {
   const [exercises, setExercises] = useState([]); // All exercises
@@ -84,62 +87,130 @@ const Exercises = () => {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        placeholder="Search"
-        style={styles.searchBar}
-        onChangeText={handleSearch}
-        value={searchTerm}
-      />
-      <FlatList
-        data={searchFilteredExercises} // Display all exercises
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => {
-          console.log("Rendering item:", item);
+      <LinearGradient
+        colors={['#000000', '#004d00', '#003300']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.container}
+      >
+        <View style={styles.contentContainer}>
+          <TextInput
+            placeholder="Search"
+            placeholderTextColor="#rgba(255, 255, 255, 0.6)"
+            style={styles.searchBar}
+            onChangeText={handleSearch}
+            value={searchTerm}
+          />
+          <FlatList
+            data={searchFilteredExercises} // Display all exercises
+            keyExtractor={item => item.id.toString()}
+            renderItem={({ item }) => {
+              console.log("Rendering item:", item);
 
-          // Extract image URL from the Example field
-          const imageUrl = item.fields.Example && item.fields.Example[0] ? item.fields.Example[0].url : null;
-          console.log("Image URL:", imageUrl);  // Check the constructed image URL
+              // Extract image URL from the Example field
+              const imageUrl = item.fields.Example && item.fields.Example[0] ? item.fields.Example[0].url : null;
+              console.log("Image URL:", imageUrl);  // Check the constructed image URL
 
-          return (
-            <TouchableOpacity style={styles.itemContainer} onPress={() => handleSelectExercise(item)}>
-              {imageUrl ? (
-                <Image 
-                  source={{ uri: imageUrl }} 
-                  style={styles.thumbnail} 
-                />
-              ) : (
-                <Text>No Image Available</Text>
-              )}
-              <Text style={styles.itemText}>{item.fields.Exercise}</Text>
-            </TouchableOpacity>
-          );
-        }}
-        contentContainerStyle={styles.listContent}
-      />
-      {/* Pagination buttons */}
-      <View style={styles.pagination}>
-        {page > 0 && (
-          <Button title="Previous" onPress={() => setPage(page - 1)} color="#007AFF" />
-        )}
-        <Button title="More" onPress={() => setPage(page + 1)} color="#007AFF" />
-      </View>
+              return (
+                <TouchableOpacity style={styles.itemContainer} onPress={() => handleSelectExercise(item)}>
+                  {imageUrl ? (
+                    <Image 
+                      source={{ uri: imageUrl }} 
+                      style={styles.thumbnail} 
+                    />
+                  ) : (
+                    <Text>No Image Available</Text>
+                  )}
+                  <Text style={styles.itemText}>{item.fields.Exercise}</Text>
+                </TouchableOpacity>
+              );
+            }}
+            contentContainerStyle={styles.listContent}
+          />
+          {/* Pagination buttons */}
+          <View style={styles.pagination}>
+            {page > 0 && (
+              <Button title="Previous" onPress={() => setPage(page - 1)} color="#007AFF" />
+            )}
+            <Button title="More" onPress={() => setPage(page + 1)} color="#007AFF" />
+          </View>
+        </View>
+      </LinearGradient>
+
+      {/* Add the custom tab bar at the bottom */}
+      <CustomTabBar />
     </View>
+  );
+};
+
+const CustomTabBar = () => {
+  const router = useRouter();
+
+  return (
+    <BlurView
+      intensity={20}
+      tint=""
+      style={styles.tabBar}
+    >
+      <TouchableOpacity 
+        style={styles.tabItem} 
+        onPress={() => router.push('/(drawer)/(tabs)/more')}
+      >
+        <Feather name="more-horizontal" size={25} color="#fff" />
+        <Text style={[styles.tabLabel, styles.activeTab]}>More</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.tabItem} 
+        onPress={() => router.push('/(drawer)/(tabs)/planScreen')}
+      >
+        <Feather name="plus" size={25} color="rgba(255, 255, 255, 0.6)" />
+        <Text style={styles.tabLabel}>Plan</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.tabItem} 
+        onPress={() => router.push('/(drawer)/(tabs)/home')}
+      >
+        <Feather name="home" size={24} color="rgba(255, 255, 255, 0.6)" />
+        <Text style={styles.tabLabel}>Home</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.tabItem} 
+        onPress={() => router.push('/(drawer)/(tabs)/chartScreen')}
+      >
+        <Feather name="bar-chart" size={25} color="rgba(255, 255, 255, 0.6)" />
+        <Text style={styles.tabLabel}>Charts</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.tabItem} 
+        onPress={() => router.push('/(drawer)/(tabs)/profileScreen')}
+      >
+        <Feather name="user" size={25} color="rgba(255, 255, 255, 0.6)" />
+        <Text style={styles.tabLabel}>Profile</Text>
+      </TouchableOpacity>
+    </BlurView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
     paddingTop: 20,
-    backgroundColor: '#fff',
   },
   searchBar: {
     marginHorizontal: 10,
     marginBottom: 10,
     padding: 10,
     fontSize: 16,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 10,
+    color: '#fff',
   },
   listContent: {
     paddingHorizontal: 10,
@@ -149,9 +220,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 10,
     alignItems: 'center',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 8,
     overflow: 'hidden',
+    padding: 10,
   },
   thumbnail: {
     width: 70,
@@ -160,13 +232,45 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 18,
-    color: '#333',
+    color: '#fff',
   },
   pagination: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     marginTop: 20,
+  },
+  
+  tabBar: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 70,
+    elevation: 0,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.35)',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  tabItem: {
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    padding: 5,
+  },
+  tabLabel: {
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  activeTab: {
+    color: '#fff',
   },
 });
 

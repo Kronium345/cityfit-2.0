@@ -237,7 +237,7 @@ const ProfileScreen = () => {
           </View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>{userData.firstName || ''}</Text>
-            <Text style={styles.profileEmail}>{userData.email || ''}<Ionicons name="copy-outline" size={14} color="rgba(255, 255, 255, 0.6)" /></Text>
+            <Text style={styles.profileUsername}>@{userData.username || ''}<Ionicons name="copy-outline" size={14} color="rgba(255, 255, 255, 0.6)" /></Text>
           </View>
         </View>
 
@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 500,
   },
-  profileEmail: {
+  profileUsername: {
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.6)',
     marginTop: 4,

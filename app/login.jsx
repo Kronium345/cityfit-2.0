@@ -70,6 +70,7 @@ const Login = () => {
         </View>
         {/* Header End */}
 
+
         {/* Email Input Start */}
         <View style={styles.inputSection}>
           <View style={styles.labelContainer}>
@@ -86,6 +87,7 @@ const Login = () => {
           />
         </View>
         {/* Email Input End */}
+
 
         {/* Password Input Start */}
         <View style={styles.inputSection}>
@@ -112,6 +114,7 @@ const Login = () => {
         </View>
         {/* Password Input End */}
 
+
         {/* Login Button Start */}
         <TouchableOpacity 
           style={[
@@ -125,11 +128,13 @@ const Login = () => {
         </TouchableOpacity>
         {/* Login Button End */}
 
+
         {/* Forgot Password Link Start */}
         <TouchableOpacity style={styles.forgotPasswordContainer}>
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
         {/* Forgot Password Link End */}
+
 
         {/* Divider Start */}
         <View style={styles.dividerContainer}>
@@ -138,6 +143,7 @@ const Login = () => {
           <View style={styles.dividerLine} />
         </View>
         {/* Divider End */}
+
 
         {/* Social Buttons Start */}
         <TouchableOpacity style={styles.integrationButton}>
@@ -153,6 +159,7 @@ const Login = () => {
           <Text style={styles.integrationButtonText}>Log in with Google</Text>
         </TouchableOpacity>
         {/* Social Buttons End */}
+
 
         {/* Sign Up Prompt Start */}
         <View style={styles.signUpPromptContainer}>
@@ -177,6 +184,7 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 0,
   },
+  // Header Component Start
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -204,6 +212,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     textShadow: 'rgba(0, 0, 0, 0.8)',
   },
+  // Header Component End
 
   // Input Fields Start
   inputSection: {

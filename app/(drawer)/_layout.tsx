@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { DrawerContentScrollView, DrawerItem, DrawerContentComponentProps } from '@react-navigation/drawer'; 
+import { DrawerContentScrollView, DrawerItem, DrawerContentComponentProps } from '@react-navigation/drawer';
 import { Feather, AntDesign, MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { router, usePathname } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
@@ -75,7 +75,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     >
       <View style={[styles.menuItemCard, { backgroundColor: item.color }]}>
         <View style={styles.imageContainer}>
-          <Image 
+          <Image
             source={item.image}
             style={styles.menuImage}
             resizeMode="cover"
@@ -98,14 +98,14 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       try {
         const userJson = await AsyncStorage.getItem('user');
         const token = await AsyncStorage.getItem('token');
-        
+
         if (userJson) {
           const user = JSON.parse(userJson);
           // Fetch latest user data from the server
           const response = await axios.get(`http://localhost:5000/user/${user._id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
-          
+
           setUserData(response.data);
         }
       } catch (error) {
@@ -130,12 +130,17 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       />
       <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
       <View style={styles.drawerContent}>
-
         {/* Profile Component Start */}
         <View style={styles.profileSection}>
+          <View style={styles.profileInfo}>
+            <Text style={styles.profileName}>
+              {userData.firstName || 'User'} {userData.lastName || ''}
+            </Text>
+            <Text style={styles.accountType}>Free Account</Text>
+          </View>
           <View style={styles.profileImageContainer}>
             {userData.avatar ? (
-              <Image 
+              <Image
                 source={{
                   uri: userData.avatar.includes('http')
                     ? userData.avatar
@@ -152,24 +157,30 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
               </View>
             )}
           </View>
-          <Text style={styles.profileName}>
-            {userData.firstName || 'User'}
-          </Text>
-          <TouchableOpacity 
-            style={styles.closeButton}
-            onPress={() => props.navigation.closeDrawer()}
-          >
-            <Feather name="x" size={18} color="white" />
-          </TouchableOpacity>
         </View>
         {/* Profile Component End */}
 
 
-        {/* Header Section */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Menu</Text>
+        {/* Divider Start */}
+        <View style={styles.MenuDividerContainer}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>MENU</Text>
+          <View style={styles.dividerLine} />
         </View>
+        {/* Divider End */}
 
+
+        {/* Close Button Start */}
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => props.navigation.closeDrawer()}
+        >
+          <Feather name="x" size={18} color="white" />
+        </TouchableOpacity>
+        {/* Close Button End */}
+
+
+        {/* Menu Body Start */}
         <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContainer}>
           <View style={styles.menuGrid}>
             {menuItems.map((item, index) => renderMenuItem(item, index))}
@@ -196,7 +207,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
               >
                 <Ionicons name="logo-whatsapp" size={24} color="#fff" />
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 style={styles.socialIcon}
                 onPress={() => Linking.openURL('https://instagram.com/fitnessoneltd')}
@@ -213,6 +224,8 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
             </View>
           </View>
         </DrawerContentScrollView>
+        {/* Menu Body End */}
+        
       </View>
     </View>
   );
@@ -220,8 +233,8 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 
 export default function DrawerLayout() {
   const IconWithBlur = ({ children }) => (
-    <BlurView 
-      intensity={20} 
+    <BlurView
+      intensity={20}
       tint="light"
       style={{
         borderRadius: 12,
@@ -238,8 +251,8 @@ export default function DrawerLayout() {
   );
 
   return (
-    <Drawer 
-      drawerContent={(props) => <CustomDrawerContent {...props} />} 
+    <Drawer
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerShown: false,
         drawerType: 'front',
@@ -251,8 +264,8 @@ export default function DrawerLayout() {
 
       }}
     >
-      <Drawer.Screen 
-        name="stepCounter" 
+      <Drawer.Screen
+        name="stepCounter"
         options={{
           headerShown: true,
           headerTransparent: true,
@@ -273,7 +286,7 @@ export default function DrawerLayout() {
             </View>
           ),
           headerTitle: ""
-        }} 
+        }}
       />
       <Drawer.Screen name="(tabs)" options={{ headerShown: false }} />
     </Drawer>
@@ -300,73 +313,124 @@ const styles = StyleSheet.create({
   drawerContainer: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    position: 'relative',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: 'white',
-  },
   closeButton: {
     position: 'absolute',
-    right: 6,
+    alignSelf: 'center',
     top: 16,
-    width: 28,
-    height: 28,
-    borderRadius: 8,
+    width: 30,
+    height: 30,
+    borderRadius: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 1,
   },
 
   // Profile Component Start
   profileSection: {
-    alignItems: 'center',
     padding: 20,
-  },
-  profileImageContainer: {
-    marginBottom: 10,
-  },
-  profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 3,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  defaultAvatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    justifyContent: 'center',
+    top: 30,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 3,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    position: 'relative',
   },
-  avatarText: {
-    color: '#fff',
-    fontSize: 32,
-    fontWeight: '600',
+  profileInfo: {
+    flex: 1,
+    marginRight: 12,
   },
   profileName: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 22,
+    fontWeight: '600',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
+  },
+  accountType: {
+    color: 'rgba(255, 255, 255, 0.5)',
+    fontSize: 12,
+    marginTop: 2,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 8,
+  },
+  profileImageContainer: {
+    borderRadius: 50,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+  profileImage: {
+    width: 55,
+    height: 55,
+    borderRadius: 50,
+    
+  },
+  defaultAvatar: {
+    width: 55,
+    height: 55,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarText: {
+    color: '#fff',
+    fontSize: 16,
     fontWeight: '600',
   },
   // Profile Component End
+
+  // Divider & Social Component Start
+  socialSection: {
+    paddingVertical: 20,
+    marginTop: 'auto',
+  },
+  MenuDividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 20,
+    marginTop: 20,
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginBottom: 20,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+  },
+  dividerText: {
+    paddingHorizontal: 10,
+    color: 'rgba(255, 255, 255, 0.75)',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  socialIconsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    paddingHorizontal: 16,
+  },
+  socialIcon: {
+    padding: 10,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 0 14px rgba(0, 0, 0, 0.15)',
+  },
+  // Divider & Social Component End
 
 
   menuGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    padding: 10,
   },
   menuItem: {
     width: '48%',
@@ -408,36 +472,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     textAlign: 'center',
   },
-  socialSection: {
-    paddingVertical: 20,
-    marginTop: 'auto',
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 20,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.4)',
-  },
-  dividerText: {
-    paddingHorizontal: 10,
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  socialIconsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    paddingHorizontal: 16,
-  },
-  socialIcon: {
-    padding: 10,
-    borderRadius: 22,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    boxShadow: '0 0 14px rgba(0, 0, 0, 0.15)',
-  },
+
 });

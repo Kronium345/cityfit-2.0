@@ -172,7 +172,7 @@ const GridTerrain = () => {
           <Path
             key={`center-${i}`}
             d={`M ${200 + (i - 30) * 15} 1200 L ${200 + (i - 30) * 45} 0`}
-            stroke="rgba(255,255,255,0.15)"
+            stroke="rgba(255, 255, 255, 0.4)"
             strokeWidth="0.4"
           />
         ))}
@@ -182,7 +182,7 @@ const GridTerrain = () => {
           <Path
             key={`cross-${i}`}
             d={`M -200 ${100 + (i * 8)} L 600 ${100 + (i * 8)}`}
-            stroke="rgba(255,255,255,0.15)"
+            stroke="rgba(255, 255, 255, 0.4)"
             strokeWidth="0.4"
           />
         ))}
