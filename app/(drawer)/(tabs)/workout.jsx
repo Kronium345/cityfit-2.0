@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const screenWidth = Dimensions.get('window').width;
 
-const ChartScreen = () => {
+const workout = () => {
   const [historyData, setHistoryData] = useState([]);
   const { user } = useAuthContext();
 
@@ -52,7 +52,6 @@ const ChartScreen = () => {
       style={styles.container}
     >
       <ScrollView style={[styles.container, { backgroundColor: 'transparent' }]}>
-        <Text style={styles.title}>Exercise History</Text>
 
         {historyData.length ? (
           <View style={styles.historyList}>
@@ -86,16 +85,12 @@ const ChartScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingTop: 30,
+    padding: 10,
     backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#333',
-  },
+  }, 
+
+
   historyList: {
     marginTop: 20,
   },
@@ -133,4 +128,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChartScreen;
+export default workout;

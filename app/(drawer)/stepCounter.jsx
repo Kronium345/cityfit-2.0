@@ -8,7 +8,6 @@ import SVG, { Circle, LinearGradient as SVGGradient, Stop, Defs, RadialGradient,
 import Animated, { useAnimatedProps, useSharedValue, withTiming, useAnimatedStyle, withSpring, interpolate } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-// Installing 'Pedometer' from expo-sensors
 import { Pedometer } from 'expo-sensors';
 
 

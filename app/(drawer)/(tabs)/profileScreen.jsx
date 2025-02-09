@@ -10,6 +10,68 @@ import * as ImagePicker from 'expo-image-picker'; // Expo Image Picker
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay } from 'date-fns';
+import Animated, { 
+  withTiming, 
+  withRepeat, 
+  useAnimatedStyle, 
+  useSharedValue 
+} from 'react-native-reanimated';
+import Svg, { Circle } from 'react-native-svg';
+
+// Blob Blurred Background Start
+const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+
+const BlobBackground = () => {
+  const blob1Animation = useSharedValue(0);
+  const blob2Animation = useSharedValue(0);
+  const blob3Animation = useSharedValue(0);
+
+  useEffect(() => {
+    const animate = (value, duration) => {
+      'worklet';
+      value.value = withRepeat(
+        withTiming(1, { duration }),
+        -1,
+        true
+      );
+    };
+
+    animate(blob1Animation, 15000);
+    animate(blob2Animation, 25000);
+    animate(blob3Animation, 20000);
+  }, []);
+
+  const createBlobStyle = (animation) => {
+    const animatedStyles = useAnimatedStyle(() => ({
+      transform: [
+        { scale: 1 + animation.value * 0.2 },
+        { rotate: `${animation.value * 360}deg` },
+      ],
+      opacity: 0.7 + animation.value * 0.2,
+    }));
+
+    return animatedStyles;
+  };
+
+  return (
+    <View style={StyleSheet.absoluteFill}>
+      <View style={styles.backgroundContainer}>
+        <AnimatedSvg style={[styles.blob, createBlobStyle(blob1Animation)]}>
+          <Circle r={100} cx={100} cy={100} fill="rgba(7, 94, 7, 0.4)" />
+        </AnimatedSvg>
+        <AnimatedSvg style={[styles.blob, styles.blob2, createBlobStyle(blob2Animation)]}>
+          <Circle r={110} cx={110} cy={110} fill="rgba(6, 214, 37, 0.15)" />
+        </AnimatedSvg>
+        <AnimatedSvg style={[styles.blob, styles.blob3, createBlobStyle(blob3Animation)]}>
+          <Circle r={90} cx={90} cy={90} fill="rgba(0, 0, 0, 0.4)" />
+        </AnimatedSvg>
+      </View>
+      <BlurView intensity={70} tint="dark" style={StyleSheet.absoluteFill} />
+    </View>
+  );
+};
+// Blob Blurred Background End
+
 
 const ProfileScreen = () => {
   const [userData, setUserData] = useState({});
@@ -202,12 +264,8 @@ const ProfileScreen = () => {
   };
 
   return (
-    <LinearGradient
-      colors={['#000000', '#004d00', '#003300']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
+    <View style={styles.container}>
+      <BlobBackground />
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -217,7 +275,6 @@ const ProfileScreen = () => {
             {avatar ? (
               <Image
                 source={{
-
                   uri: avatar.includes('http')
                     ? avatar
                     : `http://localhost:5000/${avatar.replace(/\\/g, '/')}`
@@ -344,97 +401,41 @@ const ProfileScreen = () => {
         </View>
         {/* Quick StatData Box End*/}
 
-        {/* Old Daniel's Old Input Fields Code Start*/}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>First Name:</Text>
-          <TextInput
-            style={styles.input}
-            value={userData.firstName || ''}
-            editable={false}
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Last Name:</Text>
-          <TextInput
-            style={styles.input}
-            value={userData.lastName || ''}
-            editable={false}
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email:</Text>
-          <TextInput
-            style={styles.input}
-            value={userData.email || ''}
-            editable={false}
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Weight (kg):</Text>
-          <TextInput
-            style={styles.input}
-            value={weight}
-            editable={editing}
-            onChangeText={setWeight}
-            keyboardType="numeric"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Experience Level:</Text>
-          <Picker
-            selectedValue={experience}
-            onValueChange={(itemValue) => setExperience(itemValue)}
-            enabled={editing}
-            style={styles.input}
-          >
-            <Picker.Item label="Beginner" value="Beginner" />
-            <Picker.Item label="Intermediate" value="Intermediate" />
-            <Picker.Item label="Advanced" value="Advanced" />
-            <Picker.Item label="Pro" value="Pro" />
-            <Picker.Item label="Elite" value="Elite" />
-          </Picker>
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Gender:</Text>
-          <Picker
-            selectedValue={gender}
-            onValueChange={(itemValue) => setGender(itemValue)}
-            enabled={editing}
-            style={styles.input}
-          >
-            <Picker.Item label="Male" value="Male" />
-            <Picker.Item label="Female" value="Female" />
-            <Picker.Item label="Other" value="Other" />
-          </Picker>
-        </View>
-
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={editing ? handleSave : handleEditToggle}
-        >
-          <Text style={styles.editButtonText}>
-            {editing ? 'Save Changes' : 'Edit Profile'}
-          </Text>
-        </TouchableOpacity>
-        {/* Old Daniel's Old Input Fields Code End*/}
       </ScrollView>
-    </LinearGradient>
-
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'rgba(0, 26, 0, 1)',
   },
   scrollView: {
     flex: 1,
   },
+  // Blob Blurred Background Start
+  backgroundContainer: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: 'hidden',
+  },
+  blob: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    left: '10%',
+    top: '20%',
+  },
+  blob2: {
+    left: '60%',
+    top: '45%',
+  },
+  blob3: {
+    left: '30%',
+    top: '70%',
+  },
+  // Blob Blurred Background End
+
   // Profile Info Start
   profileSection: {
     alignItems: 'center',
@@ -557,7 +558,6 @@ const styles = StyleSheet.create({
   },
   premiumPromoContent: {
     flexDirection: 'row',
-
     justifyContent: 'space-between',
     alignItems: 'center',
   },
@@ -696,37 +696,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   // Calendar Quick Stat End
-
-  // Input Container Start
-  inputContainer: {
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 18,
-    marginBottom: 5,
-    fontWeight: 'bold',
-  },
-  input: {
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  editButton: {
-    backgroundColor: 'rgba(102, 102, 102, 0.4)',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  editButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  // Edit Button End
 });
-
 
 export default ProfileScreen;

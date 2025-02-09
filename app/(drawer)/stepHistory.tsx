@@ -1,10 +1,71 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import Animated, {
+  withTiming,
+  withRepeat,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence
+} from 'react-native-reanimated';
+import Svg, { Circle } from 'react-native-svg';
+
+// Blob Blurred Background Start
+const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+
+const BlobBackground = () => {
+  const blob1Animation = useSharedValue(0);
+  const blob2Animation = useSharedValue(0);
+  const blob3Animation = useSharedValue(0);
+
+  useEffect(() => {
+    const animate = (value: any, duration: number) => {
+      'worklet';
+      value.value = withRepeat(
+        withTiming(1, { duration }),
+        -1,
+        true
+      );
+    };
+
+    animate(blob1Animation, 8000);
+    animate(blob2Animation, 12000);
+    animate(blob3Animation, 10000);
+  }, []);
+
+  const createBlobStyle = (animation: any) => {
+    'worklet';
+    const animatedStyles = useAnimatedStyle(() => ({
+      transform: [
+        { translateX: animation.value * 40 - 20 },
+        { translateY: animation.value * 40 - 20 }
+      ]
+    }));
+    return animatedStyles;
+  };
+
+  return (
+    <View style={StyleSheet.absoluteFill}>
+      <View style={styles.backgroundContainer}>
+        <AnimatedSvg style={[styles.blob, createBlobStyle(blob1Animation)]}>
+          <Circle r={100} cx={100} cy={100} fill="rgba(7, 94, 7, 0.4)" />
+        </AnimatedSvg>
+        <AnimatedSvg style={[styles.blob, styles.blob2, createBlobStyle(blob2Animation)]}>
+          <Circle r={110} cx={110} cy={110} fill="rgba(6, 214, 37, 0.15)" />
+        </AnimatedSvg>
+        <AnimatedSvg style={[styles.blob, styles.blob3, createBlobStyle(blob3Animation)]}>
+          <Circle r={90} cx={90} cy={90} fill="rgba(0, 0, 0, 0.4)" />
+        </AnimatedSvg>
+      </View>
+      <BlurView intensity={70} tint="dark" style={StyleSheet.absoluteFill} />
+    </View>
+  );
+};
+// Blob Blurred Background End
+
 
 // Function to get month name
 const getMonthName = (month: number): string => {
@@ -31,7 +92,7 @@ const isToday = (dateStr: string): boolean => {
 // Function to process history data and determine status
 const processHistoryData = (rawData: any[]) => {
   const today = formatDate(new Date());
-  
+
   return rawData.map(entry => ({
     ...entry,
     current: entry.date === today,
@@ -46,7 +107,7 @@ const StepHistory = () => {
   // Raw history data (simulating database records)
   const rawHistoryData = useMemo(() => {
     const today = formatDate(new Date());
-    
+
     return [
       { date: today, steps: 69 }, // Today's date
       { date: 'February, 07', steps: 11484 },
@@ -70,16 +131,12 @@ const StepHistory = () => {
   }, [rawHistoryData]);
 
   return (
-    <LinearGradient
-      colors={['#000000', '#004d00', '#003300']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
+    <View style={styles.container}>
+      <BlobBackground />
       {/* Fixed Header */}
       <View style={styles.header}>
-        <TouchableOpacity 
-          onPress={() => router.back()} 
+        <TouchableOpacity
+          onPress={() => router.back()}
           style={styles.backButton}
         >
           <BlurView intensity={20} tint="light" style={styles.blurContainer}>
@@ -94,23 +151,23 @@ const StepHistory = () => {
       <View style={styles.fixedContent}>
         {/* Tabs */}
         <View style={styles.tabContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.tab, activeTab === 'Streaks' && styles.activeTab]}
             onPress={() => setActiveTab('Streaks')}
           >
             <Text style={[
-              styles.tabText, 
+              styles.tabText,
               activeTab === 'Streaks' && styles.activeTabText
             ]}>
               Streaks
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[styles.tab, activeTab === 'Awards' && styles.activeTab]}
             onPress={() => setActiveTab('Awards')}
           >
             <Text style={[
-              styles.tabText, 
+              styles.tabText,
               activeTab === 'Awards' && styles.activeTabText
             ]}>
               Awards
@@ -137,7 +194,7 @@ const StepHistory = () => {
       </View>
 
       {/* Scrollable History Section */}
-      <ScrollView 
+      <ScrollView
         style={styles.historyScrollContainer}
         showsVerticalScrollIndicator={false}
       >
@@ -149,17 +206,17 @@ const StepHistory = () => {
             </View>
             <View style={styles.historyRight}>
               <Text style={styles.dateText}>{item.date}</Text>
-              <Ionicons 
-                name={item.completed ? "checkmark-circle" : "time"} 
-                size={20} 
-                color={item.completed ? "#4CAF50" : "#757575"} 
+              <Ionicons
+                name={item.completed ? "checkmark-circle" : "time"}
+                size={20}
+                color={item.completed ? "#4CAF50" : "#757575"}
               />
             </View>
           </View>
         ))}
       </ScrollView>
       <StatusBar style="light" />
-    </LinearGradient>
+    </View>
   );
 };
 
@@ -167,7 +224,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 12,
+    backgroundColor: 'rgba(0, 26, 0, 1)',
   },
+  // Blob Blurred Background Start
+  backgroundContainer: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: 'hidden',
+  },
+  blob: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    left: '10%',
+    top: '20%',
+  },
+  blob2: {
+    left: '60%',
+    top: '45%',
+  },
+  blob3: {
+    left: '30%',
+    top: '70%',
+  },
+  // Blob Blurred Background End
+
   header: {
     flexDirection: 'row',
     alignItems: 'center',

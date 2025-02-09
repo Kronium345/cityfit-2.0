@@ -8,6 +8,66 @@ import axios from 'axios';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Picker } from '@react-native-picker/picker';
+import Svg, { Circle } from 'react-native-svg';
+import Animated, { 
+  withTiming, 
+  withRepeat, 
+  useAnimatedStyle, 
+  useSharedValue 
+} from 'react-native-reanimated';
+
+// Blob Blurred Background Start
+const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+
+const BlobBackground = () => {
+  const blob1Animation = useSharedValue(0);
+  const blob2Animation = useSharedValue(0);
+  const blob3Animation = useSharedValue(0);
+
+  useEffect(() => {
+    const animate = (value: any, duration: number) => {
+      'worklet';
+      value.value = withRepeat(
+        withTiming(1, { duration }),
+        -1,
+        true
+      );
+    };
+
+    animate(blob1Animation, 8000);
+    animate(blob2Animation, 12000);
+    animate(blob3Animation, 10000);
+  }, []);
+
+  const createBlobStyle = (animation: any) => {
+    'worklet';
+    const animatedStyles = useAnimatedStyle(() => ({
+      transform: [
+        { translateX: animation.value * 40 - 20 },
+        { translateY: animation.value * 40 - 20 }
+      ]
+    }));
+    return animatedStyles;
+  };
+
+  return (
+    <View style={StyleSheet.absoluteFill}>
+      <View style={styles.backgroundContainer}>
+        <AnimatedSvg style={[styles.blob, createBlobStyle(blob1Animation)]}>
+          <Circle r={100} cx={100} cy={100} fill="rgba(7, 94, 7, 0.4)" />
+        </AnimatedSvg>
+        <AnimatedSvg style={[styles.blob, styles.blob2, createBlobStyle(blob2Animation)]}>
+          <Circle r={110} cx={110} cy={110} fill="rgba(6, 214, 37, 0.15)" />
+        </AnimatedSvg>
+        <AnimatedSvg style={[styles.blob, styles.blob3, createBlobStyle(blob3Animation)]}>
+          <Circle r={90} cx={90} cy={90} fill="rgba(0, 0, 0, 0.4)" />
+        </AnimatedSvg>
+      </View>
+      <BlurView intensity={70} tint="dark" style={StyleSheet.absoluteFill} />
+    </View>
+  );
+};
+// Blob Blurred Background End
 
 
 const Profile = () => {
@@ -179,12 +239,8 @@ const Profile = () => {
   };
 
   return (
-    <LinearGradient
-      colors={['#000000', '#004d00', '#003300']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
+    <View style={styles.container}>
+      <BlobBackground />
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => router.push('/(drawer)/settings')}
@@ -224,15 +280,7 @@ const Profile = () => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            style={styles.editProfileButton}
-            onPress={() => setEditing(!editing)}
-          >
-            <Text style={styles.editProfileText}>
-              {editing ? "Cancel" : "Edit Profile"}
-            </Text>
-          </TouchableOpacity>
-
+          <TouchableOpacity style={styles.editProfileButton} onPress={() => setEditing(!editing)}></TouchableOpacity>
 
           {/* Input Fields Start */}
           <View style={styles.form}>
@@ -273,7 +321,10 @@ const Profile = () => {
 
             {/* Gender Start */}
             <View style={styles.inputSection}>
-              <Text style={styles.label}>Gender</Text>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>Gender</Text>
+                <Text style={styles.required}>*</Text>
+              </View>
               <Picker
                 selectedValue={userData.gender}
                 onValueChange={(itemValue) => setUserData(prev => ({ ...prev, gender: itemValue }))}
@@ -391,7 +442,7 @@ const Profile = () => {
       )}
       {/* Loading Overlay End */}
 
-    </LinearGradient>
+    </View>
   );
 };
 
@@ -399,7 +450,30 @@ const Profile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'rgba(0, 26, 0, 1)',
   },
+  // Blob Blurred Background Start
+  backgroundContainer: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: 'hidden',
+  },
+  blob: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    left: '10%',
+    top: '20%',
+  },
+  blob2: {
+    left: '60%',
+    top: '45%',
+  },
+  blob3: {
+    left: '30%',
+    top: '70%',
+  },
+  // Blob Blurred Background End
+  
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -519,6 +593,13 @@ const styles = StyleSheet.create({
   verifiedIcon: {
     marginLeft: 8,
   },
+  picker: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    color: '#fff',
+    borderRadius: 8,
+    padding: 4,
+  },
+
   // Input Fields End
 
   // Save Button Start
@@ -581,16 +662,6 @@ const styles = StyleSheet.create({
   },
   // Loading Overlay End
 
-  // Picker Styling
-  picker: {
-    backgroundColor: '#2E2E2E', // Darker background for visibility
-    color: '#fff', // White text for contrast
-    borderRadius: 8, // Rounded corners
-    borderWidth: 1, 
-    borderColor: '#ccc', // Light border for better separation
-    padding: 10, // Spacing for better readability
-  },
-  
 });
 
 export default Profile;

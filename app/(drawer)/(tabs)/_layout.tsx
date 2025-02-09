@@ -90,7 +90,7 @@ export default function _layout() {
           name="more"
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Feather name="more-horizontal" size={size} color={color} />
+              <Feather name="grid" size={size} color={color} />
             ),
             tabBarLabel: 'More',
             headerTitle: 'More',
@@ -134,18 +134,18 @@ export default function _layout() {
         {/* Home Tab End */}
 
 
-        {/* ChartScreen Tab Start */}
+        {/* Workout Tab Start */}
         <Tabs.Screen
-          name="chartScreen"
+          name="workout"
           options={{
             tabBarIcon: ({ color, size }) => (
               <Feather name="bar-chart" size={size} color={color} />
             ),
-            tabBarLabel: 'Charts',
-            headerTitle: 'Charts',
+            tabBarLabel: 'Workout',
+            headerTitle: 'Workout',
           }}
         />
-        {/* ChartScreen Tab End */}
+        {/* Workout Tab End */}
 
 
         {/* ProfileScreen Tab Start */}
@@ -168,13 +168,14 @@ export default function _layout() {
                 onPress={() => router.push('/(drawer)/settings')}
               >
                 <IconWithBlur>
-                  <Feather name="settings" size={20} color="#fff" />
+                  <Ionicons name="settings-outline" size={20} color="#fff" />
                 </IconWithBlur>
               </TouchableOpacity>
+
             ),
           }}
         />
-        {/* ProfileScreen Tab End */}        
+        {/* ProfileScreen Tab End */}
       </Tabs>
 
       {/* More Modal Start */}
@@ -189,32 +190,61 @@ export default function _layout() {
           onPress={() => setIsMoreModalVisible(false)}
         >
           <View style={styles.modalContainer}>
-            {/* Exercise Page Button Start */}
-            <TouchableOpacity
-              style={styles.modalItem}
-              onPress={() => {
-                router.push('/exercises');
-                setIsMoreModalVisible(false);
-              }}
-            >
-              <Feather name="activity" size={24} color="#fff" style={{ marginRight: 15 }} />
-              <Text style={{ color: '#fff', fontSize: 16 }}>Exercises</Text>
-            </TouchableOpacity>
-            {/* Exercise Page Button End */}
+            <View style={styles.modalGrid}>
+              {/* Exercise Page Start */}
+              <TouchableOpacity
+                style={styles.modalItem}
+                onPress={() => {
+                  router.push('/exercises');
+                  setIsMoreModalVisible(false);
+                }}
+              >
+                <Ionicons name="fitness" size={24} color="#fff" style={styles.modalIcon} />
+                <Text style={styles.modalText}>Exercises</Text>
+              </TouchableOpacity>
+              {/* Exercise Page End */}
 
-            {/* Mental Page Button Start */}
-            <TouchableOpacity
-              style={styles.modalItem}
-              onPress={() => {
-                router.push('/mental');
-                setIsMoreModalVisible(false);
-              }}
-            >
-              <Feather name="activity" size={24} color="#fff" style={{ marginRight: 15 }} />
-              <Text style={{ color: '#fff', fontSize: 16 }}>Mental</Text>
-            </TouchableOpacity>
-            {/* Mental Page Button End */}
+              {/* Mental Button Start */}
+              <TouchableOpacity
+                style={styles.modalItem}
+                onPress={() => {
+                  router.push('/mental');
+                  setIsMoreModalVisible(false);
+                }}
+              >
+                <Feather name="activity" size={24} color="#fff" style={styles.modalIcon} />
+                <Text style={styles.modalText}>Mental</Text>
+              </TouchableOpacity>
+              {/* Mental Button End */}
+
+              {/* Food Tracker Button Start */}
+              <TouchableOpacity
+                style={styles.modalItem}
+                onPress={() => {
+                  router.push('/foodScreen');
+                  setIsMoreModalVisible(false);
+                }}
+              >
+                <Ionicons name="fast-food-outline" size={24} color="#fff" style={styles.modalIcon} />
+                <Text style={styles.modalText}>Food Tracker</Text>
+              </TouchableOpacity>
+              {/* Food Tracker Button End */}
+
+              {/* Settings Button Start */}
+              <TouchableOpacity
+                style={styles.modalItem}
+                onPress={() => {
+                  router.push('/settings');
+                  setIsMoreModalVisible(false);
+                }}
+              >
+                <Ionicons name="settings-outline" size={24} color="#fff" style={styles.modalIcon} />
+                <Text style={styles.modalText}>Settings</Text>
+              </TouchableOpacity>
+              {/* Settings Button End */}
+            </View>
           </View>
+          
         </TouchableOpacity>
       </Modal>
       {/* More Modal End */}
@@ -225,6 +255,7 @@ export default function _layout() {
 
 
 const styles = StyleSheet.create({
+  // More Modal Start
   modalContainer: {
     position: 'absolute',
     bottom: 70,
@@ -233,16 +264,36 @@ const styles = StyleSheet.create({
     backgroundColor: "none",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 20,
+    padding: 10,
+    marginHorizontal: 10,
+    backdropFilter: 'blur(4px)',
+  },
+  modalGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 14,
   },
   modalItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    borderBottomWidth: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+    width: '48%',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    boxShadow: '0 0 6px rgba(0, 0, 0, 0.4)',
     borderRadius: 12,
-    backdropFilter: 'blur(2px)',
+    padding: 15,
+    alignItems: 'center',
   },
+  modalIcon: {
+    marginBottom: 8,
+  },
+  modalText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.65)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 10,
+    fontWeight: '500',
+  },
+  // More Modal End
 });
+

@@ -8,8 +8,70 @@ import Carousel from 'react-native-snap-carousel';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
+import Animated, {
+  withTiming,
+  withRepeat,
+  useAnimatedStyle,
+  useSharedValue
+} from 'react-native-reanimated';
+import Svg, { Circle } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
+
+// Blob Blurred Background Start
+const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+
+const BlobBackground = () => {
+  const blob1Animation = useSharedValue(0);
+  const blob2Animation = useSharedValue(0);
+  const blob3Animation = useSharedValue(0);
+
+  useEffect(() => {
+    const animate = (value, duration) => {
+      'worklet';
+      value.value = withRepeat(
+        withTiming(1, { duration }),
+        -1,
+        true
+      );
+    };
+
+    animate(blob1Animation, 15000);
+    animate(blob2Animation, 25000);
+    animate(blob3Animation, 20000);
+  }, []);
+
+  const createBlobStyle = (animation) => {
+    const animatedStyles = useAnimatedStyle(() => ({
+      transform: [
+        { scale: 1 + animation.value * 0.2 },
+        { rotate: `${animation.value * 360}deg` },
+      ],
+      opacity: 0.7 + animation.value * 0.2,
+    }));
+
+    return animatedStyles;
+  };
+
+  return (
+    <View style={StyleSheet.absoluteFill}>
+      <View style={styles.backgroundContainer}>
+        <AnimatedSvg style={[styles.blob, createBlobStyle(blob1Animation)]}>
+          <Circle r={100} cx={100} cy={100} fill="rgba(7, 94, 7, 0.4)" />
+        </AnimatedSvg>
+        <AnimatedSvg style={[styles.blob, styles.blob2, createBlobStyle(blob2Animation)]}>
+          <Circle r={110} cx={110} cy={110} fill="rgba(6, 214, 37, 0.15)" />
+        </AnimatedSvg>
+        <AnimatedSvg style={[styles.blob, styles.blob3, createBlobStyle(blob3Animation)]}>
+          <Circle r={90} cx={90} cy={90} fill="rgba(0, 0, 0, 0.4)" />
+        </AnimatedSvg>
+      </View>
+      <BlurView intensity={70} tint="dark" style={StyleSheet.absoluteFill} />
+    </View>
+  );
+};
+// Blob Blurred Background End
+
 
 const Home = () => {
   const [userData, setUserData] = useState({});
@@ -129,12 +191,8 @@ const Home = () => {
   };
 
   return (
-    <LinearGradient
-      colors={['#000000', '#004d00', '#003300']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
+    <View style={styles.container}>
+      <BlobBackground />
       <ScrollView style={styles.scrollView}>
         <Text style={styles.welcomeText}>Welcome, {userData.firstName || 'User'}</Text>
         <Text style={styles.subText}>Let's check your daily stats</Text>
@@ -193,19 +251,42 @@ const Home = () => {
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'rgba(0, 26, 0, 1)',
   },
   scrollView: {
     flex: 1,
     paddingHorizontal: 20,
     marginTop: 50,
   },
+  // Blob Blurred Background Start
+  backgroundContainer: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: 'hidden',
+  },
+  blob: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    left: '10%',
+    top: '20%',
+  },
+  blob2: {
+    left: '60%',
+    top: '45%',
+  },
+  blob3: {
+    left: '30%',
+    top: '70%',
+  },
+  // Blob Blurred Background End
+
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',

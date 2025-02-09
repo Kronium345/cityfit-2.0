@@ -5,8 +5,68 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import DateTimePickerAndroid from '@react-native-community/datetimepicker';
-import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import Animated, {
+  withTiming,
+  withRepeat,
+  useAnimatedStyle,
+  useSharedValue
+} from 'react-native-reanimated';
+import Svg, { Circle } from 'react-native-svg';
+
+// Blob Blurred Background Start
+const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+
+const BlobBackground = () => {
+  const blob1Animation = useSharedValue(0);
+  const blob2Animation = useSharedValue(0);
+  const blob3Animation = useSharedValue(0);
+
+  useEffect(() => {
+    const animate = (value: any, duration: number) => {
+      'worklet';
+      value.value = withRepeat(
+        withTiming(1, { duration }),
+        -1,
+        true
+      );
+    };
+
+    animate(blob1Animation, 8000);
+    animate(blob2Animation, 12000);
+    animate(blob3Animation, 10000);
+  }, []);
+
+  const createBlobStyle = (animation: any) => {
+    'worklet';
+    const animatedStyles = useAnimatedStyle(() => ({
+      transform: [
+        { translateX: animation.value * 40 - 20 },
+        { translateY: animation.value * 40 - 20 }
+      ]
+    }));
+    return animatedStyles;
+  };
+
+  return (
+    <View style={StyleSheet.absoluteFill}>
+      <View style={styles.backgroundContainer}>
+        <AnimatedSvg style={[styles.blob, createBlobStyle(blob1Animation)]}>
+          <Circle r={100} cx={100} cy={100} fill="rgba(7, 94, 7, 0.4)" />
+        </AnimatedSvg>
+        <AnimatedSvg style={[styles.blob, styles.blob2, createBlobStyle(blob2Animation)]}>
+          <Circle r={110} cx={110} cy={110} fill="rgba(6, 214, 37, 0.15)" />
+        </AnimatedSvg>
+        <AnimatedSvg style={[styles.blob, styles.blob3, createBlobStyle(blob3Animation)]}>
+          <Circle r={90} cx={90} cy={90} fill="rgba(0, 0, 0, 0.4)" />
+        </AnimatedSvg>
+      </View>
+      <BlurView intensity={70} tint="dark" style={StyleSheet.absoluteFill} />
+    </View>
+  );
+};
+// Blob Blurred Background End
+
 
 const AccountSettings = () => {
   const router = useRouter();
@@ -16,7 +76,7 @@ const AccountSettings = () => {
     dateOfBirth: '',
     gender: '',
   });
-  
+
   const [expandedSection, setExpandedSection] = useState('');
   const [newUsername, setNewUsername] = useState('');
   const [newEmail, setNewEmail] = useState('');
@@ -107,12 +167,8 @@ const AccountSettings = () => {
   };
 
   return (
-    <LinearGradient
-      colors={['#000000', '#004d00', '#003300']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
+    <View style={styles.container}>
+      <BlobBackground />
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <BlurView intensity={20} tint="light" style={styles.blurContainer}>
@@ -332,14 +388,14 @@ const AccountSettings = () => {
                   value={currentPassword}
                   onChangeText={setCurrentPassword}
                 />
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.eyeIcon}
                   onPress={() => setShowCurrentPassword(!showCurrentPassword)}
                 >
-                  <Ionicons 
-                    name={showCurrentPassword ? "eye-outline" : "eye-off-outline"} 
-                    size={20} 
-                    color="rgba(255, 255, 255, 0.65)" 
+                  <Ionicons
+                    name={showCurrentPassword ? "eye-outline" : "eye-off-outline"}
+                    size={20}
+                    color="rgba(255, 255, 255, 0.65)"
                   />
                 </TouchableOpacity>
               </View>
@@ -353,14 +409,14 @@ const AccountSettings = () => {
                   value={newPassword}
                   onChangeText={setNewPassword}
                 />
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.eyeIcon}
                   onPress={() => setShowNewPassword(!showNewPassword)}
                 >
-                  <Ionicons 
-                    name={showNewPassword ? "eye-outline" : "eye-off-outline"} 
-                    size={20} 
-                    color="rgba(255, 255, 255, 0.65)" 
+                  <Ionicons
+                    name={showNewPassword ? "eye-outline" : "eye-off-outline"}
+                    size={20}
+                    color="rgba(255, 255, 255, 0.65)"
                   />
                 </TouchableOpacity>
               </View>
@@ -374,14 +430,14 @@ const AccountSettings = () => {
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
                 />
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.eyeIcon}
                   onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  <Ionicons 
-                    name={showConfirmPassword ? "eye-outline" : "eye-off-outline"} 
-                    size={20} 
-                    color="rgba(255, 255, 255, 0.65)" 
+                  <Ionicons
+                    name={showConfirmPassword ? "eye-outline" : "eye-off-outline"}
+                    size={20}
+                    color="rgba(255, 255, 255, 0.65)"
                   />
                 </TouchableOpacity>
               </View>
@@ -407,14 +463,37 @@ const AccountSettings = () => {
         {/* Delete Account Tab End */}
 
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'rgba(0, 26, 0, 1)',
   },
+  // Blob Blurred Background Start
+  backgroundContainer: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: 'hidden',
+  },
+  blob: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    left: '10%',
+    top: '20%',
+  },
+  blob2: {
+    left: '60%',
+    top: '45%',
+  },
+  blob3: {
+    left: '30%',
+    top: '70%',
+  },
+  // Blob Blurred Background End
+
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -452,7 +531,7 @@ const styles = StyleSheet.create({
     height: 24,
     color: '#fff',
   },
-  
+
   // General Setting Tab Start
   settingsTab: {
     marginBottom: 16,
