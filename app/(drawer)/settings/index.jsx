@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Settings = () => {
   const router = useRouter();
@@ -12,6 +13,16 @@ const Settings = () => {
   const handleThemeSelect = (theme) => {
     setSelectedTheme(theme);
     // Here you can add logic to actually change the theme
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('user');
+      router.replace('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
   };
 
   const renderSettingItem = (icon, title, route, isPro = false) => (
@@ -160,6 +171,7 @@ const Settings = () => {
         {/* Logout Button Start */}
         <TouchableOpacity
           style={styles.logoutButton}
+          onPress={handleLogout}
         >
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
@@ -186,7 +198,6 @@ const styles = StyleSheet.create({
     left: 16,
     zIndex: 1,
   },
-
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',

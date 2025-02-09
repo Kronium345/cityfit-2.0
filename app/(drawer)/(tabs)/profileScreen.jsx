@@ -434,7 +434,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-
   },
   // Profile Info Start
   profileSection: {
@@ -483,7 +482,6 @@ const styles = StyleSheet.create({
   profileEmail: {
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.6)',
-
     marginTop: 4,
     display: 'flex',
     flexDirection: 'row',

@@ -163,7 +163,7 @@ const GridTerrain = () => {
 
 // Main Component Start
 const StepCounter = () => {
-  const [dailyGoal, setDailyGoal] = useState(3600);
+  const [dailyGoal, setDailyGoal] = useState(4500);
   const [isGoalModalVisible, setIsGoalModalVisible] = useState(false);
 
   return (
@@ -1214,7 +1214,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-
   shareContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

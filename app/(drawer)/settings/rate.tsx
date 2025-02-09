@@ -1,9 +1,20 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
+import Animated, { useAnimatedStyle, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
+
+// Add this helper function at the top of the file, outside the component
+const getCountryFlag = (countryCode: string) => {
+  const OFFSET = 127397;
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => char.charCodeAt(0) + OFFSET);
+  return String.fromCodePoint(...codePoints);
+};
 
 export default function RateScreen() {
   const router = useRouter();
@@ -13,21 +24,66 @@ export default function RateScreen() {
     router.push('/(drawer)/settings');
   };
 
-  const renderStars = () => {
-    return Array(5).fill(0).map((_, index) => (
-      <TouchableOpacity 
-        key={index}
-        onPress={() => setSelectedRating(index + 1)}
-      >
-        <Ionicons 
-          name={index < selectedRating ? "star" : "star-outline"} 
-          size={34} 
-          color="#fff" 
-          style={styles.star}
-        />
-      </TouchableOpacity>
-    ));
-  };
+  const testimonials = [
+    {
+      id: 1,
+      name: 'James Wilson',
+      image: 'https://randomuser.me/api/portraits/men/32.jpg',
+      countryCode: 'GB',
+      location: 'UK',
+      date: 'March 15, 2024',
+      subject: 'Great Workout Companion!',
+      review: "This app has completely transformed my fitness journey. The interface is intuitive and the workout plans are well-structured.",
+      rating: 3
+    },
+    {
+      id: 2,
+      name: 'Sarah Miller',
+      image: 'https://randomuser.me/api/portraits/women/44.jpg',
+      countryCode: 'GB',
+      location: 'UK',
+      date: 'March 14, 2024',
+      subject: 'Perfect for Beginners',
+      review: "As someone new to fitness, this app has been incredibly helpful. The guidance and progress tracking are excellent.",
+      rating: 1
+    },
+    {
+      id: 3,
+      name: 'David Chen',
+      image: 'https://randomuser.me/api/portraits/men/67.jpg',
+      countryCode: 'GB',
+      location: 'UK',
+      date: 'March 13, 2024',
+      subject: 'Excellent Progress Tracking',
+      review: "The way this app tracks and visualizes progress is outstanding. It keeps me motivated and focused on my goals.",
+      rating: 4
+    },
+    {
+      id: 4,
+      name: 'Emma Thompson',
+      image: 'https://randomuser.me/api/portraits/women/28.jpg',
+      countryCode: 'GB',
+      location: 'UK',
+      date: 'March 12, 2024',
+      subject: 'Love the Workout Variety',
+      review: "There's such a great variety of workouts available. I never get bored and always feel challenged in the best way.",
+      rating: 5
+    }
+  ];
+
+  const arrowAnimation = useAnimatedStyle(() => ({
+    transform: [{
+      translateY: withRepeat(
+        withSequence(
+          withTiming(0, { duration: 0 }),
+          withTiming(10, { duration: 1000 }),
+          withTiming(0, { duration: 1000 })
+        ),
+        -1,
+        true
+      ),
+    }],
+  }));
 
   return (
     <LinearGradient
@@ -36,49 +92,110 @@ export default function RateScreen() {
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-          <BlurView intensity={20} tint="light" style={styles.blurContainer}>
-            <Ionicons name="chevron-back" size={24} color="#fff" />
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+            <BlurView intensity={20} tint="light" style={styles.blurContainer}>
+              <Ionicons name="chevron-back" size={24} color="#fff" />
 
-          </BlurView>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Rate Fitness One</Text>
-      </View>
-
-      <View style={styles.ratingSection}>
-        <Text style={styles.ratingTitle}>Tell us about your experience</Text>
-        <View style={styles.starsContainer}>
-          {renderStars()}
-        </View>
-        <TouchableOpacity 
-          style={[styles.sendButton, selectedRating === 0 && styles.sendButtonDisabled]}
-          disabled={selectedRating === 0}
-        >
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.storeSection}>
-        <Text style={styles.storeTitle}>Review our app on the store</Text>
-        <Text style={styles.storeSubtitle}>Your review helps others discover our app</Text>
-        
-        <View style={styles.storeButtons}>
-          <TouchableOpacity style={styles.storeButton}>
-            <View style={styles.storeBadgeContainer}>
-              <Ionicons name="logo-apple" size={24} color="#fff" />
-              <Text style={styles.storeBadgeText}>App Store</Text>
-            </View>
+            </BlurView>
           </TouchableOpacity>
+          <Text style={styles.headerTitle}>Rate Fitness One</Text>
+        </View>
+
+
+        {/* Testimonial Section Start */}
+        <View style={styles.testimonialSection}>
+          <Text style={styles.testimonialTitle}>What others are saying</Text>
+          <ScrollView 
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.testimonialCarousel}
+          >
+            {testimonials.map((testimonial) => (
+              <View key={testimonial.id} style={styles.reviewCard}>
+                <View style={styles.reviewHeader}>
+                  <View style={styles.reviewerInfo}>
+                    <Image 
+                      source={{ uri: testimonial.image }}
+                      style={styles.profilePic}
+                    />
+                    <View>
+                      <Text style={styles.reviewerName}>{testimonial.name}</Text>
+                      <View style={styles.locationContainer}>
+                        <Text style={styles.flagEmoji}>
+                          {getCountryFlag(testimonial.countryCode)}
+                        </Text>
+                        <Text style={styles.reviewDate}>
+                          {testimonial.location} • {testimonial.date}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                <Text style={styles.reviewSubject}>{testimonial.subject}</Text>
+                <Text style={styles.reviewBody}>{testimonial.review}</Text>
+                <View style={styles.reviewStars}>
+                  {Array(testimonial.rating).fill(0).map((_, index) => (
+                    <Ionicons 
+                      key={index}
+                      name="star" 
+                      size={16} 
+                      color="#fff" 
+                      style={styles.reviewStar}
+                    />
+                  ))}
+                </View>
+              </View>
+            ))}
+          </ScrollView>
+
+          <View style={styles.messageContainer}>
+            <Text style={styles.messageText}>
+              Join many of the people within our community who have shared their experiences with the Fitness One app!{'\n\n'}
+              Your feedback is valuable for us to make this app the best it can be.
+            </Text>
+          </View>
+
+          <View style={styles.arrowsContainer}>
+            <Animated.View style={[styles.arrow, arrowAnimation]}>
+              <Ionicons name="chevron-down" size={30} color="#fff" />
+            </Animated.View>
+            <Animated.View style={[styles.arrow, arrowAnimation]}>
+              <Ionicons name="chevron-down" size={30} color="#fff" />
+            </Animated.View>
+            <Animated.View style={[styles.arrow, arrowAnimation]}>
+              <Ionicons name="chevron-down" size={30} color="#fff" />
+            </Animated.View>
+          </View>
+        </View>
+        {/* Testimonial Section End */}
+
+
+        {/* Store Rating Component Start */}
+        <View style={styles.storeSection}>
+          <Text style={styles.storeTitle}>Review our app on the store</Text>
+          <Text style={styles.storeSubtitle}>Your review helps others discover our app</Text>
           
-          <TouchableOpacity style={styles.storeButton}>
-            <View style={styles.storeBadgeContainer}>
-              <Ionicons name="logo-google-playstore" size={24} color="#fff" />
-              <Text style={styles.storeBadgeText}>Play Store</Text>
-            </View>
-          </TouchableOpacity>
+          <View style={styles.storeButtons}>
+            <TouchableOpacity style={styles.storeButton}>
+              <View style={styles.storeBadgeContainer}>
+                <Ionicons name="logo-apple" size={24} color="#fff" />
+                <Text style={styles.storeBadgeText}>App Store</Text>
+              </View>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.storeButton}>
+              <View style={styles.storeBadgeContainer}>
+                <Ionicons name="logo-google-playstore" size={24} color="#fff" />
+                <Text style={styles.storeBadgeText}>Play Store</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+        {/* Store Rating Component End */}
+
+      </ScrollView>
     </LinearGradient>
   );
 }
@@ -115,41 +232,120 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
-  ratingSection: {
-    alignItems: 'center',
-    marginTop: 50,
+  scrollView: {
+    flex: 1,
   },
-  ratingTitle: {
-    fontSize: 18,
+
+  // Testimonial Section Start
+  testimonialSection: {
+    marginTop: 40,
+    paddingBottom: 24,
+  },
+  testimonialTitle: {
+    fontSize: 20,
     color: '#fff',
+    fontWeight: '600',
     marginBottom: 20,
+    paddingHorizontal: 20,
   },
-  starsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 30,
+  testimonialCarousel: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  reviewCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+    borderRadius: 16,
+    padding: 16,
+    marginRight: 16,
+    width: 300,
   },
   star: {
     marginHorizontal: 8,
   },
-  sendButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
-    borderRadius: 12,
-    padding: 14,
+  reviewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  reviewerInfo: {
+    flexDirection: 'row',
     alignItems: 'center',
-    width: '80%',
   },
-  sendButtonDisabled: {
-    opacity: 0.5,
+  profilePic: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
   },
-  sendButtonText: {
+  reviewerName: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '500',
   },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+  },
+  reviewDate: {
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 12,
+  },
+  reviewSubject: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  reviewBody: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  reviewStars: {
+    flexDirection: 'row',
+  },
+  reviewStar: {
+    marginRight: 4,
+  },
+  flagEmoji: {
+    fontSize: 14,
+    marginRight: 4,
+  },
+  // Testimonial Section End
+
+  // Message Box Start
+  messageContainer: {
+    marginHorizontal: 20,
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+    overflow: 'hidden',
+  },
+  messageText: {
+    color: '#fff',
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
+    opacity: 0.9,
+  },
+  arrowsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 8,
+  },
+  arrow: {
+    opacity: 0.8,
+  },
+  // Message Box End
+
+  // Store Rating Component Start
   storeSection: {
-    marginTop: 60,
     paddingHorizontal: 20,
   },
   storeTitle: {
@@ -189,4 +385,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  // Store Rating Component En
+
 });

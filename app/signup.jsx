@@ -9,6 +9,9 @@ import axios from 'axios';
 import { useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
+import { Ionicons } from '@expo/vector-icons';
 
 const Signup = () => {
   const [firstName, setFirstName] = useState('');
@@ -86,7 +89,7 @@ const Signup = () => {
         lastName,
         email,
         password,
-        dob,
+        dob, 
         username: username || undefined,
       });
 
@@ -127,236 +130,479 @@ const Signup = () => {
   };
 
   return (
-    <ScrollView style={tw`flex-1 bg-black p-6`}>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Icon name="arrow-left" size={20} color="#FFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Sign up</Text>
-      </View>
-
-      {/* Name Fields Row */}
-      <View style={tw`flex-row gap-4 mb-4`}>
-        <View style={tw`flex-1`}>
-          <TextInput
-            style={tw`bg-gray-800 text-white p-4 rounded-md`}
-            placeholder="First name"
-            placeholderTextColor="#666"
-            value={firstName}
-            onChangeText={setFirstName}
-          />
+    <LinearGradient
+      colors={['#000000', '#004d00', '#003300']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <BlurView intensity={20} tint="light" style={styles.blurContainer}>
+              <Ionicons name="chevron-back" size={24} color="#fff" />
+            </BlurView>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Sign Up</Text>
         </View>
-        <View style={tw`flex-1`}>
-          <TextInput
-            style={tw`bg-gray-800 text-white p-4 rounded-md`}
-            placeholder="Last name"
-            placeholderTextColor="#666"
-            value={lastName}
-            onChangeText={setLastName}
-          />
-        </View>
-      </View>
 
-      <TextInput
-        style={tw`bg-gray-800 text-white p-4 rounded-md mb-4`}
-        placeholder="Email"
-        placeholderTextColor="#666"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-
-      <TextInput
-        style={tw`bg-gray-800 text-white p-4 rounded-md mb-4`}
-        placeholder="Username (optional)"
-        placeholderTextColor="#666"
-        value={username}
-        onChangeText={setUsername}
-      />
-
-      <View style={tw`mb-4`}>
-        <Text style={tw`text-white mb-2`}>Date of Birth</Text>
-        {Platform.OS === 'web' ? (
-          <DatePicker
-            selected={dob}
-            onChange={(date) => setDob(date)}
-            dateFormat="yyyy/MM/dd"
-            maxDate={new Date()}
-            showMonthDropdown
-            showYearDropdown
-          />
-        ) : (
-          <>
-            <TouchableOpacity 
-              style={tw`bg-gray-800 p-4 rounded-md flex-row justify-between items-center`}
-              onPress={() => setShow(true)}
-            >
-              <Text style={tw`text-white`}>{dob.toLocaleDateString()}</Text>
-              <Icon name="calendar" size={20} color="#666" />
-            </TouchableOpacity>
-            {show && (
-              <DateTimePicker
-                value={dob}
-                mode="date"
-                display="default"
-                onChange={onChange}
-                maximumDate={new Date()}
+        {/* Name Fields Start */}
+        <View style={styles.nameFieldsRow}>
+          <View style={styles.nameFieldContainer}>
+            <View style={styles.inputSection}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>First Name</Text>
+                <Text style={styles.required}>*</Text>
+              </View>
+              <TextInput
+                style={styles.input}
+                placeholder="First name"
+                placeholderTextColor="rgba(255, 255, 255, 0.45)"
+                value={firstName}
+                onChangeText={setFirstName}
               />
-            )}
-          </>
-        )}
-      </View>
-
-      <View style={tw`mb-4`}>
-        <TextInput
-          style={tw`bg-gray-800 text-white p-4 rounded-md`}
-          placeholder="Password (minimum 6 characters)"
-          placeholderTextColor="#666"
-          secureTextEntry={!showPassword}
-          value={password}
-          onChangeText={setPassword}
-        />
-        <TouchableOpacity 
-          style={tw`absolute right-4 top-4`}
-          onPress={() => setShowPassword(!showPassword)}
-        >
-          <Icon name={showPassword ? "eye" : "eye-slash"} size={20} color="#666" />
-        </TouchableOpacity>
-      </View>
-
-      <View style={tw`mb-4`}>
-        <TextInput
-          style={tw`bg-gray-800 text-white p-4 rounded-md`}
-          placeholder="Confirm password"
-          placeholderTextColor="#666"
-          secureTextEntry={!showConfirmPassword}
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-        />
-        <TouchableOpacity 
-          style={tw`absolute right-4 top-4`}
-          onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-        >
-          <Icon name={showConfirmPassword ? "eye" : "eye-slash"} size={20} color="#666" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Terms and Conditions Checkbox */}
-      <View style={tw`flex-row items-start mb-6`}>
-        <TouchableOpacity 
-          style={tw`mr-2 mt-1`}
-          onPress={() => setAcceptedTerms(!acceptedTerms)}
-        >
-          <View style={[
-            tw`w-4 h-4 border border-gray-700 rounded-sm`,
-            acceptedTerms && tw`bg-blue-500 border-blue-500`
-          ]}>
-            {acceptedTerms && <Icon name="check" size={12} color="#FFF" style={tw`m-auto`} />}
+            </View>
           </View>
+          <View style={styles.nameFieldContainer}>
+            <View style={styles.inputSection}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>Last Name</Text>
+                <Text style={styles.required}>*</Text>
+              </View>
+              <TextInput
+                style={styles.input}
+                placeholder="Last name"
+                placeholderTextColor="rgba(255, 255, 255, 0.45)"
+                value={lastName}
+                onChangeText={setLastName}
+              />
+            </View>
+          </View>
+        </View>
+        {/* Name Fields End */}
+
+        {/* Email Field Start */}
+        <View style={styles.inputSection}>
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Email</Text>
+            <Text style={styles.required}>*</Text>
+          </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="rgba(255, 255, 255, 0.45)"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+        </View>
+        {/* Email Field End */}
+
+        {/* Username Field Start */}
+        <View style={styles.inputSection}>
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Username</Text>
+            <Text style={styles.required}>*</Text>
+          </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            placeholderTextColor="rgba(255, 255, 255, 0.45)"
+            value={username}
+            onChangeText={setUsername}
+          />
+        </View>
+        {/* Username Field End */}
+
+        {/* Date of Birth Field Start */}
+        <View style={styles.inputSection}>
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Date of Birth</Text>
+            <Text style={styles.required}>*</Text>
+          </View>
+          {Platform.OS === 'web' ? (
+            <DatePicker
+              selected={dob}
+              onChange={(date) => setDob(date)}
+              dateFormat="yyyy/MM/dd"
+              maxDate={new Date()}
+              showMonthDropdown
+              showYearDropdown
+            />
+          ) : (
+            <>
+              <TouchableOpacity 
+                style={styles.dobButton}
+                onPress={() => setShow(true)}
+              >
+                <Text style={styles.dobButtonText}>{dob.toLocaleDateString()}</Text>
+                <Icon name="calendar" size={20} color="rgba(255, 255, 255, 0.45)" />
+              </TouchableOpacity>
+              {show && (
+                <DateTimePicker
+                  value={dob}
+                  mode="date"
+                  display="default"
+                  onChange={onChange}
+                  maximumDate={new Date()}
+                />
+              )}
+            </>
+          )}
+        </View>
+        {/* Date of Birth Field End */}
+
+        {/* Password Field Start */}
+        <View style={styles.inputSection}>
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Password</Text>
+            <Text style={styles.required}>*</Text>
+          </View>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={[styles.input, styles.passwordInput]}
+              placeholder="Password (minimum 6 characters)"
+              placeholderTextColor="rgba(255, 255, 255, 0.45)"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity 
+              style={styles.eyeIcon}
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              <Icon name={showPassword ? "eye" : "eye-slash"} size={20} color="rgba(255, 255, 255, 0.45)" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.inputSection}>
+          <View style={styles.labelContainer}>
+            <Text style={styles.label}>Confirm Password</Text>
+            <Text style={styles.required}>*</Text>
+          </View>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={[styles.input, styles.passwordInput]}
+              placeholder="Confirm password"
+              placeholderTextColor="rgba(255, 255, 255, 0.45)"
+              secureTextEntry={!showConfirmPassword}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+            <TouchableOpacity 
+              style={styles.eyeIcon}
+              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              <Icon name={showConfirmPassword ? "eye" : "eye-slash"} size={20} color="rgba(255, 255, 255, 0.45)" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        {/* Password Field End */}
+
+        {/* Terms and Conditions Checkbox Start */}
+        <View style={styles.termsContainer}>
+          <TouchableOpacity 
+            style={styles.checkboxContainer}
+            onPress={() => setAcceptedTerms(!acceptedTerms)}
+          >
+            <View style={[styles.checkbox, acceptedTerms && styles.checkboxChecked]}>
+              {acceptedTerms && <Icon name="check" size={12} color="#000" style={styles.checkIcon} />}
+            </View>
+          </TouchableOpacity>
+          <Text style={styles.termsText}>
+            I accept the <Text style={styles.termsLink}>terms & conditions</Text> and the{' '}
+            <Text style={styles.termsLink}>privacy policy</Text>
+          </Text>
+        </View>
+        {/* Terms and Conditions Checkbox End */}
+
+        {/* Sign Up Button Start */}
+        <TouchableOpacity 
+          style={[
+            styles.signUpButton,
+            isFormValid() ? styles.signUpButtonActive : styles.signUpButtonInactive
+          ]}
+          onPress={handleSignUp}
+          disabled={!isFormValid()}
+        >
+          <Text style={styles.signUpButtonText}>Sign Up</Text>
         </TouchableOpacity>
-        <Text style={tw`text-gray-400 text-sm flex-1`}>
-          I accept the <Text style={tw`text-blue-500`}>terms & conditions</Text> and the{' '}
-          <Text style={tw`text-blue-500`}>privacy policy</Text>
-        </Text>
-      </View>
+        {/* Sign Up Button End */}
 
-      <TouchableOpacity 
-        style={[
-          styles.signUpButton,
-          isFormValid() ? styles.signUpButtonActive : styles.signUpButtonInactive
-        ]}
-        onPress={handleSignUp}
-        disabled={!isFormValid()}
-      >
-        <Text style={styles.signUpButtonText}>Sign Up</Text>
-      </TouchableOpacity>
+        {/* Divider Start */}
+        <View style={styles.dividerContainer}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>OR</Text>
+          <View style={styles.dividerLine} />
+        </View>
+        {/* Divider End */}
 
-      {/* Updated Social Sign Up Buttons */}
-      <TouchableOpacity style={styles.socialButton}>
-        <Icon name="apple" size={20} color="#FFF" style={tw`mr-2`} />
-        <Text style={styles.socialButtonText}>Sign up with Apple</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={[styles.socialButton, tw`mb-6`]}>
-        <Image 
-          source={require('../assets/images/logo-img/logo-google.png')}
-          style={styles.socialIcon}
-        />
-        <Text style={styles.socialButtonText}>Sign up with Google</Text>
-      </TouchableOpacity>
-
-      <View style={tw`flex-row justify-center items-center`}>
-        <Text style={tw`text-gray-400`}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => router.push('/login')}>
-          <Text style={tw`text-blue-500`}>Log in</Text>
+        {/* Integrations Buttons Start */}
+        <TouchableOpacity style={styles.integrationButton}>
+          <Icon name="apple" size={20} color="#FFFFFF" style={styles.integrationIcon}/>
+          <Text style={styles.integrationButtonText}>Sign up with Apple</Text>
         </TouchableOpacity>
-      </View>
-    </ScrollView>
+
+        <TouchableOpacity style={[styles.integrationButton, styles.latterIntegrationButton]}>
+          <Image 
+            source={require('../assets/images/logo-img/logo-google.png')}
+            style={styles.integrationIcon}
+          />
+          <Text style={styles.integrationButtonText}>Sign up with Google</Text>
+        </TouchableOpacity>
+        {/* Integrations Buttons End */}
+
+        {/* Login Prompt Start */}
+        <View style={styles.loginPromptContainer}>
+          <Text style={styles.loginPromptText}>Already have an account? </Text>
+          <TouchableOpacity onPress={() => router.push('/login')}>
+            <Text style={styles.loginLink}>Log in</Text>
+          </TouchableOpacity>
+        </View>
+        {/* Login Prompt End */}
+
+      </ScrollView>
+    </LinearGradient>
+
   );
 };
 
 export default Signup;
 
 const styles = StyleSheet.create({
-  socialButton: {
-    backgroundColor: '#1c1c1e',
-    borderColor: '#2c2c2e',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 8,
-    marginBottom: 12,
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+    padding: 16,
+    paddingTop: 0,
+  },
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  socialButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '500',
-    marginLeft: 8,
-  },
-  socialIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 8,
-  },
-  signUpButton: {
-    padding: 10,
-    borderRadius: 12,
-    marginBottom: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  signUpButtonActive: {
-    backgroundColor: '#3B82F6',
-  },
-  signUpButtonInactive: {
-    backgroundColor: '#9CA3AF',
-  },
-  signUpButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingTop: 20,
+    paddingBottom: 10,
     position: 'relative',
     marginBottom: 24,
   },
   backButton: {
     position: 'absolute',
-    left: 16,
+    left: 0,
     zIndex: 1,
   },
-  headerText: {
-    color: '#FFFFFF',
-    fontSize: 16,
+  blurContainer: {
+    borderRadius: 14,
+    overflow: 'hidden',
+    paddingVertical: 8,
+    paddingLeft: 8,
+    paddingRight: 10,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+    textShadow: 'rgba(0, 0, 0, 0.8)',
+  },
+
+  // Fields Container Start
+  nameFieldsRow: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  nameFieldContainer: {
     flex: 1,
+  },
+  inputSection: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+    borderRadius: 12,
+    marginBottom: 16,
+    paddingTop: 6,
+    paddingBottom: 10,
+    paddingHorizontal: 16,
+  },
+  labelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
+  label: {
+    color: '#fff',
+    fontSize: 12,
+    opacity: 0.6,
+    letterSpacing: 0.65,
+  },
+  required: {
+    color: '#ff4444',
+    marginLeft: 4,
+    fontSize: 14,
+  },
+  input: {
+    color: '#fff',
+    fontSize: 16,
+    padding: 0,
+  },
+  dobContainer: {
+    marginBottom: 16,
+  },
+  dobLabel: {
+    color: 'white',
+    marginBottom: 8,
+  },
+  dobButton: {
+    backgroundColor: '#1f2937',
+    padding: 16,
+    borderRadius: 6,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dobButtonText: {
+    color: 'white',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  passwordInput: {
+    flex: 1,
+    paddingRight: 40,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 0,
+    bottom: 8,
+    padding: 4,
+    height: '100%',
+    justifyContent: 'center',
+  },
+  // Fields Container End
+
+  // Terms and Conditions Start
+  termsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: 24,
+  },
+  checkboxContainer: {
+    marginRight: 8,
+  },
+  checkbox: {
+    width: 16,
+    height: 16,
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxChecked: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#FFFFFF',
+  },
+  checkIcon: {
+  },
+  termsText: {
+    color: '#9CA3AF',
+    fontSize: 14,
+    flex: 1,
+    textShadow: '0 0 6px rgba(0, 0, 0, 0.35)',
+  },
+  termsLink: {
+    color: '#FFF',
+  },
+  // Terms and Conditions End
+
+  // Sign Up Button Start
+  signUpButton: {
+    padding: 10,
+    borderRadius: 12,
+    marginBottom: 12,
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.25)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  signUpButtonActive: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+  },
+  signUpButtonInactive: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  signUpButtonText: {
+    color: '#000000',
+    textShadow: '0 0 6px rgba(0, 0, 0, 0.3)',
+    fontSize: 16,
+    fontWeight: '600',
     textAlign: 'center',
   },
-});
+  // Sign Up Button End
 
+  // Divider Start
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 6,
+    marginBottom: 16,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  dividerText: {
+    color: '#fff',
+    paddingHorizontal: 12,
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  // Divider End
+
+  // Integrations Start
+  integrationButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.25)',
+    borderRadius: 12,
+    padding: 10,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  integrationButtonText: {
+    color: '#FFFFFF',
+    textShadow: '0 0 6px rgba(0, 0, 0, 0.6)',
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 8,
+  },
+  integrationIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
+  },
+  latterIntegrationButton: {
+    marginBottom: 24,
+  },
+  // Integrations End
+
+  // Login Prompt Start
+  loginPromptContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loginPromptText: {
+    color: '#9CA3AF',
+    textShadow: '0 0 6px rgba(0, 0, 0, 0.35)',
+  },
+  loginLink: {
+    color: '#FFFFFF',
+  },
+  // Login Prompt End
+});

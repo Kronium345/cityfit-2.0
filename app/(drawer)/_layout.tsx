@@ -9,10 +9,17 @@ import { Linking } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { DrawerToggleButton } from '@react-navigation/drawer';
 import { LinearGradient } from 'expo-linear-gradient';
+import axios from 'axios';
 
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const pathname = usePathname();
+  const [userData, setUserData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    avatar: ''
+  });
 
   const menuItems = [
     {
@@ -86,6 +93,29 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     // Implement the logic to handle app review
   };
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userJson = await AsyncStorage.getItem('user');
+        const token = await AsyncStorage.getItem('token');
+        
+        if (userJson) {
+          const user = JSON.parse(userJson);
+          // Fetch latest user data from the server
+          const response = await axios.get(`http://localhost:5000/user/${user._id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          
+          setUserData(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   return (
     <View style={styles.drawerWrapper}>
       <LinearGradient
@@ -100,15 +130,44 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       />
       <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
       <View style={styles.drawerContent}>
-        {/* Header Section */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Menu</Text>
+
+        {/* Profile Component Start */}
+        <View style={styles.profileSection}>
+          <View style={styles.profileImageContainer}>
+            {userData.avatar ? (
+              <Image 
+                source={{
+                  uri: userData.avatar.includes('http')
+                    ? userData.avatar
+                    : `http://localhost:5000/${userData.avatar.replace(/\\/g, '/')}`
+                }}
+                style={styles.profileImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={styles.defaultAvatar}>
+                <Text style={styles.avatarText}>
+                  {userData.firstName ? userData.firstName[0].toUpperCase() : '?'}
+                </Text>
+              </View>
+            )}
+          </View>
+          <Text style={styles.profileName}>
+            {userData.firstName || 'User'}
+          </Text>
           <TouchableOpacity 
             style={styles.closeButton}
             onPress={() => props.navigation.closeDrawer()}
           >
             <Feather name="x" size={18} color="white" />
           </TouchableOpacity>
+        </View>
+        {/* Profile Component End */}
+
+
+        {/* Header Section */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Menu</Text>
         </View>
 
         <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContainer}>
@@ -247,8 +306,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 16,
     position: 'relative',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
   },
   headerTitle: {
     fontSize: 20,
@@ -266,6 +323,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  // Profile Component Start
+  profileSection: {
+    alignItems: 'center',
+    padding: 20,
+  },
+  profileImageContainer: {
+    marginBottom: 10,
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 3,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  defaultAvatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  avatarText: {
+    color: '#fff',
+    fontSize: 32,
+    fontWeight: '600',
+  },
+  profileName: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  // Profile Component End
+
+
   menuGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
