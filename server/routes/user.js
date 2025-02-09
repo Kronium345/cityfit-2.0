@@ -122,4 +122,16 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Update user profile
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { firstName, lastName, weight, experienceLevel } = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(id, { firstName, lastName, weight, experienceLevel }, { new: true });
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 export default router;

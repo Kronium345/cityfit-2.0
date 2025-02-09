@@ -7,6 +7,8 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Picker } from '@react-native-picker/picker';
+
 
 const Profile = () => {
   const router = useRouter();
@@ -17,6 +19,9 @@ const Profile = () => {
   const [link, setLink] = useState('');
   const [avatar, setAvatar] = useState('');
   const [loadingImage, setLoadingImage] = useState(false);
+  // Adding Editing State
+  const [editing, setEditing] = useState(false);
+
 
   const [userData, setUserData] = useState({
     name: '',
@@ -25,6 +30,7 @@ const Profile = () => {
     email: '',
     bio: '',
     avatar: '',
+    gender: ''
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -145,6 +151,8 @@ const Profile = () => {
             lastName: userData.name.split(' ')[1] || '',
             weight: userData.weight,
             bio: userData.bio,
+            experienceLevel: userData.experienceLevel,
+            gender: userData.gender,
           },
           {
             headers: { Authorization: `Bearer ${token}` }
@@ -152,6 +160,7 @@ const Profile = () => {
         );
 
         setIsSaving(false);
+        setEditing(false); // Disable edit mode after saving
         setShowSuccess(true);
 
         // Hide success message after 3 seconds
@@ -215,6 +224,16 @@ const Profile = () => {
             </TouchableOpacity>
           </View>
 
+          <TouchableOpacity
+            style={styles.editProfileButton}
+            onPress={() => setEditing(!editing)}
+          >
+            <Text style={styles.editProfileText}>
+              {editing ? "Cancel" : "Edit Profile"}
+            </Text>
+          </TouchableOpacity>
+
+
           {/* Input Fields Start */}
           <View style={styles.form}>
             {/* Name Start */}
@@ -229,6 +248,7 @@ const Profile = () => {
                 onChangeText={(text) => setUserData(prev => ({ ...prev, name: text }))}
                 placeholder="Your full name"
                 placeholderTextColor="rgba(255, 255, 255, 0.45)"
+                editable={editing}
               />
             </View>
             {/* Name End */}
@@ -246,9 +266,29 @@ const Profile = () => {
                 placeholder="Your weight"
                 placeholderTextColor="rgba(255, 255, 255, 0.45)"
                 keyboardType="numeric"
+                editable={editing}
               />
             </View>
             {/* Weight End */}
+
+            {/* Gender Start */}
+            <View style={styles.inputSection}>
+              <Text style={styles.label}>Gender</Text>
+              <Picker
+                selectedValue={userData.gender}
+                onValueChange={(itemValue) => setUserData(prev => ({ ...prev, gender: itemValue }))}
+                enabled={editing}
+                style={styles.picker}
+                dropdownIconColor="#fff"  // Makes the dropdown icon white
+                mode="dropdown"
+              >
+                <Picker.Item label="Male" value="Male" />
+                <Picker.Item label="Female" value="Female" />
+                <Picker.Item label="Other" value="Other" />
+              </Picker>
+            </View>
+            {/* Gender End */}
+
 
             {/* Experience Level Start */}
             <View style={styles.inputSection}>
@@ -256,15 +296,22 @@ const Profile = () => {
                 <Text style={styles.label}>Experience Level</Text>
                 <Text style={styles.required}>*</Text>
               </View>
-              <TextInput
-                style={styles.input}
-                value={userData.experienceLevel}
-                onChangeText={(text) => setUserData(prev => ({ ...prev, experienceLevel: text }))}
-                placeholder="Level"
-                placeholderTextColor="rgba(255, 255, 255, 0.45)"
-                keyboardType="numeric"
-              />
+              <Picker
+                selectedValue={userData.experienceLevel}
+                onValueChange={(itemValue) => setUserData(prev => ({ ...prev, experienceLevel: itemValue }))}
+                enabled={editing}
+                style={styles.picker}
+                dropdownIconColor="#fff"  // Makes the dropdown icon white
+                mode="dropdown" // Ensures a better dropdown display on Android
+              >
+                <Picker.Item label="Beginner" value="Beginner" />
+                <Picker.Item label="Intermediate" value="Intermediate" />
+                <Picker.Item label="Advanced" value="Advanced" />
+                <Picker.Item label="Pro" value="Pro" />
+                <Picker.Item label="Elite" value="Elite" />
+              </Picker>
             </View>
+
             {/* Experience Level End */}
 
             {/* Email Start */}
@@ -298,6 +345,7 @@ const Profile = () => {
                 placeholder="Add a description"
                 placeholderTextColor="rgba(255, 255, 255, 0.45)"
                 multiline
+                // editable={editing}
               />
             </View>
             {/* Description End */}
@@ -306,8 +354,14 @@ const Profile = () => {
 
 
           {/* Save Button Start */}
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>Save Changes</Text>
+          {/* Edit Profile / Save Button */}
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={() => setEditing(!editing)}
+          >
+            <Text style={styles.saveButtonText}>
+              {editing ? "Save Changes" : "Edit Profile"}
+            </Text>
           </TouchableOpacity>
           {/* Save Button End */}
 
@@ -526,6 +580,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   // Loading Overlay End
+
+  // Picker Styling
+  picker: {
+    backgroundColor: '#2E2E2E', // Darker background for visibility
+    color: '#fff', // White text for contrast
+    borderRadius: 8, // Rounded corners
+    borderWidth: 1, 
+    borderColor: '#ccc', // Light border for better separation
+    padding: 10, // Spacing for better readability
+  },
+  
 });
 
 export default Profile;

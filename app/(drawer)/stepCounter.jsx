@@ -8,6 +8,9 @@ import SVG, { Circle, LinearGradient as SVGGradient, Stop, Defs, RadialGradient,
 import Animated, { useAnimatedProps, useSharedValue, withTiming, useAnimatedStyle, withSpring, interpolate } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+// Installing 'Pedometer' from expo-sensors
+import { Pedometer } from 'expo-sensors';
+
 
 // IconWithBlur Component
 const IconWithBlur = ({ children }) => (
@@ -29,19 +32,48 @@ const IconWithBlur = ({ children }) => (
 );
 
 // Progress Ring Component
-const StepRingProgress = ({ radius = 150, strokeWidth = 8, progress = 0.7, dailyGoal }) => {
+const StepRingProgress = ({ radius = 150, strokeWidth = 8, progress = 0.7, dailyGoal, stepCount }) => {
   const fill = useSharedValue(0);
   const innerRadius = radius - strokeWidth / 2;
   const circumference = 2 * Math.PI * innerRadius;
+  const [isTracking, setIsTracking] = useState(false);
+
 
   React.useEffect(() => {
-    fill.value = withTiming(progress, { duration: 1500 });
-  }, [progress]);
+    fill.value = withTiming(stepCount / dailyGoal, { duration: 1500 });
+  }, [stepCount / dailyGoal]);
 
   const AnimatedCircle = Animated.createAnimatedComponent(Circle);
   const animatedProps = useAnimatedProps(() => ({
     strokeDasharray: [circumference * fill.value, circumference]
   }));
+
+  // UseEffect created to incorporate Pedometer API
+  useEffect(() => {
+    // Start tracking steps
+    const startTracking = async () => {
+      const { isAvailable } = await Pedometer.isAvailableAsync();
+      if (isAvailable) {
+        const stepSubscription = Pedometer.watchStepCount((result) => {
+          setStepCount(result.steps);
+        });
+        setIsTracking(true);
+  
+        // Clean up the subscription when component is unmounted
+        return () => stepSubscription.remove();
+      }
+    };
+  
+    startTracking();
+  
+    // Cleanup function when the component is unmounted
+    return () => {
+      if (isTracking) {
+        Pedometer.stopWatching();
+      }
+    };
+  }, []);
+  
 
   return (
     <View style={{ width: radius * 2, height: radius * 2, alignSelf: "center" }}>
@@ -89,7 +121,7 @@ const StepRingProgress = ({ radius = 150, strokeWidth = 8, progress = 0.7, daily
 
       {/* Main Circle Center text */}
       <View style={[styles.textOverlay, { top: '37%' }]}>
-        <Text style={styles.stepsText}>71</Text>
+        <Text style={styles.stepsText}>{stepCount}</Text>
       </View>
 
       {/* Main Circle Bottom text */}
@@ -164,6 +196,8 @@ const GridTerrain = () => {
 // Main Component Start
 const StepCounter = () => {
   const [dailyGoal, setDailyGoal] = useState(4500);
+    // UseStates for step counts for tracking
+    const [stepCount, setStepCount] = useState(0);
   const [isGoalModalVisible, setIsGoalModalVisible] = useState(false);
 
   return (
@@ -188,14 +222,14 @@ const StepCounter = () => {
         <View style={styles.content}>
           <StepRingProgress 
             radius={150} 
-            progress={0.7} 
             dailyGoal={dailyGoal}
+            stepCount={stepCount}
           />
 
           {/* Quick Stats Row */}
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>71</Text>
+              <Text style={styles.statValue}>{stepCount.toLocaleString()}</Text>
               <Text style={styles.statLabel}>Steps Today</Text>
             </View>
             <View style={styles.statItem}>

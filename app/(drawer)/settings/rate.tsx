@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
@@ -178,14 +178,14 @@ export default function RateScreen() {
           <Text style={styles.storeSubtitle}>Your review helps others discover our app</Text>
           
           <View style={styles.storeButtons}>
-            <TouchableOpacity style={styles.storeButton}>
+            <TouchableOpacity style={styles.storeButton} onPress={() => Linking.openURL('https://apps.apple.com/gb/app/cityfit/id6502287676')}>
               <View style={styles.storeBadgeContainer}>
                 <Ionicons name="logo-apple" size={24} color="#fff" />
                 <Text style={styles.storeBadgeText}>App Store</Text>
               </View>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.storeButton}>
+            <TouchableOpacity style={styles.storeButton} onPress={() => Linking.openURL('https://play.google.com/store/apps/details?id=com.cityfit.android&hl=en_GB')}>
               <View style={styles.storeBadgeContainer}>
                 <Ionicons name="logo-google-playstore" size={24} color="#fff" />
                 <Text style={styles.storeBadgeText}>Play Store</Text>
