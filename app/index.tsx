@@ -75,19 +75,19 @@ const { width: screenWidth } = Dimensions.get('window');
 const carouselItems = [
   {
     image: require('../assets/images/carousel/slide1.jpg'),
-    caption: 'Vote Trump'
+    caption: 'Track Every Step, Reach Your Goals'
   },
   {
     image: require('../assets/images/carousel/slide1.jpg'),
-    caption: 'Vote Trump'
+    caption: 'AI Personal Trainer at Your Fingertips'
   },
   {
     image: require('../assets/images/carousel/slide1.jpg'),
-    caption: 'Vote Trump'
+    caption: 'Save & Share Your Fitness Journey'
   },
   {
     image: require('../assets/images/carousel/slide1.jpg'),
-    caption: 'Vote Trump'
+    caption: 'Smart Food Tracking Made Simple'
   }
 ];
 

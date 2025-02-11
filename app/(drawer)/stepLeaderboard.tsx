@@ -209,6 +209,10 @@ const styles = StyleSheet.create({
         paddingTop: 12,
         backgroundColor: 'rgba(0, 26, 0, 1)',
     },
+    content: {
+        flex: 1,
+        paddingHorizontal: 20,
+    },
     // Blob Blurred Background Start
     backgroundContainer: {
         ...StyleSheet.absoluteFillObject,
@@ -231,10 +235,35 @@ const styles = StyleSheet.create({
     },
     // Blob Blurred Background End
 
-    content: {
-        flex: 1,
+    // Header Component Start
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
         paddingHorizontal: 20,
+        marginBottom: 20,
     },
+    backButton: {
+        width: 40,
+        height: 40,
+    },
+    blurContainer: {
+        borderRadius: 12,
+        overflow: 'hidden',
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    },
+    headerTitle: {
+        fontSize: 20,
+        color: '#fff',
+        fontWeight: '600',
+    },
+    // Header Component End
+
+    // Tab Component Start
     tabsContainer: {
         flexDirection: 'row',
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -253,13 +282,16 @@ const styles = StyleSheet.create({
     },
     tabText: {
         color: 'rgba(255,255,255,0.7)',
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '400',
     },
     activeTabText: {
         color: '#000',
         fontWeight: '600',
     },
+    // Tab Component End
+
+    // Main Component Start
     leaderboardContainer: {
         flex: 1,
     },
@@ -311,31 +343,7 @@ const styles = StyleSheet.create({
         color: 'rgba(255, 255, 255, 0.7)',
         fontSize: 14,
     },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        marginBottom: 20,
-    },
-    backButton: {
-        width: 40,
-        height: 40,
-    },
-    blurContainer: {
-        borderRadius: 12,
-        overflow: 'hidden',
-        width: 40,
-        height: 40,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    },
-    headerTitle: {
-        fontSize: 20,
-        color: '#fff',
-        fontWeight: '600',
-    },
+    // Main Component End
 });
 
 export default StepLeaderboard; 

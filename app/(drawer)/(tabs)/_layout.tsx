@@ -266,7 +266,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 10,
     marginHorizontal: 10,
-    backdropFilter: 'blur(4px)',
   },
   modalGrid: {
     flexDirection: 'row',
@@ -276,14 +275,16 @@ const styles = StyleSheet.create({
   },
   modalItem: {
     width: '48%',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    boxShadow: '0 0 6px rgba(0, 0, 0, 0.4)',
-    borderRadius: 12,
-    padding: 15,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    boxShadow: '0 0 12px rgba(0, 0, 0, 1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    backdropFilter: 'blur(4px)',
+    borderRadius: 16,
+    padding: 12,
     alignItems: 'center',
   },
   modalIcon: {
-    marginBottom: 8,
   },
   modalText: {
     color: '#fff',

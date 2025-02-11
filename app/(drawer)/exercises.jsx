@@ -1,11 +1,74 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, FlatList, Image, TouchableOpacity, StyleSheet, Button, Modal } from 'react-native';
+import { View, Text, TextInput, FlatList, Image, TouchableOpacity, StyleSheet, Button, Modal, Dimensions, ScrollView } from 'react-native';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { DrawerToggleButton } from '@react-navigation/drawer';
+import Animated, {
+  withTiming,
+  withRepeat,
+  useAnimatedStyle,
+  useSharedValue
+} from 'react-native-reanimated';
+import Svg, { Circle } from 'react-native-svg';
+
+const { width } = Dimensions.get('window');
+
+// Blob Blurred Background Start
+const AnimatedSvg = Animated.createAnimatedComponent(Svg);
+
+const BlobBackground = () => {
+  const blob1Animation = useSharedValue(0);
+  const blob2Animation = useSharedValue(0);
+  const blob3Animation = useSharedValue(0);
+
+  useEffect(() => {
+    const animate = (value, duration) => {
+      'worklet';
+      value.value = withRepeat(
+        withTiming(1, { duration }),
+        -1,
+        true
+      );
+    };
+
+    animate(blob1Animation, 15000);
+    animate(blob2Animation, 25000);
+    animate(blob3Animation, 20000);
+  }, []);
+
+  const createBlobStyle = (animation) => {
+    const animatedStyles = useAnimatedStyle(() => ({
+      transform: [
+        { scale: 1 + animation.value * 0.2 },
+        { rotate: `${animation.value * 360}deg` },
+      ],
+      opacity: 0.7 + animation.value * 0.2,
+    }));
+
+    return animatedStyles;
+  };
+
+  return (
+    <View style={StyleSheet.absoluteFill}>
+      <View style={styles.backgroundContainer}>
+        <AnimatedSvg style={[styles.blob, createBlobStyle(blob1Animation)]}>
+          <Circle r={100} cx={100} cy={100} fill="rgba(7, 94, 7, 0.4)" />
+        </AnimatedSvg>
+        <AnimatedSvg style={[styles.blob, styles.blob2, createBlobStyle(blob2Animation)]}>
+          <Circle r={110} cx={110} cy={110} fill="rgba(6, 214, 37, 0.15)" />
+        </AnimatedSvg>
+        <AnimatedSvg style={[styles.blob, styles.blob3, createBlobStyle(blob3Animation)]}>
+          <Circle r={90} cx={90} cy={90} fill="rgba(0, 0, 0, 0.4)" />
+        </AnimatedSvg>
+      </View>
+      <BlurView intensity={70} tint="dark" style={StyleSheet.absoluteFill} />
+    </View>
+  );
+};
+// Blob Blurred Background End
+
 
 // Menu Icon Component Start
 const IconWithBlur = ({ children, intensity = 20, style = {}, backgroundColor = 'rgba(0, 0, 0, 0.3)' }) => (
@@ -37,6 +100,7 @@ export default function Exercises() {
   const pageSize = 10; // 10 items per page
   const router = useRouter();
   const [isMoreModalVisible, setIsMoreModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState('All');
 
   useEffect(() => {
     fetchExercises();
@@ -103,53 +167,268 @@ export default function Exercises() {
     });
   };
 
-  // Filter exercises based on search term
+  // Exercise Filtering Search Start
   const searchFilteredExercises = exercises.filter(exercise =>
     exercise.fields.Exercise.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  // Exercise Filtering Search End
+
+  // Favorite Toggle Logic Start
+  const handleToggleFavorite = (id) => {
+    setExercises(prevExercises =>
+      prevExercises.map(exercise =>
+        exercise.id === id
+          ? { ...exercise, isFavorite: !exercise.isFavorite }
+          : exercise
+      )
+    );
+  };
+  // Favorite Toggle Logic End
+
+  // Tab Filtering Logic Start
+  const getFilteredExercises = () => {
+    switch (activeTab) {
+      case 'Favorites':
+        return searchFilteredExercises.filter(exercise => exercise.isFavorite);
+      case 'Muscles':
+        return [];
+      default:
+        return searchFilteredExercises;
+    }
+  };
+  // Tab Filtering Logic End
+
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#000000', '#004d00', '#003300']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.container}
-      >
-        {/* Screen Header Start */}
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <IconWithBlur>
-              <DrawerToggleButton tintColor='#fff' />
-            </IconWithBlur>
-          </View>
-          <Text style={styles.headerTitle}>Exercises</Text>
-          <View style={styles.headerRight} />
+      <BlobBackground />
+      {/* Screen Header Start */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <IconWithBlur>
+            <DrawerToggleButton tintColor='#fff' />
+          </IconWithBlur>
         </View>
-        {/* Screen Header End */}
+        <Text style={styles.headerTitle}>Exercises</Text>
+        <View style={styles.headerRight} />
+      </View>
+      {/* Screen Header End */}
 
-
-        {/* Main Component Start */}
-        <View style={styles.contentContainer}>
+      <View style={styles.contentContainer}>
+        {/* Search Bar Start */}
+        <View style={styles.searchBarContainer}>
+          <Feather
+            name="search"
+            size={18}
+            color="rgba(255, 255, 255, 0.6)"
+            style={styles.searchIcon}
+          />
           <TextInput
             placeholder="Search"
-            placeholderTextColor="#rgba(255, 255, 255, 0.6)"
+            placeholderTextColor="rgba(255, 255, 255, 0.6)"
             style={styles.searchBar}
             onChangeText={handleSearch}
             value={searchTerm}
           />
+          {searchTerm.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setSearchTerm('')}
+              style={styles.clearButton}
+            >
+              <Feather
+                name="x"
+                size={18}
+                color="rgba(255, 255, 255, 0.6)"
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+        {/* Search Bar End */}
+
+
+        {/* Tab Container Start */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'All' && styles.activeTab]}
+            onPress={() => setActiveTab('All')}
+          >
+            <Text style={[
+              styles.tabText,
+              activeTab === 'All' && styles.activeTabText
+            ]}>
+              All
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Favorites' && styles.activeTab]}
+            onPress={() => setActiveTab('Favorites')}
+          >
+            <Text style={[
+              styles.tabText,
+              activeTab === 'Favorites' && styles.activeTabText
+            ]}>
+              Favorites
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Muscles' && styles.activeTab]}
+            onPress={() => setActiveTab('Muscles')}
+          >
+            <Text style={[
+              styles.tabText,
+              activeTab === 'Muscles' && styles.activeTabText
+            ]}>
+              Muscles
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {/* Tab Container End */}
+
+
+        {/* Main Component - Now with conditional rendering */}
+        {activeTab === 'Muscles' ? (
+          // "Muscle" Component Start 
+          <ScrollView style={styles.recentContent}>
+            <View style={styles.headerContainer}>
+              <Text style={styles.sectionHeaderTitle}>TARGET YOUR TRAINING</Text>
+              <Text style={styles.headerSubtitle}>
+              Browse exercises by muscle group and build workouts that focus on your specific training goals
+              </Text>
+            </View>
+
+            <View style={styles.muscleGrid}>
+              {/* First Row */}
+              <View style={styles.gridRow}>
+                <TouchableOpacity 
+                  style={styles.categoryCard}
+                  onPress={() => handleCategoryPress('chest')}
+                >
+                  <Image
+                    source={require('../../assets/images/category/chest.webp')}
+                    style={styles.categoryImage}
+                  />
+                  <View style={styles.categoryOverlay}>
+                    <Text style={styles.categoryText}>CHEST</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                  style={styles.categoryCard}
+                  onPress={() => handleCategoryPress('shoulders')}
+                >
+                  <Image
+                    source={require('../../assets/images/category/shoulders.webp')}
+                    style={styles.categoryImage}
+                  />
+                  <View style={styles.categoryOverlay}>
+                    <Text style={styles.categoryText}>SHOULDERS</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+              {/* Second Row */}
+              <View style={styles.gridRow}>
+                <TouchableOpacity 
+                  style={styles.categoryCard}
+                  onPress={() => handleCategoryPress('back')}
+                >
+                  <Image
+                    source={require('../../assets/images/category/back.webp')}
+                    style={styles.categoryImage}
+                  />
+                  <View style={styles.categoryOverlay}>
+                    <Text style={styles.categoryText}>BACK</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                  style={styles.categoryCard}
+                  onPress={() => handleCategoryPress('arms')}
+                >
+                  <Image
+                    source={require('../../assets/images/category/arms.webp')}
+                    style={styles.categoryImage}
+                  />
+                  <View style={styles.categoryOverlay}>
+                    <Text style={styles.categoryText}>ARMS</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+              {/* Third Row */}
+              <View style={styles.gridRow}>
+                <TouchableOpacity 
+                  style={styles.categoryCard}
+                  onPress={() => handleCategoryPress('core')}
+                >
+                  <Image
+                    source={require('../../assets/images/category/core.webp')}
+                    style={styles.categoryImage}
+                  />
+                  <View style={styles.categoryOverlay}>
+                    <Text style={styles.categoryText}>CORE</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                  style={styles.categoryCard}
+                  onPress={() => handleCategoryPress('legs')}
+                >
+                  <Image
+                    source={require('../../assets/images/category/legs.webp')}
+                    style={styles.categoryImage}
+                  />
+                  <View style={styles.categoryOverlay}>
+                    <Text style={styles.categoryText}>LEGS</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+              {/* Fourth Row */}
+              <View style={styles.gridRow}>
+                <TouchableOpacity 
+                  style={styles.categoryCard}
+                  onPress={() => handleCategoryPress('glutes')}
+                >
+                  <Image
+                    source={require('../../assets/images/category/glutes.webp')}
+                    style={styles.categoryImage}
+                  />
+                  <View style={styles.categoryOverlay}>
+                    <Text style={styles.categoryText}>GLUTES</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                  style={styles.categoryCard}
+                  onPress={() => handleCategoryPress('conventionals')}
+                >
+                  <Image
+                    source={require('../../assets/images/category/conventional.webp')}
+                    style={styles.categoryImage}
+                  />
+                  <View style={styles.categoryOverlay}>
+                    <Text style={styles.categoryText}>CONVENTIONALS</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+          // "Muscle" Component End 
+        ) : (
+
+          // "All" & "Favorites" Component Start 
           <FlatList
-            data={searchFilteredExercises} // Display all exercises
+            data={getFilteredExercises()}
             keyExtractor={item => item.id.toString()}
             renderItem={({ item }) => {
-              console.log("Rendering item:", item);
-
-              // Extract image URL from the Example field
               const imageUrl = item.fields.Example && item.fields.Example[0] ? item.fields.Example[0].url : null;
-              console.log("Image URL:", imageUrl);  // Check the constructed image URL
 
               return (
-                <TouchableOpacity style={styles.itemContainer} onPress={() => handleSelectExercise(item)}>
+                <TouchableOpacity
+                  style={styles.itemContainer}
+                  onPress={() => handleSelectExercise(item)}
+                >
                   {imageUrl ? (
                     <Image
                       source={{ uri: imageUrl }}
@@ -159,21 +438,47 @@ export default function Exercises() {
                     <Text>No Image Available</Text>
                   )}
                   <Text style={styles.itemText}>{item.fields.Exercise}</Text>
+                  <TouchableOpacity
+                    style={styles.favoriteButton}
+                    onPress={() => handleToggleFavorite(item.id)}
+                  >
+                    <Image
+                      source={item.isFavorite
+                        ? require('../../assets/icons/star-filled.png')
+                        : require('../../assets/icons/star-outline.png')
+                      }
+                      style={styles.starIcon}
+
+                    />
+                  </TouchableOpacity>
                 </TouchableOpacity>
               );
             }}
             contentContainerStyle={styles.listContent}
-          />
-          {/* Pagination buttons */}
-          <View style={styles.pagination}>
-            {page > 0 && (
-              <Button title="Previous" onPress={() => setPage(page - 1)} color="#007AFF" />
+            ListEmptyComponent={() => (
+              <View style={styles.emptyStateContainer}>
+                <Text style={styles.emptyStateText}>
+                  {activeTab === 'Favorites'
+                    ? 'No favorite exercises yet'
+                    : 'No exercises found'}
+                </Text>
+              </View>
             )}
-            <Button title="More" onPress={() => setPage(page + 1)} color="#007AFF" />
-          </View>
+          />
+          // "All" & "Favorites" Component End 
+        )}
+
+
+
+        {/* Pagination Start */}
+        <View style={styles.pagination}>
+          {page > 0 && (
+            <Button title="Previous" onPress={() => setPage(page - 1)} color="#007AFF" />
+          )}
+          <Button title="More" onPress={() => setPage(page + 1)} color="#007AFF" />
         </View>
-        {/* Main Component End */}
-      </LinearGradient>
+        {/* Pagination End */}
+      </View>
 
 
       {/* Custom Tab Bar Start */}
@@ -316,11 +621,33 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'rgba(0, 26, 0, 1)',
   },
   contentContainer: {
     flex: 1,
     paddingTop: 20,
   },
+  // Blob Blurred Background Start
+  backgroundContainer: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: 'hidden',
+  },
+  blob: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    left: '10%',
+    top: '20%',
+  },
+  blob2: {
+    left: '60%',
+    top: '45%',
+  },
+  blob3: {
+    left: '30%',
+    top: '70%',
+  },
+  // Blob Blurred Background End
 
   // Screen Header Start
   header: {
@@ -394,7 +721,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 10,
     marginHorizontal: 10,
-    backdropFilter: 'blur(4px)',
   },
   modalGrid: {
     flexDirection: 'row',
@@ -404,14 +730,16 @@ const styles = StyleSheet.create({
   },
   modalItem: {
     width: '48%',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    boxShadow: '0 0 6px rgba(0, 0, 0, 0.4)',
-    borderRadius: 12,
-    padding: 15,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    boxShadow: '0 0 12px rgba(0, 0, 0, 1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    backdropFilter: 'blur(4px)',
+    borderRadius: 16,
+    padding: 12,
     alignItems: 'center',
   },
   modalIcon: {
-    marginBottom: 8,
   },
   modalText: {
     color: '#fff',
@@ -424,16 +752,62 @@ const styles = StyleSheet.create({
   },
   // More Modal End
 
-
-  searchBar: {
+  // Search Bar Start
+  searchBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: 10,
     marginBottom: 10,
-    padding: 10,
-    fontSize: 16,
+    paddingHorizontal: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 10,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchBar: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingRight: 10,
+    fontSize: 16,
     color: '#fff',
   },
+  clearButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 2,
+  },
+  // Search Bar End
+
+  // Tab Component Start
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 10,
+    padding: 4,
+    marginHorizontal: 10,
+    marginBottom: 20,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 8,
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  tabText: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  activeTab: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  activeTabText: {
+    color: '#fff',
+    fontWeight: '400',
+  },
+  // Tab Component End
+
+  // "All" & "Favorites" Component Start
   listContent: {
     paddingHorizontal: 10,
     paddingBottom: 60,
@@ -443,18 +817,31 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 8,
+    borderRadius: 14,
     overflow: 'hidden',
-    padding: 10,
+    padding: 6,
+    position: 'relative',
   },
   thumbnail: {
-    width: 70,
-    height: 70,
+    width: 65,
+    height: 65,
     marginRight: 10,
+    borderRadius: 14,
   },
   itemText: {
     fontSize: 18,
     color: '#fff',
+  },
+  favoriteButton: {
+    position: 'absolute',
+    right: 6,
+    top: 6,
+    padding: 5,
+  },
+  starIcon: {
+    width: 16,
+    height: 16,
+    tintColor: 'rgba(255, 255, 255, 0.6)',
   },
   pagination: {
     flexDirection: 'row',
@@ -462,4 +849,90 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 20,
   },
+  emptyStateContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 40,
+  },
+  emptyStateText: {
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  // "All" & "Favorites" Component End
+
+  // "Muscle" Component Start
+  recentContent: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
+  headerContainer: {
+    paddingHorizontal: 20,
+  },
+  sectionHeaderTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 6,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 6,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    width: '90%',
+    color: 'rgba(255, 255, 255, 0.7)',
+    marginBottom: 20,
+    textAlign: 'center',
+    alignSelf: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 6,
+  },
+  muscleGrid: {
+    padding: 10,
+  },
+  gridRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  categoryCard: {
+    width: '48%',
+    height: 120,
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginBottom: 10,
+    boxShadow: '0 0 12px rgba(0, 0, 0, 0.5)',
+  },
+  categoryImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  categoryOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  categoryText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 12,
+  },
+  // "Muscle" Component End
 });
+
+
+const handleCategoryPress = (category) => {
+  // Handle category selection here
+  console.log(`Selected category: ${category}`);
+  // You can filter exercises by category or navigate to a category-specific screen
+};
