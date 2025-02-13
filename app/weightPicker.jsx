@@ -16,6 +16,7 @@ const WeightPicker = () => {
   };
 
   const handleWeightSelect = async (selectedWeight) => {
+    console.log("Selected weight:", selectedWeight); // Log the selected weight
     // Save the updated weight and unit in AsyncStorage
     const user = await AsyncStorage.getItem('user');
     if (user) {

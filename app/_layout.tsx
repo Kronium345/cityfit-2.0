@@ -42,19 +42,19 @@ const RootLayout = () => {
           } else if (!userData.weight) {
             setInitialRoute('/weightInput');
           } else {
-            // If all user data is available, check for last page or go to home
+            // All required data is available; check for last page or default to home
             const lastPage = await AsyncStorage.getItem('lastPage');
             if (lastPage) {
-              setInitialRoute(lastPage); // Navigate to last page user visited
+              setInitialRoute(lastPage);  // Navigate to last visited page
             } else {
-              setInitialRoute('/(drawer)/(tabs)/home'); // Default route is home
+              setInitialRoute('/(drawer)/(tabs)/home');  // Default route is home if no last page found
             }
           }
         } catch (error) {
-          setInitialRoute('/'); // Default to login if error
+          setInitialRoute('/');  // Default to login if error fetching user data
         }
       } else {
-        setInitialRoute('/'); // Go to login if no user
+        setInitialRoute('/');  // Redirect to login if no user found
       }
 
       setLoading(false);

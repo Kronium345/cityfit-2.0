@@ -17,6 +17,7 @@ const WeightInput = () => {
         const parsedUser = JSON.parse(user);
         setWeight(parsedUser.weight || '');
         setUnit(parsedUser.unit || 'kg');
+        console.log("Fetched weight from AsyncStorage:", parsedUser.weight); // Log fetched weight
       }
     };
 
@@ -32,6 +33,8 @@ const WeightInput = () => {
   };
 
   const handleDone = async () => {
+    console.log("Final selected weight:", weight); // Log final weight before saving
+
     const user = await AsyncStorage.getItem('user');
     if (user) {
       const parsedUser = JSON.parse(user);
