@@ -42,13 +42,19 @@ const RootLayout = () => {
           } else if (!userData.weight) {
             setInitialRoute('/weightInput');
           } else {
-            setInitialRoute('/(drawer)/(tabs)/home');
+            // If all user data is available, check for last page or go to home
+            const lastPage = await AsyncStorage.getItem('lastPage');
+            if (lastPage) {
+              setInitialRoute(lastPage); // Navigate to last page user visited
+            } else {
+              setInitialRoute('/(drawer)/(tabs)/home'); // Default route is home
+            }
           }
         } catch (error) {
-          setInitialRoute('/');
+          setInitialRoute('/'); // Default to login if error
         }
       } else {
-        setInitialRoute('/');
+        setInitialRoute('/'); // Go to login if no user
       }
 
       setLoading(false);
