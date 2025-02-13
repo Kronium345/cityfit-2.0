@@ -96,34 +96,34 @@ router.patch('/:id/experience', async (req, res) => {
   }
 });
 
+// Correctly handle file upload and store avatar path
 router.put('/:id/avatar', upload.single('avatar'), async (req, res) => {
-  console.log('Received file:', req.file);  // Debug log for file
   const { id } = req.params;
 
-  // Check if the file is available
+  // If file is available
   if (req.file) {
-    const avatarPath = req.file.path;
+    const avatarPath = req.file.path ? req.file.path : req.body.avatar; // Correct file path received from multer
 
     try {
       const updatedUser = await User.findByIdAndUpdate(id, { avatar: avatarPath }, { new: true });
       if (!updatedUser) {
         return res.status(404).json({ message: 'User not found' });
       }
-      return res.status(200).json(updatedUser);
+      return res.status(200).json(updatedUser);  // Return updated user with avatar path
     } catch (error) {
       console.error('Error updating avatar:', error);
       return res.status(500).json({ message: 'Error updating avatar', error: error.message });
     }
   }
 
-  // If no file was uploaded, it means the user selected a pre-selected avatar URL
+  // If avatar URL is provided (pre-selected avatar)
   if (req.body.avatar) {
     try {
       const updatedUser = await User.findByIdAndUpdate(id, { avatar: req.body.avatar }, { new: true });
       if (!updatedUser) {
         return res.status(404).json({ message: 'User not found' });
       }
-      return res.status(200).json(updatedUser);
+      return res.status(200).json(updatedUser);  // Return updated user with avatar URL
     } catch (error) {
       console.error('Error updating avatar:', error);
       return res.status(500).json({ message: 'Error updating avatar', error: error.message });
@@ -132,6 +132,7 @@ router.put('/:id/avatar', upload.single('avatar'), async (req, res) => {
 
   return res.status(400).json({ message: 'Avatar image is required' });
 });
+
 
 
 

@@ -106,7 +106,7 @@ const uploadImage = async (uri) => {
 
   const formData = new FormData();
   formData.append('avatar', {
-    uri,  // URI of the image selected
+    uri: uri,  // URI of the image selected
     type: fileType, // Dynamically set MIME type
     name: `avatar.${fileType === 'image/png' ? 'png' : 'jpg'}`, // Set file name with appropriate extension
   });

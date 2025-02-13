@@ -126,7 +126,7 @@ const ProfileScreen = () => {
 
       setUserData(response.data);
       setEditing(false);
-      setAvatar(response.data.avatar || ''); // Update avatar after saving changes
+      setAvatar(response.data.avatar); // Update avatar after saving changes
 
       // Log updated avatar
       console.log("Updated avatar path:", response.data.avatar);
