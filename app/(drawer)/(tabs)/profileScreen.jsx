@@ -17,6 +17,7 @@ import Animated, {
   useSharedValue 
 } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
+import { Alert } from 'react-native';
 
 // Blob Blurred Background Start
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
@@ -98,9 +99,15 @@ const ProfileScreen = () => {
           setWeight(response.data.weight || '');
           setExperience(response.data.experience || '');
           setGender(response.data.gender || '');
-          setAvatar(response.data.avatar || ''); // Set the avatar URL here
+          
+          // Check if avatar exists, and format it properly
+          if (response.data.avatar) {
+            setAvatar(`http://localhost:5000/${response.data.avatar.replace(/\\/g, '/')}`);
+          } else {
+            setAvatar('');  // Default to empty if no avatar
+          }
 
-          // Log the avatar to verify
+          // Log avatar to verify
           console.log("User avatar path:", response.data.avatar);
         } catch (error) {
           console.error('Error fetching user data:', error);
@@ -182,7 +189,7 @@ const ProfileScreen = () => {
 
   // Handle uploading the selected image
   const uploadImage = async (uri) => {
-    setLoadingImage(true); // Show loading spinner while uploading
+    // setLoadingImage(true); // Show loading spinner while uploading
 
     const user = JSON.parse(await AsyncStorage.getItem('user'));
     const token = await AsyncStorage.getItem('token');
@@ -192,7 +199,7 @@ const ProfileScreen = () => {
 
     const formData = new FormData();
     formData.append('avatar', {
-      uri,  // URI of the image selected
+      uri: uri,  // URI of the image selected
       type: fileType, // Dynamically set MIME type
       name: `avatar.${fileType === 'image/png' ? 'png' : 'jpg'}`, // Set file name with appropriate extension
     });
@@ -218,7 +225,7 @@ const ProfileScreen = () => {
       console.error('Error uploading image:', error);
       Alert.alert('Error', 'Failed to upload your profile picture. Please try again.');
     } finally {
-      setLoadingImage(false);  // Hide loading spinner
+      // setLoadingImage(false);  // Hide loading spinner
     }
   };
 

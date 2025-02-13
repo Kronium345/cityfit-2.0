@@ -33,6 +33,24 @@ const upload = multer({
   }
 });
 
+// Update user username
+router.put('/:id/username', async (req, res) => {
+  const { id } = req.params;
+  const { username } = req.body;  // Ensure you send the new username from frontend
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(id, { username }, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    return res.status(200).json(updatedUser);  // Return the updated user with new username
+  } catch (error) {
+    console.error('Error updating username:', error.message);
+    res.status(500).json({ message: 'Error updating username' });
+  }
+});
+
+
 // Update user password
 router.patch('/:id/password', async (req, res) => {
   const { id } = req.params;

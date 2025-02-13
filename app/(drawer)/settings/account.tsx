@@ -134,7 +134,7 @@ const handleUpdateUsername = async () => {
 
     if (user && token) {
       const response = await axios.put(
-        `http://localhost:5000/user/${user._id}`,
+        `http://localhost:5000/user/${user._id}/username`,
         { username: newUsername },  // Update only username
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -325,18 +325,17 @@ const handleUpdateGender = async (gender: string) => {
             <View style={styles.settingsTabContent}>
               <Ionicons name="mail-outline" size={24} color="#fff" style={styles.icon} />
               <View style={styles.settingsTabHeaderText}>
-                <Text style={styles.settingsTabTitle}>Change Email</Text>
+                <Text style={styles.settingsTabTitle}>Email</Text>
                 <Text style={styles.settingsTabCurrentValue}>{userData.email}</Text>
               </View>
             </View>
-            <Ionicons
+            {/* <Ionicons
               name={expandedSection === 'email' ? 'chevron-up' : 'chevron-forward'}
               size={24}
               color="rgba(255, 255, 255, 0.8)"
-            />
+            /> */}
           </TouchableOpacity>
-          {expandedSection === 'email' && (
-            <View style={styles.expandedContent}>
+            {/* <View style={styles.expandedContent}>
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
@@ -353,8 +352,7 @@ const handleUpdateGender = async (gender: string) => {
               >
                 <Text style={styles.updateButtonText}>Update Email</Text>
               </TouchableOpacity>
-            </View>
-          )}
+            </View> */}
         </View>
         {/* Email Tab End */}
 
@@ -407,18 +405,17 @@ const handleUpdateGender = async (gender: string) => {
             <View style={styles.settingsTabContent}>
               <Ionicons name="calendar-outline" size={24} color="#fff" style={styles.icon} />
               <View style={styles.settingsTabHeaderText}>
-                <Text style={styles.settingsTabTitle}>Change Date of Birth</Text>
+                <Text style={styles.settingsTabTitle}>Date of Birth</Text>
                 <Text style={styles.settingsTabCurrentValue}>{userData.dateOfBirth}</Text>
               </View>
             </View>
-            <Ionicons
+            {/* <Ionicons
               name={expandedSection === 'dob' ? 'chevron-up' : 'chevron-forward'}
               size={24}
               color="rgba(255, 255, 255, 0.8)"
-            />
+            /> */}
           </TouchableOpacity>
-          {expandedSection === 'dob' && (
-            <View style={styles.expandedContent}>
+            {/* <View style={styles.expandedContent}>
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
@@ -449,7 +446,7 @@ const handleUpdateGender = async (gender: string) => {
                 <Text style={styles.updateButtonText}>Update Date of Birth</Text>
               </TouchableOpacity>
             </View>
-          )}
+ */}
         </View>
         {/* Date of Birth Tab End */}
 
