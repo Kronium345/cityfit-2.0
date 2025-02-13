@@ -35,4 +35,43 @@ router.post('/history', async (req, res) => {
   }
 });
 
+router.post('/toggle-favorite', async (req, res) => {
+  const { userId, exerciseName } = req.body;
+
+  try {
+    let exercise = await ExerciseHistory.findOne({ userId, exerciseName });
+
+    if (!exercise) {
+      exercise = new ExerciseHistory({
+        userId,
+        exerciseName,
+        isFavorite: true,  // Initial favorite status
+      });
+      await exercise.save();  // Save the new favorite
+    } else {
+      exercise.isFavorite = !exercise.isFavorite;  // Toggle favorite status
+      await exercise.save();
+    }
+
+    res.status(200).json({ message: 'Favorite status updated', exercise });
+  } catch (error) {
+    console.error('Error toggling favorite:', error);
+    res.status(500).json({ message: 'Failed to toggle favorite status', error: error.message });
+  }
+});
+
+
+router.get('/favorites/:userId', async (req, res) => {
+  try {
+    const favorites = await ExerciseHistory.find({ userId: req.params.userId, isFavorite: true });
+    res.status(200).json(favorites);  // Send the list of favorite exercises
+  } catch (error) {
+    console.error('Error fetching favorites:', error);
+    res.status(500).json({ message: 'Failed to fetch favorites', error: error.message });
+  }
+});
+
+
+
+
 export default router;

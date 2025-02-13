@@ -12,6 +12,9 @@ import Animated, {
   useSharedValue
 } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
+import { useAuthContext } from '../AuthProvider';
+import Toast from 'react-native-toast-message';
+
 
 const { width } = Dimensions.get('window');
 
@@ -101,6 +104,9 @@ export default function Exercises() {
   const router = useRouter();
   const [isMoreModalVisible, setIsMoreModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState('All');
+  const { user } = useAuthContext();
+  const [favorites, setFavorites] = useState([]); // Track the favorite exercises
+
 
   useEffect(() => {
     fetchExercises();
@@ -150,6 +156,18 @@ export default function Exercises() {
     setSearchTerm(text);
   };
 
+  // Toast Pop-Ups
+  const showToast = (type, text1, text2) => {
+    Toast.show({
+      type: type,
+      text1: text1,
+      text2: text2,
+      position: 'bottom',
+      visibilityTime: 4000,
+    });
+  };
+  
+
   const handleSelectExercise = (exercise) => {
     router.push({
       pathname: '/exerciseDetails',
@@ -172,17 +190,76 @@ export default function Exercises() {
     exercise.fields.Exercise.toLowerCase().includes(searchTerm.toLowerCase())
   );
   // Exercise Filtering Search End
+  
 
   // Favorite Toggle Logic Start
-  const handleToggleFavorite = (id) => {
-    setExercises(prevExercises =>
-      prevExercises.map(exercise =>
-        exercise.id === id
-          ? { ...exercise, isFavorite: !exercise.isFavorite }
-          : exercise
-      )
-    );
+  const handleToggleFavorite = async (exerciseId) => {
+    if (!user || !exerciseId) {
+      showToast('error', 'Favorite Toggle Failed', 'User not logged in or Invalid Exercise');
+      return;
+    }
+  
+    const exercise = exercises.find(ex => ex.id === exerciseId);
+    if (!exercise) {
+      showToast('error', 'Exercise not found', 'Unable to find exercise');
+      return;
+    }
+  
+    const exerciseName = exercise.fields?.Exercise;
+    if (!exerciseName) {
+      showToast('error', 'Exercise name not available', 'Unable to find exercise name');
+      return;
+    }
+  
+    const logEntry = {
+      userId: user._id,
+      exerciseName: exerciseName,
+      isFavorite: !exercise.isFavorite, // Toggle favorite status
+    };
+  
+    try {
+      // Post to server to toggle favorite status
+      await axios.post('http://localhost:5000/history/toggle-favorite', logEntry);
+  
+      // Update the favorite status locally
+      setExercises(prevExercises => prevExercises.map(ex =>
+        ex.id === exerciseId ? { ...ex, isFavorite: !ex.isFavorite } : ex
+      ));
+  
+      showToast('success', 'Favorite Status Updated', 'Exercise favorite status has been toggled.');
+    } catch (error) {
+      console.error('Error toggling favorite:', error.response ? error.response.data : error.message);
+      showToast('error', 'Favorite Toggle Failed', 'Error occurred while toggling favorite.');
+    }
   };
+  
+  
+  
+
+  useEffect(() => {
+    if (user && activeTab === 'Favorites') {
+      const fetchFavorites = async () => {
+        try {
+          const response = await axios.get(`http://localhost:5000/history/favorites/${user._id}`);
+          const favoriteNames = response.data.map(fav => fav.exerciseName); // Extract the favorite exercise names
+          
+          // Update exercises based on the fetched favorites
+          const updatedExercises = exercises.map(exercise => ({
+            ...exercise,
+            isFavorite: favoriteNames.includes(exercise.fields?.Exercise),
+          }));
+          setExercises(updatedExercises);  // Update the exercises state with the favorite status
+        } catch (error) {
+          console.error('Error fetching favorites:', error);
+        }
+      };
+      fetchFavorites();
+    }
+  }, [user, activeTab]);  // Fetch favorites only when the user or activeTab changes
+  
+  
+  
+  
   // Favorite Toggle Logic End
 
   // Tab Filtering Logic Start
@@ -197,6 +274,23 @@ export default function Exercises() {
     }
   };
   // Tab Filtering Logic End
+
+  // useEffect(() => {
+  //   if (user && activeTab === 'Favorites') {
+  //     const fetchFavorites = async () => {
+  //       try {
+  //         const response = await axios.get(`http://localhost:5000/history/favorites/${user._id}`);
+  //         setFavorites(response.data);  // Set the fetched favorites
+  //       } catch (error) {
+  //         console.error('Error fetching favorites:', error);
+  //       }
+  //     };
+      
+  //     fetchFavorites();  // Fetch favorites on tab change
+  //   }
+  // }, [user, activeTab]);  // Re-fetch only when user or activeTab changes
+  
+
 
 
   return (

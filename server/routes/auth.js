@@ -46,10 +46,13 @@ router.post('/register', async (req, res) => {
 
 // Login route
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { emailOrUsername, password } = req.body;  // Accept email or username
   try {
-    // Find the user by email
-    const existingUser = await User.findOne({ email });
+    // Find the user by email or username
+    const existingUser = await User.findOne({
+      $or: [{ email: emailOrUsername }, { username: emailOrUsername }]
+    });
+
     if (!existingUser) return res.status(404).json({ message: 'User not found' });
 
     // Check if the password matches
@@ -72,6 +75,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Something went wrong on the server.', error: error.message || error });
   }
 });
+
 
 
 // In your routes/auth.js

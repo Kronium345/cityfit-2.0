@@ -13,6 +13,10 @@ const exerciseHistorySchema = new mongoose.Schema({
   sets: Number,
   reps: Number,
   weight: Number,
+  isFavorite: { // New field for favorite status
+    type: Boolean,
+    default: false, // Default to false
+  },
   dateLogged: { type: Date, default: Date.now }
 });
 

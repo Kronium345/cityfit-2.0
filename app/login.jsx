@@ -12,6 +12,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 const Login = () => {
   const [email, setEmail] = useState('');
+  // To accept email & username
+  const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
@@ -26,14 +28,14 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
-    if (!email || !password) {
+    if (!emailOrUsername || !password) {
       showToast('error', 'Incomplete Fields', 'Please fill in both fields');
       return;
     }
 
     try {
       const response = await axios.post('http://localhost:5000/auth/login', {
-        email,
+        emailOrUsername,
         password,
       });
 
@@ -71,22 +73,21 @@ const Login = () => {
         {/* Header End */}
 
 
-        {/* Email Input Start */}
+        {/* Email/Username Input Start */}
         <View style={styles.inputSection}>
           <View style={styles.labelContainer}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>Email or Username</Text>
             <Text style={styles.required}>*</Text>
           </View>
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder="Email or Username"
             placeholderTextColor="rgba(255, 255, 255, 0.45)"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
+            value={emailOrUsername}
+            onChangeText={setEmailOrUsername}
           />
         </View>
-        {/* Email Input End */}
+        {/* Email/Username Input End */}
 
 
         {/* Password Input Start */}
