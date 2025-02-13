@@ -95,15 +95,23 @@ const AccountSettings = () => {
   const fetchUserData = async () => {
     try {
       const userJson = await AsyncStorage.getItem('user');
+      const token = await AsyncStorage.getItem('token');
       if (userJson) {
         const user = JSON.parse(userJson);
         if (user) {
+          const response = await axios.get(`http://localhost:5000/user/${user._id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+
+          console.log("Fetched user data:", response.data);
+
           setUserData({
             username: user.username || '',
             email: user.email || '',
             dateOfBirth: user.dateOfBirth || '',
             gender: user.gender || '',
           });
+
         }
       }
     } catch (error) {
@@ -111,16 +119,33 @@ const AccountSettings = () => {
     }
   };
 
+
+
   const toggleSection = (section: string) => {
     setExpandedSection(expandedSection === section ? '' : section);
   };
 
-  const handleUpdateUsername = async () => {
-    // Implement username update logic
-    console.log('Update username:', newUsername);
-    setExpandedSection('');
-    setNewUsername('');
-  };
+  // Handle Update Username
+const handleUpdateUsername = async () => {
+  try {
+    const userJson = await AsyncStorage.getItem('user');
+    const token = await AsyncStorage.getItem('token');
+    const user = JSON.parse(userJson);
+
+    if (user && token) {
+      const response = await axios.put(
+        `http://localhost:5000/user/${user._id}`,
+        { username: newUsername },  // Update only username
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      setUserData(prev => ({ ...prev, username: response.data.username }));
+    }
+  } catch (error) {
+    console.error('Error updating username:', error);
+  }
+};
 
   const handleUpdateEmail = async () => {
     // Implement email update logic
@@ -129,19 +154,56 @@ const AccountSettings = () => {
     setNewEmail('');
   };
 
-  const handleUpdatePassword = async () => {
-    // Implement password update logic
-    console.log('Update password');
-    setExpandedSection('');
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-  };
+  // Handle Update Password
+const handleUpdatePassword = async () => {
+  try {
+    const userJson = await AsyncStorage.getItem('user');
+    const token = await AsyncStorage.getItem('token');
+    const user = JSON.parse(userJson);
 
-  const handleDeleteAccount = () => {
-    // Implement account deletion logic
-    console.log('Delete account');
-  };
+    if (user && token) {
+      const response = await axios.patch(
+        `http://localhost:5000/user/${user._id}/password`,
+        { currentPassword, newPassword },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      console.log(response.data.message); // Password updated successfully
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    }
+  } catch (error) {
+    console.error('Error updating password:', error);
+  }
+};
+
+
+  // Handle Delete Account
+const handleDeleteAccount = async () => {
+  try {
+    const userJson = await AsyncStorage.getItem('user');
+    const token = await AsyncStorage.getItem('token');
+    const user = JSON.parse(userJson);
+
+    if (user && token) {
+      const response = await axios.delete(
+        `http://localhost:5000/user/${user._id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      console.log(response.data.message); // User deleted successfully
+      await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('token');
+      router.push('/');
+    }
+  } catch (error) {
+    console.error('Error deleting account:', error);
+  }
+};
+
 
   const handleBack = () => {
     router.push('/(drawer)/settings');
@@ -155,16 +217,49 @@ const AccountSettings = () => {
     }
   };
 
-  const handleUpdateDateOfBirth = () => {
-    // Implement date of birth update logic
-    console.log('Update date of birth:', userData.dateOfBirth);
-    setExpandedSection('');
-  };
+  // Handle Update Date of Birth
+const handleUpdateDateOfBirth = async () => {
+  try {
+    const userJson = await AsyncStorage.getItem('user');
+    const token = await AsyncStorage.getItem('token');
+    const user = JSON.parse(userJson);
 
-  const handleUpdateGender = (gender: string) => {
-    setUserData(prev => ({ ...prev, gender }));
-    setExpandedSection('');
-  };
+    if (user && token) {
+      const response = await axios.put(
+        `http://localhost:5000/user/${user._id}`,
+        { dob: userData.dateOfBirth },  // Update Date of Birth
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      setUserData(prev => ({ ...prev, dateOfBirth: response.data.dob }));
+    }
+  } catch (error) {
+    console.error('Error updating date of birth:', error);
+  }
+};
+
+  // Handle Update Gender
+const handleUpdateGender = async (gender: string) => {
+  try {
+    const userJson = await AsyncStorage.getItem('user');
+    const token = await AsyncStorage.getItem('token');
+    const user = JSON.parse(userJson);
+
+    if (user && token) {
+      const response = await axios.patch(
+        `http://localhost:5000/user/${user._id}/gender`,
+        { gender },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      setUserData(prev => ({ ...prev, gender: response.data.gender }));
+    }
+  } catch (error) {
+    console.error('Error updating gender:', error);
+  }
+};
 
   return (
     <View style={styles.container}>
