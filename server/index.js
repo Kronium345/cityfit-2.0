@@ -31,6 +31,10 @@ app.use('/preferences', caloriePreferences);
 app.use('/food', foodLog);
 app.use('/quiz', quiz);
 
+app.get('/', (req, res) => {
+  res.send('Hello, world! Fitness One!.');
+});
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
