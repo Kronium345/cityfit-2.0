@@ -37,7 +37,7 @@
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
-      "package": "com.kronium.cityfit2.x0"
+      "package": "com.kronium.fitnessone.x0"
     },
     "web": {
       "bundler": "metro",
@@ -57,6 +57,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "625eb310-69c9-46af-b77d-fd3dd7120803"
+      },
+      "cohereApiKey": "@env:EXPO_PUBLIC_COHERE_API_KEY"
     }
   }
 }
