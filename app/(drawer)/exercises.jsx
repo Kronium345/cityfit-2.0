@@ -16,6 +16,32 @@ import { useAuthContext } from '../AuthProvider';
 import Toast from 'react-native-toast-message';
 
 
+// Nav Bar Tab Icons Start
+const tabIcons = {
+  more: {
+    active: require('@/assets/icons/more-tab.png'),
+    default: require('@/assets/icons/more-tab.png')
+  },
+  plan: {
+    active: require('@/assets/icons/plan-tab.png'),
+    default: require('@/assets/icons/plan-tab.png')
+  },
+  home: {
+    active: require('@/assets/icons/home-tab.png'),
+    default: require('@/assets/icons/home-tab.png')
+  },
+  steps: {
+    active: require('@/assets/icons/steps-tab.png'),
+    default: require('@/assets/icons/steps-tab.png')
+  },
+  profile: {
+    active: require('@/assets/icons/profile-tab.png'),
+    default: require('@/assets/icons/profile-tab.png')
+  }
+};
+// Nav Bar Tab Icons End
+
+
 const { width } = Dimensions.get('window');
 
 // Blob Blurred Background Start
@@ -256,11 +282,8 @@ export default function Exercises() {
       fetchFavorites();
     }
   }, [user, activeTab]);  // Fetch favorites only when the user or activeTab changes
-  
-  
-  
-  
   // Favorite Toggle Logic End
+
 
   // Tab Filtering Logic Start
   const getFilteredExercises = () => {
@@ -274,6 +297,7 @@ export default function Exercises() {
     }
   };
   // Tab Filtering Logic End
+
 
   // useEffect(() => {
   //   if (user && activeTab === 'Favorites') {
@@ -290,8 +314,6 @@ export default function Exercises() {
   //   }
   // }, [user, activeTab]);  // Re-fetch only when user or activeTab changes
   
-
-
 
   return (
     <View style={styles.container}>
@@ -379,7 +401,7 @@ export default function Exercises() {
         {/* Tab Container End */}
 
 
-        {/* Main Component - Now with conditional rendering */}
+        {/* Main Component Start */}
         {activeTab === 'Muscles' ? (
           // "Muscle" Component Start 
           <ScrollView style={styles.recentContent}>
@@ -561,17 +583,6 @@ export default function Exercises() {
           />
           // "All" & "Favorites" Component End 
         )}
-
-
-
-        {/* Pagination Start */}
-        <View style={styles.pagination}>
-          {page > 0 && (
-            <Button title="Previous" onPress={() => setPage(page - 1)} color="#007AFF" />
-          )}
-          <Button title="More" onPress={() => setPage(page + 1)} color="#007AFF" />
-        </View>
-        {/* Pagination End */}
       </View>
 
 
@@ -601,10 +612,31 @@ export default function Exercises() {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Ionicons name="fitness" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/exercises-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Exercises</Text>
               </TouchableOpacity>
               {/* Exercise Page End */}
+
+              {/* Workout Page Start */}
+              <TouchableOpacity
+                style={styles.modalItem}
+                onPress={() => {
+                  router.push('/workout');
+                  setIsMoreModalVisible(false);
+                }}
+              >
+                <Image
+                  source={require('@/assets/icons/workout-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
+                <Text style={styles.modalText}>Workout</Text>
+              </TouchableOpacity>
+              {/* Workout Page End */}
 
               {/* Mental Button Start */}
               <TouchableOpacity
@@ -614,7 +646,11 @@ export default function Exercises() {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Feather name="activity" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/mental-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Mental</Text>
               </TouchableOpacity>
               {/* Mental Button End */}
@@ -627,7 +663,11 @@ export default function Exercises() {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Ionicons name="fast-food-outline" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/food-tracker-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Food Tracker</Text>
               </TouchableOpacity>
               {/* Food Tracker Button End */}
@@ -640,7 +680,11 @@ export default function Exercises() {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Ionicons name="settings-outline" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/settings-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Settings</Text>
               </TouchableOpacity>
               {/* Settings Button End */}
@@ -672,7 +716,15 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
           setIsMoreModalVisible(true);
         }}
       >
-        <Feather name="grid" size={25} color="#fff" />
+        <Image 
+          source={tabIcons.more.active}
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: '#fff'
+          }}
+          resizeMode="contain"
+        />
         <Text style={[styles.tabLabel, styles.activeTab]}>More</Text>
       </TouchableOpacity>
 
@@ -680,7 +732,15 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
         style={styles.tabItem}
         onPress={() => router.push('/(drawer)/(tabs)/planScreen')}
       >
-        <Feather name="plus" size={25} color="rgba(255, 255, 255, 0.6)" />
+        <Image 
+          source={tabIcons.plan.default}
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: 'rgba(255, 255, 255, 0.6)'
+          }}
+          resizeMode="contain"
+        />
         <Text style={styles.tabLabel}>Plan</Text>
       </TouchableOpacity>
 
@@ -688,7 +748,15 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
         style={styles.tabItem}
         onPress={() => router.push('/(drawer)/(tabs)/home')}
       >
-        <Feather name="home" size={24} color="rgba(255, 255, 255, 0.6)" />
+        <Image 
+          source={tabIcons.home.default}
+          style={{
+            width: 24,
+            height: 24,
+            tintColor: 'rgba(255, 255, 255, 0.6)'
+          }}
+          resizeMode="contain"
+        />
         <Text style={styles.tabLabel}>Home</Text>
       </TouchableOpacity>
 
@@ -696,7 +764,15 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
         style={styles.tabItem}
         onPress={() => router.push('/(drawer)/(tabs)/workout')}
       >
-        <Feather name="bar-chart" size={25} color="rgba(255, 255, 255, 0.6)" />
+        <Image 
+          source={tabIcons.steps.default}
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: 'rgba(255, 255, 255, 0.6)'
+          }}
+          resizeMode="contain"
+        />
         <Text style={styles.tabLabel}>Charts</Text>
       </TouchableOpacity>
 
@@ -704,13 +780,22 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
         style={styles.tabItem}
         onPress={() => router.push('/(drawer)/(tabs)/profileScreen')}
       >
-        <Feather name="user" size={25} color="rgba(255, 255, 255, 0.6)" />
+        <Image 
+          source={tabIcons.profile.default}
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: 'rgba(255, 255, 255, 0.6)'
+          }}
+          resizeMode="contain"
+        />
         <Text style={styles.tabLabel}>Profile</Text>
       </TouchableOpacity>
     </BlurView>
   );
 };
 // Custom Tab Bar End
+
 
 const styles = StyleSheet.create({
   container: {
@@ -834,6 +919,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalIcon: {
+    width: 26,
+    height: 26,
   },
   modalText: {
     color: '#fff',
@@ -937,12 +1024,7 @@ const styles = StyleSheet.create({
     height: 16,
     tintColor: 'rgba(255, 255, 255, 0.6)',
   },
-  pagination: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginTop: 20,
-  },
+  
   emptyStateContainer: {
     flex: 1,
     alignItems: 'center',

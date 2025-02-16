@@ -3,9 +3,35 @@ import { Feather, AntDesign, Ionicons } from '@expo/vector-icons'; // For tab ic
 import { DrawerToggleButton } from '@react-navigation/drawer'; // For drawer toggle button
 import { useRouter } from 'expo-router'; // For navigation
 import React, { ReactNode } from 'react';
-import { View, TouchableOpacity, Modal, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Modal, Text, StyleSheet, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BlurView } from 'expo-blur';
+
+// Nav Bar Tab Icons Start
+const tabIcons = {
+  more: {
+    active: require('@/assets/icons/more-tab.png'),
+    default: require('@/assets/icons/more-tab.png')
+  },
+  plan: {
+    active: require('@/assets/icons/plan-tab.png'),
+    default: require('@/assets/icons/plan-tab.png')
+  },
+  home: {
+    active: require('@/assets/icons/home-tab.png'),
+    default: require('@/assets/icons/home-tab.png')
+  },
+  steps: {
+    active: require('@/assets/icons/steps-tab.png'),
+    default: require('@/assets/icons/steps-tab.png')
+  },
+  profile: {
+    active: require('@/assets/icons/profile-tab.png'),
+    default: require('@/assets/icons/profile-tab.png')
+  },
+  settings: require('@/assets/icons/settings-tab.png')
+};
+// Nav Bar Tab Icons End
 
 export default function _layout() {
   const router = useRouter();  // Set up router for navigation
@@ -89,8 +115,16 @@ export default function _layout() {
         <Tabs.Screen
           name="more"
           options={{
-            tabBarIcon: ({ color, size }) => (
-              <Feather name="grid" size={size} color={color} />
+            tabBarIcon: ({ color, focused }) => (
+              <Image
+                source={focused ? tabIcons.more.active : tabIcons.more.default}
+                style={{
+                  width: 26,
+                  height: 26,
+                  tintColor: color,
+                }}
+                resizeMode="contain"
+              />
             ),
             tabBarLabel: 'More',
             headerTitle: 'More',
@@ -109,8 +143,16 @@ export default function _layout() {
         <Tabs.Screen
           name="planScreen"
           options={{
-            tabBarIcon: ({ color, size }) => (
-              <Feather name="plus" size={size} color={color} />
+            tabBarIcon: ({ color, focused }) => (
+              <Image
+                source={focused ? tabIcons.plan.active : tabIcons.plan.default}
+                style={{
+                  width: 26,
+                  height: 26,
+                  tintColor: color,
+                }}
+                resizeMode="contain"
+              />
             ),
             tabBarLabel: 'Plan',
             headerTitle: 'Plan',
@@ -122,10 +164,17 @@ export default function _layout() {
         {/* Home Tab Start */}
         <Tabs.Screen
           name="home"
-
           options={{
-            tabBarIcon: ({ color, size }) => (
-              <Feather name="home" size={size} color={color} />
+            tabBarIcon: ({ color, focused }) => (
+              <Image
+                source={focused ? tabIcons.home.active : tabIcons.home.default}
+                style={{
+                  width: 26,
+                  height: 26,
+                  tintColor: color,
+                }}
+                resizeMode="contain"
+              />
             ),
             tabBarLabel: 'Home',
             headerTitle: 'City Fit',
@@ -134,26 +183,42 @@ export default function _layout() {
         {/* Home Tab End */}
 
 
-        {/* Workout Tab Start */}
+        {/* Step Counter Tab Start */}
         <Tabs.Screen
-          name="workout"
+          name="stepCounter"
           options={{
-            tabBarIcon: ({ color, size }) => (
-              <Feather name="bar-chart" size={size} color={color} />
+            tabBarIcon: ({ color, focused }) => (
+              <Image
+                source={focused ? tabIcons.steps.active : tabIcons.steps.default}
+                style={{
+                  width: 26,
+                  height: 26,
+                  tintColor: color,
+                }}
+                resizeMode="contain"
+              />
             ),
-            tabBarLabel: 'Workout',
-            headerTitle: 'Workout',
+            tabBarLabel: 'Steps',
+            headerTitle: '',
           }}
         />
-        {/* Workout Tab End */}
+        {/* Step Counter Tab End */}
 
 
         {/* ProfileScreen Tab Start */}
         <Tabs.Screen
           name="profileScreen"
           options={{
-            tabBarIcon: ({ color, size }) => (
-              <Feather name="user" size={size} color={color} />
+            tabBarIcon: ({ color, focused }) => (
+              <Image
+                source={focused ? tabIcons.profile.active : tabIcons.profile.default}
+                style={{
+                  width: 26,
+                  height: 26,
+                  tintColor: color,
+                }}
+                resizeMode="contain"
+              />
             ),
             tabBarLabel: 'Profile',
             headerTitle: 'My Profile',
@@ -168,10 +233,17 @@ export default function _layout() {
                 onPress={() => router.push('/(drawer)/settings')}
               >
                 <IconWithBlur>
-                  <Ionicons name="settings-outline" size={20} color="#fff" />
+                  <Image
+                    source={tabIcons.settings}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      tintColor: '#fff',
+                    }}
+                    resizeMode="contain"
+                  />
                 </IconWithBlur>
               </TouchableOpacity>
-
             ),
           }}
         />
@@ -199,10 +271,31 @@ export default function _layout() {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Ionicons name="fitness" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/exercises-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Exercises</Text>
               </TouchableOpacity>
               {/* Exercise Page End */}
+
+              {/* Workout Button Start */}
+              <TouchableOpacity
+                style={styles.modalItem}
+                onPress={() => {
+                  router.push('/workout');
+                  setIsMoreModalVisible(false);
+                }}
+              >
+                <Image
+                  source={require('@/assets/icons/workout-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
+                <Text style={styles.modalText}>Workout</Text>
+              </TouchableOpacity>
+              {/* Workout Button End */}
 
               {/* Mental Button Start */}
               <TouchableOpacity
@@ -212,7 +305,11 @@ export default function _layout() {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Feather name="activity" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/mental-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Mental</Text>
               </TouchableOpacity>
               {/* Mental Button End */}
@@ -225,7 +322,11 @@ export default function _layout() {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Ionicons name="fast-food-outline" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/food-tracker-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Food Tracker</Text>
               </TouchableOpacity>
               {/* Food Tracker Button End */}
@@ -238,13 +339,17 @@ export default function _layout() {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Ionicons name="settings-outline" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={tabIcons.settings}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Settings</Text>
               </TouchableOpacity>
               {/* Settings Button End */}
             </View>
           </View>
-          
+
         </TouchableOpacity>
       </Modal>
       {/* More Modal End */}
@@ -285,6 +390,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalIcon: {
+    width: 26,
+    height: 26,
   },
   modalText: {
     color: '#fff',

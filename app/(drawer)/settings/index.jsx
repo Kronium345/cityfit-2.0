@@ -103,6 +103,7 @@ const Settings = () => {
   return (
     <View style={styles.container}>
       <BlobBackground />
+      {/* Header Start */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => router.push('/(drawer)/(tabs)/profileScreen')}
@@ -114,6 +115,7 @@ const Settings = () => {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Settings</Text>
       </View>
+      {/* Header End */}
 
       {/* New Premium Promo Cell */}
       <BlurView intensity={20} tint="dark" style={styles.premiumPromoContainer}>

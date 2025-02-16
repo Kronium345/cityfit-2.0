@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import axios from 'axios';
-import { MaterialIcons } from '@expo/vector-icons'; // Import MaterialIcons library
+import { MaterialIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 const PlanScreen = () => {
   const [input, setInput] = useState('');  // User's fitness goal input
@@ -52,34 +54,42 @@ const PlanScreen = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.chatContainer}>
-        {loading && <Text style={styles.loadingText}>Generating your plan...</Text>}
-        {plan.map((message, index) => (
-          <View style={styles.chatBox} key={index}>
-            <Text style={styles.messageBot}>
-              {message.split('\n').map((part, idx) => (
-                <Text key={idx} style={idx === 0 ? styles.boldText : styles.normalText}>
-                  {part}
-                  {'\n'}
-                </Text>
-              ))}
-            </Text>
-          </View>
-        ))}
-      </ScrollView>
+      <LinearGradient
+        colors={['#000000', '#004d00', '#003300']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.container}
+      >
+
+        <ScrollView style={styles.chatContainer}>
+          {loading && <Text style={styles.loadingText}>Generating your plan...</Text>}
+          {plan.map((message, index) => (
+            <View style={styles.chatBox} key={index}>
+              <Text style={styles.messageBot}>
+                {message.split('\n').map((part, idx) => (
+                  <Text key={idx} style={idx === 0 ? styles.boldText : styles.normalText}>
+                    {part}
+                    {'\n'}
+                  </Text>
+                ))}
+              </Text>
+            </View>
+          ))}
+        </ScrollView>
 
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          value={input}
-          onChangeText={setInput}
-          placeholder="Enter your fitness goals"
-          style={styles.textInput}
-        />
-        <TouchableOpacity onPress={generatePlan} style={styles.sendButton}>
-          <MaterialIcons name="send" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            value={input}
+            onChangeText={setInput}
+            placeholder="Enter your fitness goals"
+            style={styles.textInput}
+          />
+          <TouchableOpacity onPress={generatePlan} style={styles.sendButton}>
+            <MaterialIcons name="send" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
     </View>
   );
 };
@@ -122,9 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
+    marginBottom: 70,
   },
   textInput: {
     flex: 1,

@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { BlurView } from 'expo-blur';
 import { Feather, Ionicons } from '@expo/vector-icons';
@@ -100,11 +100,43 @@ const processHistoryData = (rawData: any[]) => {
   }));
 };
 
+// Milestone Badge Component Start
+type Achievement = {
+  steps: number;
+  unlocked: boolean;
+};
+
+// Milestone Badge Data
+const ACHIEVEMENTS: Achievement[] = [
+  { steps: 10000, unlocked: true },
+  { steps: 50000, unlocked: false },
+  { steps: 75000, unlocked: false },
+  { steps: 100000, unlocked: false },
+  { steps: 150000, unlocked: false },
+  { steps: 200000, unlocked: false },
+  { steps: 250000, unlocked: false },
+  { steps: 300000, unlocked: false },
+  { steps: 350000, unlocked: false },
+  { steps: 400000, unlocked: false },
+  { steps: 450000, unlocked: false },
+  { steps: 500000, unlocked: false },
+  { steps: 600000, unlocked: false },
+  { steps: 700000, unlocked: false },
+  { steps: 800000, unlocked: false },
+];
+
+// Format Large Numbers
+const formatNumber = (num: number): string => {
+  return num >= 1000 ? `${num / 1000}K` : num.toString();
+};
+// Milestone Badge Component End
+
+// Step History Component Start
 const StepHistory = () => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('Streaks');
+  const [activeTab, setActiveTab] = useState('History');
 
-  // Raw history data (simulating database records)
+  // Sample Histroy Data
   const rawHistoryData = useMemo(() => {
     const today = formatDate(new Date());
 
@@ -143,7 +175,7 @@ const StepHistory = () => {
             <Ionicons name="chevron-back" size={24} color="#fff" />
           </BlurView>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Step History</Text>
+        <Text style={styles.headerTitle}>Your Progress</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -152,69 +184,114 @@ const StepHistory = () => {
         {/* Tabs */}
         <View style={styles.tabContainer}>
           <TouchableOpacity
-            style={[styles.tab, activeTab === 'Streaks' && styles.activeTab]}
-            onPress={() => setActiveTab('Streaks')}
+            style={[styles.tab, activeTab === 'History' && styles.activeTab]}
+            onPress={() => setActiveTab('History')}
           >
             <Text style={[
               styles.tabText,
-              activeTab === 'Streaks' && styles.activeTabText
+              activeTab === 'History' && styles.activeTabText
             ]}>
-              Streaks
+              History
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.tab, activeTab === 'Awards' && styles.activeTab]}
-            onPress={() => setActiveTab('Awards')}
+            style={[styles.tab, activeTab === 'Achievements' && styles.activeTab]}
+            onPress={() => setActiveTab('Achievements')}
           >
             <Text style={[
               styles.tabText,
-              activeTab === 'Awards' && styles.activeTabText
+              activeTab === 'Achievements' && styles.activeTabText
             ]}>
-              Awards
+              Achievements
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Streak Stats */}
-        <View style={styles.streakStatsContainer}>
-          <View style={styles.streakBox}>
-            <Text style={styles.fireEmoji}>🔥</Text>
-            <Text style={styles.streakLabel}>Current</Text>
-            <Text style={styles.streakValue}>5 days</Text>
-          </View>
-          <View style={styles.streakBox}>
-            <Text style={styles.fireEmoji}>🔥</Text>
-            <Text style={styles.streakLabel}>Longest</Text>
-            <Text style={styles.streakValue}>5 days</Text>
-          </View>
-        </View>
+        {/* Histroy */}
+        {activeTab === 'History' ? (
+          <>
+            {/* Stat Box Start */}
+            <View style={styles.statBoxContainer}>
+              <View style={styles.statBox}>
+                <Image
+                  source={require('../../assets/icons/counter.png')}
+                  style={styles.progressIcon}
+                />
+                <Text style={styles.statBoxTitle}>Best Day</Text>
+                <Text style={styles.statBoxText}>10,200 Steps</Text>
+              </View>
+              <View style={styles.statBox}>
+                <Text style={styles.fireEmoji}>🔥</Text>
+                <Text style={styles.statBoxTitle}>Total Steps</Text>
+                <Text style={styles.statBoxText}>100,200 Steps</Text>
+              </View>
+            </View>
+            {/* Stat Box End */}
 
-        {/* History Title */}
-        <Text style={styles.historyTitle}>History</Text>
+            {/* History Title */}
+            <Text style={styles.historyTitle}>History</Text>
+          </>
+        ) : (
+          // TODO: Add fixed achievements content here
+          // This is where you put non-scrolling content like:
+          // - Achievement summary
+          // - Total achievements earned
+          // - Current progress overview
+          <View style={styles.achievementsContainer}>
+            <Text style={styles.comingSoonText}>Achievements Coming Soon</Text>
+          </View>
+        )}
       </View>
 
-      {/* Scrollable History Section */}
-      <ScrollView
-        style={styles.historyScrollContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        {historyData.map((item, index) => (
-          <View key={index} style={styles.historyItem}>
-            <View style={styles.historyLeft}>
-              <Text style={styles.stepCount}>{item.steps}</Text>
-              <Text style={styles.stepsLabel}>steps</Text>
+      {/* Scrollable Content Section */}
+      {activeTab === 'History' ? (
+        <ScrollView
+          style={styles.historyScrollContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          {historyData.map((item, index) => (
+            <View key={index} style={styles.historyItem}>
+              <View style={styles.historyLeft}>
+                <Text style={styles.stepCount}>{item.steps}</Text>
+                <Text style={styles.stepsLabel}>steps</Text>
+              </View>
+              <View style={styles.historyRight}>
+                <Text style={styles.dateText}>{item.date}</Text>
+                <Ionicons
+                  name={item.completed ? "checkmark-circle" : "time"}
+                  size={20}
+                  color={item.completed ? "#4CAF50" : "#757575"}
+                />
+              </View>
             </View>
-            <View style={styles.historyRight}>
-              <Text style={styles.dateText}>{item.date}</Text>
-              <Ionicons
-                name={item.completed ? "checkmark-circle" : "time"}
-                size={20}
-                color={item.completed ? "#4CAF50" : "#757575"}
-              />
-            </View>
+          ))}
+        </ScrollView>
+      ) : (
+        <ScrollView
+          style={styles.achievementsScrollContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* TODO: Add scrollable achievements list here
+              This is where you put the actual list of achievements:
+              - Individual achievement cards
+              - Achievement categories
+              - Detailed progress for each achievement
+          */}
+
+
+          <View style={styles.achievementsGrid}>
+            {ACHIEVEMENTS.map((achievement, index) => (
+              <View key={index} style={styles.achievementItem}>
+                <View style={styles.badge}>
+                  <Text style={styles.badgeNumber}>{formatNumber(achievement.steps)}</Text>
+                  <Text style={styles.badgeLabel}>steps</Text>
+                </View>
+              </View>
+            ))}
           </View>
-        ))}
-      </ScrollView>
+        </ScrollView>
+      )}
+
       <StatusBar style="light" />
     </View>
   );
@@ -248,15 +325,13 @@ const styles = StyleSheet.create({
   },
   // Blob Blurred Background End
 
+  // Header Component Start
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     marginBottom: 20,
-  },
-  fixedContent: {
-    paddingHorizontal: 20,
   },
   backButton: {
     width: 40,
@@ -276,6 +351,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
   },
+  fixedContent: {
+    paddingHorizontal: 20,
+  },
+  // Header Component End
+
+  // Tab Component Start
   tabContainer: {
     flexDirection: 'row',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -293,35 +374,43 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   tabText: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 16,
-    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 14,
+    fontWeight: '400',
   },
   activeTabText: {
     color: '#000',
     fontWeight: '600',
   },
-  streakStatsContainer: {
+  // Tab Component End
+
+  // Streak Stats Component Start
+  statBoxContainer: {
     flexDirection: 'row',
     gap: 10,
     marginBottom: 20,
   },
-  streakBox: {
+  statBox: {
     flex: 1,
     borderRadius: 15,
     padding: 15,
     backgroundColor: 'rgba(255,255,255,0.1)',
   },
+  progressIcon: {
+    width: 40,
+    height: 40,
+    marginRight: 4,
+  },
   fireEmoji: {
     fontSize: 24,
     marginBottom: 8,
   },
-  streakLabel: {
+  statBoxTitle: {
     color: 'rgba(255,255,255,0.7)',
     fontSize: 14,
     marginBottom: 4,
   },
-  streakValue: {
+  statBoxText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: '600',
@@ -368,6 +457,59 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.7)',
     fontSize: 14,
   },
+
+  // Achievements Component Start
+  achievementsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  achievementsScrollContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  comingSoonText: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  achievementsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    padding: 16,
+    gap: 16,
+  },
+  achievementItem: {
+    width: '30%', // Approximately 3 items per row with spacing
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badge: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 25,
+    backgroundColor: 'rgba(7, 94, 7, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+    borderWidth: 2,
+    borderColor: 'rgba(7, 94, 7, 1)',
+    boxShadow: '0 0 10px rgba(7, 94, 7, 0.6)',
+  },
+  badgeNumber: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  badgeLabel: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  // Achievements Component End
 });
 
 export default StepHistory; 

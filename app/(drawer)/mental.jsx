@@ -6,6 +6,32 @@ import { BlurView } from 'expo-blur';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { DrawerToggleButton } from '@react-navigation/drawer';
 
+// Nav Bar Tab Icons Start
+const tabIcons = {
+  more: {
+    active: require('@/assets/icons/more-tab.png'),
+    default: require('@/assets/icons/more-tab.png')
+  },
+  plan: {
+    active: require('@/assets/icons/plan-tab.png'),
+    default: require('@/assets/icons/plan-tab.png')
+  },
+  home: {
+    active: require('@/assets/icons/home-tab.png'),
+    default: require('@/assets/icons/home-tab.png')
+  },
+  steps: {
+    active: require('@/assets/icons/steps-tab.png'),
+    default: require('@/assets/icons/steps-tab.png')
+  },
+  profile: {
+    active: require('@/assets/icons/profile-tab.png'),
+    default: require('@/assets/icons/profile-tab.png')
+  }
+};
+// Nav Bar Tab Icons End
+
+
 // Menu Icon Component Start
 const IconWithBlur = ({ children, intensity = 20, style = {}, backgroundColor = 'rgba(0, 0, 0, 0.3)' }) => (
   <BlurView
@@ -103,10 +129,31 @@ const MentalHomePage = () => {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Ionicons name="fitness" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/exercises-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Exercises</Text>
               </TouchableOpacity>
               {/* Exercise Page End */}
+
+              {/* Workout Page Start */}
+              <TouchableOpacity
+                style={styles.modalItem}
+                onPress={() => {
+                  router.push('/workout');
+                  setIsMoreModalVisible(false);
+                }}
+              >
+                <Image
+                  source={require('@/assets/icons/workout-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
+                <Text style={styles.modalText}>Workout</Text>
+              </TouchableOpacity>
+              {/* Workout Page End */}
 
               {/* Mental Button Start */}
               <TouchableOpacity
@@ -116,7 +163,11 @@ const MentalHomePage = () => {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Feather name="activity" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/mental-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Mental</Text>
               </TouchableOpacity>
               {/* Mental Button End */}
@@ -129,7 +180,11 @@ const MentalHomePage = () => {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Ionicons name="fast-food-outline" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/food-tracker-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Food Tracker</Text>
               </TouchableOpacity>
               {/* Food Tracker Button End */}
@@ -142,7 +197,11 @@ const MentalHomePage = () => {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Ionicons name="settings-outline" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/settings-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Settings</Text>
               </TouchableOpacity>
               {/* Settings Button End */}
@@ -151,7 +210,7 @@ const MentalHomePage = () => {
 
         </TouchableOpacity>
       </Modal>
-      {/* More Modal End */}
+      {/* More Modal End */} 
     </View>
   );
 };
@@ -173,7 +232,15 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
           setIsMoreModalVisible(true);
         }}
       >
-        <Feather name="grid" size={25} color="#fff" />
+        <Image 
+          source={tabIcons.more.active}
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: '#fff'
+          }}
+          resizeMode="contain"
+        />
         <Text style={[styles.tabLabel, styles.activeTab]}>More</Text>
       </TouchableOpacity>
 
@@ -181,7 +248,15 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
         style={styles.tabItem}
         onPress={() => router.push('/(drawer)/(tabs)/planScreen')}
       >
-        <Feather name="plus" size={25} color="rgba(255, 255, 255, 0.6)" />
+        <Image 
+          source={tabIcons.plan.default}
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: 'rgba(255, 255, 255, 0.6)'
+          }}
+          resizeMode="contain"
+        />
         <Text style={styles.tabLabel}>Plan</Text>
       </TouchableOpacity>
 
@@ -189,7 +264,15 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
         style={styles.tabItem}
         onPress={() => router.push('/(drawer)/(tabs)/home')}
       >
-        <Feather name="home" size={24} color="rgba(255, 255, 255, 0.6)" />
+        <Image 
+          source={tabIcons.home.default}
+          style={{
+            width: 24,
+            height: 24,
+            tintColor: 'rgba(255, 255, 255, 0.6)'
+          }}
+          resizeMode="contain"
+        />
         <Text style={styles.tabLabel}>Home</Text>
       </TouchableOpacity>
 
@@ -197,7 +280,15 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
         style={styles.tabItem}
         onPress={() => router.push('/(drawer)/(tabs)/workout')}
       >
-        <Feather name="bar-chart" size={25} color="rgba(255, 255, 255, 0.6)" />
+        <Image 
+          source={tabIcons.steps.default}
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: 'rgba(255, 255, 255, 0.6)'
+          }}
+          resizeMode="contain"
+        />
         <Text style={styles.tabLabel}>Charts</Text>
       </TouchableOpacity>
 
@@ -205,13 +296,22 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
         style={styles.tabItem}
         onPress={() => router.push('/(drawer)/(tabs)/profileScreen')}
       >
-        <Feather name="user" size={25} color="rgba(255, 255, 255, 0.6)" />
+        <Image 
+          source={tabIcons.profile.default}
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: 'rgba(255, 255, 255, 0.6)'
+          }}
+          resizeMode="contain"
+        />
         <Text style={styles.tabLabel}>Profile</Text>
       </TouchableOpacity>
     </BlurView>
   );
 };
 // Custom Tab Bar End
+
 
 const styles = StyleSheet.create({
   container: {
@@ -309,6 +409,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalIcon: {
+    width: 26,
+    height: 26,
   },
   modalText: {
     color: '#fff',

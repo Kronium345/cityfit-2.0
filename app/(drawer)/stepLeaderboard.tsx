@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     tabText: {
-        color: 'rgba(255,255,255,0.7)',
+        color: 'rgba(255, 255, 255, 0.7)',
         fontSize: 14,
         fontWeight: '400',
     },

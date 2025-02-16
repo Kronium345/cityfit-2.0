@@ -11,7 +11,7 @@ import { useRouter } from 'expo-router';
 import { Pedometer } from 'expo-sensors';
 
 
-// IconWithBlur Component
+// IconWithBlur Component Start
 const IconWithBlur = ({ children }) => (
   <BlurView
     intensity={8}
@@ -29,8 +29,10 @@ const IconWithBlur = ({ children }) => (
     {children}
   </BlurView>
 );
+// IconWithBlur Component End
 
-// Progress Ring Component
+
+// Progress Ring Component Start
 const StepRingProgress = ({ radius = 150, strokeWidth = 8, progress = 0.7, dailyGoal, stepCount }) => {
   const fill = useSharedValue(0);
   const innerRadius = radius - strokeWidth / 2;
@@ -130,6 +132,7 @@ const StepRingProgress = ({ radius = 150, strokeWidth = 8, progress = 0.7, daily
     </View>
   );
 };
+// Progress Ring Component End
 
 
 // Streak Counter Start
@@ -142,7 +145,7 @@ const StreakCounter = ({ days = 0 }) => {
       onPress={() => router.push('/stepHistory')}
     >
       <Text style={styles.fireEmoji}>🔥</Text>
-      <Text style={styles.streakText}>{days} days</Text>
+      <Text style={styles.streakText}>Progress</Text>
       <Feather 
         name="chevron-right" 
         size={16} 

@@ -1,14 +1,16 @@
-import { StyleSheet, Text, View, FlatList, Button, Modal, TouchableOpacity, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Link, useRouter } from 'expo-router';
-import FoodListItem from '../../components/FoodListItem';
+import { View, Text, Dimensions, ScrollView, StyleSheet, Image, TouchableOpacity, Modal } from 'react-native';
 import axios from 'axios';
 import { useAuthContext } from '../AuthProvider';
-import Toast from 'react-native-toast-message';
+import resistanceIcon from "../../assets/tracker-images/resistance.png"; // Updated path
 import { LinearGradient } from 'expo-linear-gradient';
 import { DrawerToggleButton } from '@react-navigation/drawer';
 import { BlurView } from 'expo-blur';
 import { Ionicons, Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+
+const screenWidth = Dimensions.get('window').width;
+
 
 // Nav Bar Tab Icons Start
 const tabIcons = {
@@ -36,7 +38,47 @@ const tabIcons = {
 // Nav Bar Tab Icons End
 
 
-// Menu Icon Component Start
+const workout = () => {
+  const [historyData, setHistoryData] = useState([]);
+  const { user } = useAuthContext();
+  const router = useRouter();
+  const [isMoreModalVisible, setIsMoreModalVisible] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      console.log('User ID not found');
+      return;
+    }
+    console.log('Fetching history for user:', user._id);
+    fetchExerciseHistory();  // Fetch data on mount
+  }, [user]);
+
+  // Fetch the exercise history
+  const fetchExerciseHistory = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/exercise/${user._id}`);
+      console.log('Fetched history:', response.data);
+      
+      if (response.data) {
+        const updatedHistory = response.data.map((entry) => {
+          return {
+            date: new Date(entry.dateLogged).toLocaleString(),
+            exerciseName: entry.exerciseName,
+            weight: entry.weight,
+            sets: entry.sets,
+            reps: entry.reps,
+            detail: `${entry.weight} kg, ${entry.sets} sets, ${entry.reps} reps`
+          };
+        });
+        setHistoryData(updatedHistory);
+      }
+    } catch (error) {
+      console.error('Failed to fetch exercise history:', error);
+    }
+  };
+
+
+  // Menu Icon Component Start
 const IconWithBlur = ({ children, intensity = 20, style = {}, backgroundColor = 'rgba(0, 0, 0, 0.3)' }) => (
   <BlurView
     intensity={intensity}
@@ -58,89 +100,52 @@ const IconWithBlur = ({ children, intensity = 20, style = {}, backgroundColor = 
 // Menu Icon Component End
 
 
-const foodDetails = () => {
-  const [foodLogs, setFoodLogs] = useState([]); // To store food logs for today
-  const [totalCalories, setTotalCalories] = useState(0);
-  const { user } = useAuthContext();  // Dynamically getting user from AuthContext
-  const [isMoreModalVisible, setIsMoreModalVisible] = useState(false);
-  const router = useRouter();
-
-  // Log user data to confirm it's available
-  useEffect(() => {
-    if (user) {
-      console.log("User data:", user);
-      fetchFoodLogs();
-    }
-  }, [user]);
-
-  const showToast = (type, text1, text2) => {
-    Toast.show({
-      type: type,
-      text1: text1,
-      text2: text2,
-      position: 'bottom',
-      visibilityTime: 4000,
-    });
-  };
-
-  const fetchFoodLogs = async () => {
-    if (!user) {
-      console.log("No user data available");
-      return;
-    }
-
-    try {
-      const today = new Date().toISOString().split('T')[0];  // Get today's date in YYYY-MM-DD format
-      const response = await axios.get(`http://localhost:5000/food/log/${user._id}?date=${today}`);
-      setFoodLogs(response.data);
-      const totalKcal = response.data.reduce((sum, item) => sum + item.cal, 0);
-      setTotalCalories(totalKcal); // Set total calories for the day
-      console.log("Food logs fetched:", response.data);
-    } catch (error) {
-      console.error("Error fetching food logs:", error);
-    }
-  };
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={['#000000', '#004d00', '#003300']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.container}
-      >
-        {/* Screen Header Start */}
-        <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <IconWithBlur>
-              <DrawerToggleButton tintColor='#fff' />
-            </IconWithBlur>
+    <LinearGradient
+      colors={['#000000', '#004d00', '#003300']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
+      {/* Screen Header Start */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <IconWithBlur>
+            <DrawerToggleButton tintColor='#fff' />
+          </IconWithBlur>
+        </View>
+        <Text style={styles.headerTitle}>Workouts</Text>
+        <View style={styles.headerRight} />
+      </View>
+      {/* Screen Header End */}
+
+      <ScrollView style={[styles.mainContainer, { backgroundColor: 'transparent' }]}>
+
+        {historyData.length ? (
+          <View style={styles.historyList}>
+            {historyData.map((item, index) => (
+              <View key={index} style={styles.historyItem}>
+                <View style={styles.dateWrapper}>
+                  <Text style={styles.date}>{item.date}</Text>
+                </View>
+
+                <View style={styles.exerciseWrapper}>
+                  <Image
+                    source={resistanceIcon} // Always using resistance icon
+                    style={styles.icon}
+                  />
+                  <View>
+                    <Text style={styles.exerciseName}>{item.exerciseName}</Text>
+                    <Text style={styles.exerciseDetail}>{item.detail}</Text>
+                  </View>
+                </View>
+              </View>
+            ))}
           </View>
-          <Text style={styles.headerTitle}>Food Tracker</Text>
-          <View style={styles.headerRight} />
-        </View>
-        {/* Screen Header End */}
-
-        <View style={styles.headerRow}>
-          <Text style={styles.subTitle}>Calories</Text>
-          <Text>{totalCalories} kcal</Text>
-        </View>
-        <View style={styles.headerRow}>
-          <Text style={styles.subTitle}>Today's Food</Text>
-          <Link href="/foodHomeScreen" asChild>
-            <Button title="Add Food" />
-          </Link>
-        </View>
-        <FlatList
-          data={foodLogs}
-          contentContainerStyle={{ gap: 5 }}
-          renderItem={({ item }) => (
-            <FoodListItem item={item} onAddFood={() => handleAddFood(item)} showAddButton={false} />  // Pass the entire item object to the FoodListItem component
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
-        <Toast ref={(ref) => Toast.setRef(ref)} />
-      </LinearGradient>
-
+        ) : (
+          <Text>No exercise history available.</Text>
+        )}
+      </ScrollView>
 
       {/* Custom Tab Bar Start */}
       <CustomTabBar setIsMoreModalVisible={setIsMoreModalVisible} />
@@ -249,8 +254,9 @@ const foodDetails = () => {
 
         </TouchableOpacity>
       </Modal>
-      {/* More Modal End */} 
-    </View>
+      {/* More Modal End */}     
+
+    </LinearGradient>
   );
 };
 
@@ -353,11 +359,13 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
 // Custom Tab Bar End
 
 
-export default foodDetails;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'rgba(0, 26, 0, 1)',
+  }, 
+  mainContainer: {
+    paddingHorizontal: 10,
   },
 
   // Screen Header Start
@@ -466,19 +474,41 @@ const styles = StyleSheet.create({
   // More Modal End
 
 
-
-
-
-
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  historyList: {
+    marginTop: 20,
   },
-  subTitle: {
+  historyItem: {
+    marginBottom: 10,
+    padding: 15,
+    backgroundColor: '#f1f1f1',
+    borderRadius: 8,
+  },
+  dateWrapper: {
+    marginBottom: 10,
+  },
+  date: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  exerciseWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    marginRight: 10,
+  },
+  exerciseName: {
     fontSize: 18,
-    fontWeight: "500",
-    flex: 1,
-    color: "dimgray"
-  }
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  exerciseDetail: {
+    fontSize: 14,
+    color: '#555',
+  },
 });
+
+export default workout;

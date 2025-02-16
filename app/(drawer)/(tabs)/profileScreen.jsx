@@ -10,14 +10,15 @@ import * as ImagePicker from 'expo-image-picker'; // Expo Image Picker
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay } from 'date-fns';
-import Animated, { 
-  withTiming, 
-  withRepeat, 
-  useAnimatedStyle, 
-  useSharedValue 
+import Animated, {
+  withTiming,
+  withRepeat,
+  useAnimatedStyle,
+  useSharedValue
 } from 'react-native-reanimated';
 import Svg, { Circle } from 'react-native-svg';
 import { Alert } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 // Blob Blurred Background Start
 const AnimatedSvg = Animated.createAnimatedComponent(Svg);
@@ -99,7 +100,7 @@ const ProfileScreen = () => {
           setWeight(response.data.weight || '');
           setExperience(response.data.experience || '');
           setGender(response.data.gender || '');
-          
+
           // Check if avatar exists, and format it properly
           if (response.data.avatar) {
             setAvatar(`http://localhost:5000/${response.data.avatar.replace(/\\/g, '/')}`);
@@ -229,6 +230,7 @@ const ProfileScreen = () => {
     }
   };
 
+  // Calendar Component Start
   const renderCalendar = () => {
     const today = new Date();
     const start = startOfMonth(today);
@@ -268,6 +270,146 @@ const ProfileScreen = () => {
         </View>
       </View>
     );
+  };
+  // Calendar Component End
+
+  // Tab Content Components
+  const renderCalendarTab = () => {
+    return (
+      <View style={styles.DataBox}>
+        {renderCalendar()}
+      </View>
+    );
+  };
+
+  const renderMeasurementsTab = () => {
+    return (
+      <View style={styles.DataBox}>
+        {/* TODO: Add your recipes content here
+          Suggested components:
+          - Weight tracking graph
+          - Body recipes input/display
+          - Progress photos
+          - BMI calculator
+        */}
+        <MaterialCommunityIcons name="chart-line" size={40} color="rgba(255, 255, 255, 0.55)" />
+        <Text style={styles.noDataText}>No recipes recorded yet</Text>
+      </View>
+    );
+  };
+
+  // Steps Tab Component Start
+  const renderStepsTab = () => {
+    const totalSteps = 10900; // Replace with actual total steps from your data
+    const formattedSteps = (totalSteps / 1000).toFixed(1) + 'K';
+
+    return (
+      <View style={styles.stepsDataBox}>
+        {/* Total Steps Progress Section */}
+        <View style={styles.totalStepsContainer}>
+          <View style={styles.totalStepsContent}>
+            {/* Icon Container */}
+            <View style={styles.iconContainer}>
+              <Feather name="pie-chart" size={26} color="#fff" />
+            </View>
+
+            {/* Progress Section */}
+            <View style={styles.progressSection}>
+              <Text style={styles.totalStepsTitle}>Total Steps Tracked</Text>
+              <View style={styles.progressContainer}>
+                <View style={styles.progressBarBackground}>
+                  <View style={[styles.progressBarFill, { width: '85%' }]} />
+                </View>
+                <View style={styles.progressLabels}>
+                  <Text style={styles.currentSteps}>{formattedSteps}</Text>
+                  <Text style={styles.rankText}>Top 1%</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* Existing Achievements Section */}
+        <TouchableOpacity
+          style={styles.stepsAchievementsContainer}
+          onPress={() => router.push({
+            pathname: '/(drawer)/stepHistory',
+            params: { initialTab: 'achievements' }
+          })}
+        >
+          <View style={styles.stepsTitleContainer}>
+            <Text style={styles.stepsAchievementTitle}>Steps Achievements</Text>
+            <Ionicons name="chevron-forward" size={18} color="rgba(255, 255, 255, 0.75)" />
+          </View>
+          <View style={styles.badgesContainer}>
+            <View style={styles.badgeItem}>
+              <View style={styles.badge}>
+                <View style={styles.badgeTextContainer}>
+                  <Text style={styles.badgeNumber}>10</Text>
+                  <Text style={styles.badgeUnit}>K</Text>
+                </View>
+              </View>
+              <Text style={styles.badgeLabel}>10K steps</Text>
+            </View>
+
+            <View style={styles.badgeItem}>
+              <View style={styles.badge}>
+                <View style={styles.badgeTextContainer}>
+                  <Text style={styles.badgeNumber}>50</Text>
+                  <Text style={styles.badgeUnit}>K</Text>
+                </View>
+              </View>
+              <Text style={styles.badgeLabel}>50K steps</Text>
+            </View>
+
+            <View style={styles.badgeItem}>
+              <View style={styles.badge}>
+                <View style={styles.badgeTextContainer}>
+                  <Text style={styles.badgeNumber}>75</Text>
+                  <Text style={styles.badgeUnit}>K</Text>
+                </View>
+              </View>
+              <Text style={styles.badgeLabel}>75K steps</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+  // Steps Tab Component End
+
+  // Exercises Tab Component Start
+  const renderExercisesTab = () => {
+    return (
+      <View style={styles.DataBox}>
+        {/* TODO: Add your exercises content here
+          Suggested components:
+          - Exercise history
+          - Personal records
+          - Favorite exercises
+          - Exercise statistics
+        */}
+        <MaterialCommunityIcons name="chart-line" size={40} color="rgba(255, 255, 255, 0.55)" />
+        <Text style={styles.noDataText}>No exercise history yet</Text>
+      </View>
+    );
+  };
+  // Exercises Tab Component End
+
+  // Main render function for tab content
+  const renderTabContent = () => {
+    switch (selectedTab) {
+      case 'calendar':
+        return renderCalendarTab();
+      case 'exercises':
+        return renderExercisesTab();
+      case 'recipes':
+        return renderMeasurementsTab();
+      case 'steps':
+        return renderStepsTab();
+      default:
+        return renderCalendarTab();
+    }
   };
 
   return (
@@ -360,16 +502,6 @@ const ProfileScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.iconButton, selectedTab === 'measurements' && styles.selectedIcon]}
-            onPress={() => setSelectedTab('measurements')}
-          >
-            <View style={styles.iconContent}>
-              <MaterialCommunityIcons name="ruler" size={24} color={selectedTab === 'measurements' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(255, 255, 255, 0.55)'} />
-              {selectedTab === 'measurements' && <Text style={styles.iconText}>Measurements</Text>}
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
             style={[styles.iconButton, selectedTab === 'steps' && styles.selectedIcon]}
             onPress={() => setSelectedTab('steps')}
           >
@@ -388,25 +520,21 @@ const ProfileScreen = () => {
               {selectedTab === 'exercises' && <Text style={styles.iconText}>Exercises</Text>}
             </View>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.iconButton, selectedTab === 'recipes' && styles.selectedIcon]}
+            onPress={() => setSelectedTab('recipes')}
+          >
+            <View style={styles.iconContent}>
+              <MaterialCommunityIcons name="ruler" size={24} color={selectedTab === 'recipes' ? 'rgba(255, 255, 255, 0.6)' : 'rgba(255, 255, 255, 0.55)'} />
+              {selectedTab === 'recipes' && <Text style={styles.iconText}>Recipes</Text>}
+            </View>
+          </TouchableOpacity>
         </View>
         {/* Icon Row End*/}
 
-        {/* Quick StatData Box Start*/}
-        <View style={styles.DataBox}>
-          {selectedTab === 'calendar' ? (
-            renderCalendar()
-          ) : (
-            <>
-              <MaterialCommunityIcons name="chart-line" size={40} color="rgba(255, 255, 255, 0.55)" />
-              <Text style={styles.noDataText}>
-                {selectedTab === 'measurements' && 'No measurements recorded yet'}
-                {selectedTab === 'steps' && 'No step data available yet'}
-                {selectedTab === 'exercises' && 'No exercise history yet'}
-              </Text>
-            </>
-          )}
-        </View>
-        {/* Quick StatData Box End*/}
+        {/* Replace the existing DataBox with the new tab content */}
+        {renderTabContent()}
 
       </ScrollView>
     </View>
@@ -677,11 +805,10 @@ const styles = StyleSheet.create({
   },
   dayCell: {
     width: '14.28%',
-    height: 40,
+    height: 32,
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 2,
   },
   dayWrapper: {
     width: 25,
@@ -703,6 +830,155 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   // Calendar Quick Stat End
+
+  // Add specific styles for each tab section here
+  measurementsContainer: {
+    // Add styles for recipes tab
+  },
+
+  exercisesContainer: {
+    // Add styles for exercises tab
+  },
+
+  // Steps Tab Component Start
+  stepsDataBox: {
+    marginHorizontal: 20,
+    marginTop: 15,
+    marginBottom: 15,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 130,
+  },
+  // Total Steps Component Start
+  totalStepsContainer: {
+    marginBottom: 15,
+    borderRadius: 16,
+    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    boxShadow: '0 0 16px rgba(0, 0, 0, 0.25)',
+  },
+  totalStepsContent: {
+    flexDirection: 'row',
+    padding: 15,
+    alignItems: 'center',
+    gap: 12,
+  },
+  iconContainer: {
+    marginRight: 4,
+    width: 50,
+    height: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressSection: {
+    flex: 1,
+  },
+  totalStepsTitle: {
+    color: '#fff',
+    fontSize: 14,
+    marginBottom: 8,
+    opacity: 0.8,
+  },
+  progressContainer: {
+    width: '100%',
+  },
+  progressBarBackground: {
+    height: 4,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    borderRadius: 2,
+    marginBottom: 8,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    backgroundColor: '#4CAF50',
+    borderRadius: 2,
+  },
+  progressLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  currentSteps: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  rankText: {
+    color: '#4CAF50',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  // Total Steps Component End
+  // 
+  // Steps Achievements Section Start
+  stepsAchievementsContainer: {
+    width: '100%',
+    paddingBottom: 12,
+    borderRadius: 16,
+    backgroundColor: 'rgba(102, 102, 102, 0.4)',
+    boxShadow: '0 0 16px rgba(0, 0, 0, 0.25)',
+  },
+  stepsTitleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    borderTopRightRadius: 16,
+    borderTopLeftRadius: 16,
+  },
+  stepsAchievementTitle: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  badgesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '100%',
+  },
+  badgeItem: {
+    alignItems: 'center',
+  },
+  badge: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: 'rgba(7, 94, 7, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+    borderWidth: 2,
+    borderColor: 'rgba(7, 94, 7, 1)',
+    boxShadow: '0 0 16px rgba(7, 94, 7, 0.6)',
+  },
+  badgeTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  badgeNumber: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  badgeUnit: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '500',
+    marginLeft: 1,
+  },
+  badgeLabel: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 12,
+  },
+  // Steps Tab Component End
 });
 
 export default ProfileScreen;
