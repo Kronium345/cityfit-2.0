@@ -2,8 +2,8 @@ import { Tabs } from 'expo-router'; // Import Link from expo-router
 import { Feather, AntDesign, Ionicons } from '@expo/vector-icons'; // For tab icons
 import { DrawerToggleButton } from '@react-navigation/drawer'; // For drawer toggle button
 import { useRouter } from 'expo-router'; // For navigation
-import React, { ReactNode } from 'react';
-import { View, TouchableOpacity, Modal, Text, StyleSheet, Image } from 'react-native';
+import React, { ReactNode, useState } from 'react';
+import { View, TouchableOpacity, Modal, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BlurView } from 'expo-blur';
 
@@ -13,9 +13,9 @@ const tabIcons = {
     active: require('@/assets/icons/more-tab.png'),
     default: require('@/assets/icons/more-tab.png')
   },
-  plan: {
-    active: require('@/assets/icons/plan-tab.png'),
-    default: require('@/assets/icons/plan-tab.png')
+  trainer: {
+    active: require('@/assets/icons/trainer-tab.png'),
+    default: require('@/assets/icons/trainer-tab.png')
   },
   home: {
     active: require('@/assets/icons/home-tab.png'),
@@ -36,6 +36,8 @@ const tabIcons = {
 export default function _layout() {
   const router = useRouter();  // Set up router for navigation
   const [isMoreModalVisible, setIsMoreModalVisible] = React.useState(false);
+  const [chatHistory, setChatHistory] = useState([]);
+  const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
 
   const IconWithBlur = ({ children, intensity = 20, style = {}, backgroundColor = 'rgba(0, 0, 0, 0.3)' }: {
     children: ReactNode;
@@ -60,6 +62,45 @@ export default function _layout() {
       {children}
     </BlurView>
   );
+
+
+  // AI Chat History Modal Start
+  const HistoryModal = ({ isVisible, onClose }) => {
+    return (
+      <Modal
+        transparent
+        visible={isVisible}
+        onRequestClose={onClose}
+        animationType="slide"
+      >
+        <View style={styles.historyModalContainer}>
+          <View style={styles.historyModalContent}>
+            <TouchableOpacity 
+              style={styles.closeButton} 
+              onPress={onClose}
+            >
+              <Feather name="x" size={18} color="rgba(255,255,255,0.6)" />
+            </TouchableOpacity>
+
+            <Text style={styles.historyModalTitle}>Chat History</Text>
+            <Text style={styles.historyModalSubtitle}>View your previous conversations</Text>
+            
+            <ScrollView style={styles.historyList}>
+              {chatHistory.map((chat, index) => (
+                <View key={index} style={styles.historyItem}>
+                  <Text style={styles.historyText}>
+                    {typeof chat === 'string' ? chat : chat.text}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+  // AI Chat History Modal End
+
 
   return (
     <>
@@ -145,7 +186,7 @@ export default function _layout() {
           options={{
             tabBarIcon: ({ color, focused }) => (
               <Image
-                source={focused ? tabIcons.plan.active : tabIcons.plan.default}
+                source={focused ? tabIcons.trainer.active : tabIcons.trainer.default}
                 style={{
                   width: 26,
                   height: 26,
@@ -154,8 +195,19 @@ export default function _layout() {
                 resizeMode="contain"
               />
             ),
-            tabBarLabel: 'Plan',
-            headerTitle: 'Plan',
+            tabBarLabel: 'Trainer',
+            headerTitle: 'AI Trainer',
+            // History Modal Button
+            headerRight: () => (
+              <TouchableOpacity
+                style={{ marginRight: 12 }}
+                onPress={() => setIsHistoryModalVisible(true)}
+              >
+                <IconWithBlur>
+                  <Feather name="clock" size={20} color="#fff" />
+                </IconWithBlur>
+              </TouchableOpacity>
+            ),
           }}
         />
         {/* PlanScreen Tab End */}
@@ -354,6 +406,11 @@ export default function _layout() {
       </Modal>
       {/* More Modal End */}
 
+      <HistoryModal
+        isVisible={isHistoryModalVisible}
+        onClose={() => setIsHistoryModalVisible(false)}
+      />
+
     </>
   );
 }
@@ -403,5 +460,57 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   // More Modal End
+
+  // AI Chat History Modal Start
+  historyModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  historyModalContent: {
+    backgroundColor: '#003300',
+    borderRadius: 24,
+    padding: 24,
+    margin: 16,
+    maxHeight: '80%',
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 16,
+    top: 16,
+    width: 26,
+    height: 26,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  historyModalTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#fff',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  historyModalSubtitle: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.7)',
+    marginBottom: 24,
+  },
+  historyList: {
+    maxHeight: '70%',
+  },
+  historyItem: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+  },
+  historyText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  // AI Chat History Modal End
 });
 

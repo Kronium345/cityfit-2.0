@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.4)',
   },
   trialButton: {
-    backgroundColor: '#0c6329',
+    backgroundColor: 'rgb(7, 82, 0)',
     width: '98%',
     alignSelf: 'center',
     padding: 12,

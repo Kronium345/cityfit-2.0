@@ -16,9 +16,9 @@ const tabIcons = {
     active: require('@/assets/icons/more-tab.png'),
     default: require('@/assets/icons/more-tab.png')
   },
-  plan: {
-    active: require('@/assets/icons/plan-tab.png'),
-    default: require('@/assets/icons/plan-tab.png')
+  trainer: {
+    active: require('@/assets/icons/trainer-tab.png'),
+    default: require('@/assets/icons/trainer-tab.png')
   },
   home: {
     active: require('@/assets/icons/home-tab.png'),
@@ -289,7 +289,7 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
         onPress={() => router.push('/(drawer)/(tabs)/planScreen')}
       >
         <Image 
-          source={tabIcons.plan.default}
+          source={tabIcons.trainer.default}
           style={{
             width: 25,
             height: 25,
@@ -297,7 +297,7 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
           }}
           resizeMode="contain"
         />
-        <Text style={styles.tabLabel}>Plan</Text>
+        <Text style={styles.tabLabel}>Trainer</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -318,7 +318,7 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
 
       <TouchableOpacity
         style={styles.tabItem}
-        onPress={() => router.push('/(drawer)/(tabs)/workout')}
+        onPress={() => router.push('/(drawer)/(tabs)/stepCounter')}
       >
         <Image 
           source={tabIcons.steps.default}
@@ -329,7 +329,7 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
           }}
           resizeMode="contain"
         />
-        <Text style={styles.tabLabel}>Charts</Text>
+        <Text style={styles.tabLabel}>Steps</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
