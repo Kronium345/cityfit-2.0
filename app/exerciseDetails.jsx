@@ -252,7 +252,7 @@ const ExerciseDetail = () => {
     };
 
     try {
-      const response = await axios.post(`http://localhost:5000/history/history`, logEntry);
+      const response = await axios.post(`https://fitness-one-server.onrender.com/history/history`, logEntry);
       console.log('Exercise logged:', response.data);
       showToast('success', 'Exercise Logged Successfully', 'Your exercise has been logged.');
     } catch (error) {

@@ -91,7 +91,7 @@ const ProfileScreen = () => {
       const token = await AsyncStorage.getItem('token');
       if (user) {
         try {
-          const response = await axios.get(`http://localhost:5000/user/${user._id}`, {
+          const response = await axios.get(`https://fitness-one-server.onrender.com/user/${user._id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
 
@@ -103,7 +103,7 @@ const ProfileScreen = () => {
 
           // Check if avatar exists, and format it properly
           if (response.data.avatar) {
-            setAvatar(`http://localhost:5000/${response.data.avatar.replace(/\\/g, '/')}`);
+            setAvatar(`https://fitness-one-server.onrender.com/${response.data.avatar.replace(/\\/g, '/')}`);
           } else {
             setAvatar('');  // Default to empty if no avatar
           }
@@ -128,7 +128,7 @@ const ProfileScreen = () => {
     const token = await AsyncStorage.getItem('token');
     try {
       const updatedData = { weight, experience, gender };
-      const response = await axios.put(`http://localhost:5000/user/${user._id}`, updatedData, {
+      const response = await axios.put(`https://fitness-one-server.onrender.com/user/${user._id}`, updatedData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -208,7 +208,7 @@ const ProfileScreen = () => {
     try {
       // Sending the image file to the backend using PUT request
       const response = await axios.put(
-        `http://localhost:5000/user/${user._id}/avatar`,  // Your backend endpoint
+        `https://fitness-one-server.onrender.com/user/${user._id}/avatar`,  // Your backend endpoint
         formData,
         {
           headers: {
@@ -426,7 +426,7 @@ const ProfileScreen = () => {
                 source={{
                   uri: avatar.includes('http')
                     ? avatar
-                    : `http://localhost:5000/${avatar.replace(/\\/g, '/')}`
+                    : `https://fitness-one-server.onrender.com/${avatar.replace(/\\/g, '/')}`
                 }}
                 style={styles.profileImage}
                 resizeMode="cover"

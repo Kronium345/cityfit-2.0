@@ -107,7 +107,7 @@ const Profile = () => {
       if (userJson) {
         const user = JSON.parse(userJson);
         if (user) {
-          const response = await axios.get(`http://localhost:5000/user/${user._id}`, {
+          const response = await axios.get(`https://fitness-one-server.onrender.com/user/${user._id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
 
@@ -173,7 +173,7 @@ const Profile = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:5000/user/${user._id}/avatar`,
+        `https://fitness-one-server.onrender.com/user/${user._id}/avatar`,
         formData,
         {
           headers: {
@@ -205,7 +205,7 @@ const Profile = () => {
 
         // Then make the API call
         await axios.put(
-          `http://localhost:5000/user/${user._id}`,
+          `https://fitness-one-server.onrender.com/user/${user._id}`,
           {
             firstName: userData.name.split(' ')[0],
             lastName: userData.name.split(' ')[1] || '',
@@ -265,7 +265,7 @@ const Profile = () => {
                   source={{
                     uri: avatar.includes('http')
                       ? avatar
-                      : `http://localhost:5000/${avatar.replace(/\\/g, '/')}`
+                      : `https://fitness-one-server.onrender.com/${avatar.replace(/\\/g, '/')}`
                   }}
                   style={styles.profileImage}
                 />

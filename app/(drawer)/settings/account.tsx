@@ -99,7 +99,7 @@ const AccountSettings = () => {
       if (userJson) {
         const user = JSON.parse(userJson);
         if (user) {
-          const response = await axios.get(`http://localhost:5000/user/${user._id}`, {
+          const response = await axios.get(`https://fitness-one-server.onrender.com/user/${user._id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
 
@@ -134,7 +134,7 @@ const handleUpdateUsername = async () => {
 
     if (user && token) {
       const response = await axios.put(
-        `http://localhost:5000/user/${user._id}/username`,
+        `https://fitness-one-server.onrender.com/user/${user._id}/username`,
         { username: newUsername },  // Update only username
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -163,7 +163,7 @@ const handleUpdatePassword = async () => {
 
     if (user && token) {
       const response = await axios.patch(
-        `http://localhost:5000/user/${user._id}/password`,
+        `https://fitness-one-server.onrender.com/user/${user._id}/password`,
         { currentPassword, newPassword },
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -189,7 +189,7 @@ const handleDeleteAccount = async () => {
 
     if (user && token) {
       const response = await axios.delete(
-        `http://localhost:5000/user/${user._id}`,
+        `https://fitness-one-server.onrender.com/user/${user._id}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -226,7 +226,7 @@ const handleUpdateDateOfBirth = async () => {
 
     if (user && token) {
       const response = await axios.put(
-        `http://localhost:5000/user/${user._id}`,
+        `https://fitness-one-server.onrender.com/user/${user._id}`,
         { dob: userData.dateOfBirth },  // Update Date of Birth
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -248,7 +248,7 @@ const handleUpdateGender = async (gender: string) => {
 
     if (user && token) {
       const response = await axios.patch(
-        `http://localhost:5000/user/${user._id}/gender`,
+        `https://fitness-one-server.onrender.com/user/${user._id}/gender`,
         { gender },
         {
           headers: { Authorization: `Bearer ${token}` }

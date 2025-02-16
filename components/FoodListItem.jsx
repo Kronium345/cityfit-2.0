@@ -27,7 +27,7 @@ const FoodListItem = ({ item, showAddButton, onFoodAdded }) => {
     });
 
     try {
-      const response = await axios.post('http://localhost:5000/food/log', {
+      const response = await axios.post('https://fitness-one-server.onrender.com/food/log', {
         userId: user._id,  // Using dynamic user._id
         label: item.label,
         cal: item.cal,

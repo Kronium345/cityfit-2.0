@@ -56,7 +56,7 @@ const workout = () => {
   // Fetch the exercise history
   const fetchExerciseHistory = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/exercise/${user._id}`);
+      const response = await axios.get(`https://fitness-one-server.onrender.com/exercise/${user._id}`);
       console.log('Fetched history:', response.data);
       
       if (response.data) {

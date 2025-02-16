@@ -34,7 +34,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/auth/login', {
+      const response = await axios.post('https://fitness-one-server.onrender.com/auth/login', {
         emailOrUsername,
         password,
       });

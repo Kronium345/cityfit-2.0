@@ -245,7 +245,7 @@ export default function Exercises() {
   
     try {
       // Post to server to toggle favorite status
-      await axios.post('http://localhost:5000/history/toggle-favorite', logEntry);
+      await axios.post('https://fitness-one-server.onrender.com/history/toggle-favorite', logEntry);
   
       // Update the favorite status locally
       setExercises(prevExercises => prevExercises.map(ex =>
@@ -266,7 +266,7 @@ export default function Exercises() {
     if (user && activeTab === 'Favorites') {
       const fetchFavorites = async () => {
         try {
-          const response = await axios.get(`http://localhost:5000/history/favorites/${user._id}`);
+          const response = await axios.get(`https://fitness-one-server.onrender.com/history/favorites/${user._id}`);
           const favoriteNames = response.data.map(fav => fav.exerciseName); // Extract the favorite exercise names
           
           // Update exercises based on the fetched favorites
@@ -303,7 +303,7 @@ export default function Exercises() {
   //   if (user && activeTab === 'Favorites') {
   //     const fetchFavorites = async () => {
   //       try {
-  //         const response = await axios.get(`http://localhost:5000/history/favorites/${user._id}`);
+  //         const response = await axios.get(`https://fitness-one-server.onrender.com/history/favorites/${user._id}`);
   //         setFavorites(response.data);  // Set the fetched favorites
   //       } catch (error) {
   //         console.error('Error fetching favorites:', error);

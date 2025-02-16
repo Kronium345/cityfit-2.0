@@ -29,7 +29,7 @@ const RootLayout = () => {
         }
 
         try {
-          const response = await axios.get(`http://localhost:5000/user/${user._id}`, {
+          const response = await axios.get(`https://fitness-one-server.onrender.com/user/${user._id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
 

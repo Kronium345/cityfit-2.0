@@ -39,7 +39,7 @@ const AvatarScreen = () => {
     try {
       // Sending the selected avatar URL to the backend (not uploading as file)
       const response = await axios.put(
-        `http://localhost:5000/user/${user._id}/avatar`,
+        `https://fitness-one-server.onrender.com/user/${user._id}/avatar`,
         { avatar: avatarUrl }, // Send the URL as avatar data
         {
           headers: {
@@ -114,7 +114,7 @@ const uploadImage = async (uri) => {
   try {
     // Sending the image file to the backend using PUT request
     const response = await axios.put(
-      `http://localhost:5000/user/${user._id}/avatar`,  // Your backend endpoint
+      `https://fitness-one-server.onrender.com/user/${user._id}/avatar`,  // Your backend endpoint
       formData,
       {
         headers: {

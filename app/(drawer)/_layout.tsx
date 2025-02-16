@@ -102,7 +102,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         if (userJson) {
           const user = JSON.parse(userJson);
           // Fetch latest user data from the server
-          const response = await axios.get(`http://localhost:5000/user/${user._id}`, {
+          const response = await axios.get(`https://fitness-one-server.onrender.com/user/${user._id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
 
@@ -144,7 +144,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
                 source={{
                   uri: userData.avatar.includes('http')
                     ? userData.avatar
-                    : `http://localhost:5000/${userData.avatar.replace(/\\/g, '/')}`
+                    : `https://fitness-one-server.onrender.com/${userData.avatar.replace(/\\/g, '/')}`
                 }}
                 style={styles.profileImage}
                 resizeMode="cover"

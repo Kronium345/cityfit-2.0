@@ -15,7 +15,7 @@ const GenderSelection = () => {
     const token = await AsyncStorage.getItem('token');
     if (user) {
       try {
-        const response = await axios.patch(`http://localhost:5000/user/${user._id}/gender`, { gender }, {
+        const response = await axios.patch(`https://fitness-one-server.onrender.com/user/${user._id}/gender`, { gender }, {
           headers: { Authorization: `Bearer ${token}` }
         });
 

@@ -14,7 +14,7 @@ const Quiz = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await fetch('http://localhost:5000/quiz/quiz'); // Use your backend's /quiz route
+        const response = await fetch('https://fitness-one-server.onrender.com/quiz/quiz'); // Use your backend's /quiz route
         if (!response.ok) throw new Error('Failed to fetch questions');
         const data = await response.json();
         setQuestions(data);  // Set the fetched questions in state
@@ -54,7 +54,7 @@ const handleSubmit = async () => {
   if (!isError) {
     try {
       // Send a POST request with the quiz answers to the backend
-      const response = await fetch('http://localhost:5000/quiz/predict', {
+      const response = await fetch('https://fitness-one-server.onrender.com/quiz/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
