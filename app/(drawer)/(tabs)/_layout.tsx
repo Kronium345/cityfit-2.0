@@ -3,7 +3,7 @@ import { Feather, AntDesign, Ionicons } from '@expo/vector-icons'; // For tab ic
 import { DrawerToggleButton } from '@react-navigation/drawer'; // For drawer toggle button
 import { useRouter } from 'expo-router'; // For navigation
 import React, { ReactNode, useState } from 'react';
-import { View, TouchableOpacity, Modal, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, TouchableOpacity, Modal, Text, StyleSheet, Image, ScrollView, Animated } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BlurView } from 'expo-blur';
 
@@ -33,11 +33,80 @@ const tabIcons = {
 };
 // Nav Bar Tab Icons End
 
+
 export default function _layout() {
   const router = useRouter();  // Set up router for navigation
   const [isMoreModalVisible, setIsMoreModalVisible] = React.useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
+
+  // Add these animation values
+  const fadeAnims = [
+    React.useRef(new Animated.Value(0)).current,
+    React.useRef(new Animated.Value(0)).current,
+    React.useRef(new Animated.Value(0)).current,
+    React.useRef(new Animated.Value(0)).current,
+    React.useRef(new Animated.Value(0)).current,
+  ];
+  const scaleAnims = fadeAnims.map(() => React.useRef(new Animated.Value(0.1)).current);
+
+  // Add this function to handle the animation
+  const animateItems = React.useCallback(() => {
+    // Reset animations
+    fadeAnims.forEach(anim => anim.setValue(0));
+    scaleAnims.forEach(anim => anim.setValue(0.1));
+
+    // Create staggered animations
+    const animations = fadeAnims.map((fadeAnim, index) => {
+      const scaleAnim = scaleAnims[index];
+      return Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+          delay: index * 60, // Slightly longer delay for more distinct popping
+        }),
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          friction: 4, // Lower friction for more bounce
+          tension: 40, // Adjust tension for pop speed
+          useNativeDriver: true,
+          delay: index * 60,
+        }),
+      ]);
+    });
+
+    Animated.parallel(animations).start();
+  }, []);
+
+  // Modal Animation Trigger
+  React.useEffect(() => {
+    if (isMoreModalVisible) {
+      animateItems();
+    }
+  }, [isMoreModalVisible]);
+
+  // Modify the More Modal content to use Animated.View
+  const ModalItem = ({ index, onPress, icon, text }) => (
+    <Animated.View style={{
+      opacity: fadeAnims[index],
+      transform: [{ scale: scaleAnims[index] }],
+      width: '48%', // Control individual item width relative to grid
+    }}>
+      <TouchableOpacity
+        style={[styles.modalItem, { width: 140 }]} // Fixed width for each item
+        onPress={onPress}
+      >
+        <Image
+          source={icon}
+          style={styles.modalIcon}
+          resizeMode="contain"
+        />
+        <Text style={styles.modalText}>{text}</Text>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+  
 
   const IconWithBlur = ({ children, intensity = 20, style = {}, backgroundColor = 'rgba(0, 0, 0, 0.3)' }: {
     children: ReactNode;
@@ -173,7 +242,9 @@ export default function _layout() {
           listeners={{
             tabPress: (e) => {
               e.preventDefault();
-              setIsMoreModalVisible(true);
+              if (!isMoreModalVisible) {
+                setIsMoreModalVisible(true);
+              }
             },
           }}
         />
@@ -311,97 +382,34 @@ export default function _layout() {
       >
         <TouchableOpacity
           style={{ flex: 1 }}
+          activeOpacity={1}
           onPress={() => setIsMoreModalVisible(false)}
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalGrid}>
-              {/* Exercise Page Start */}
-              <TouchableOpacity
-                style={styles.modalItem}
-                onPress={() => {
-                  router.push('/exercises');
-                  setIsMoreModalVisible(false);
-                }}
-              >
-                <Image
-                  source={require('@/assets/icons/exercises-tab.png')}
-                  style={styles.modalIcon}
-                  resizeMode="contain"
+              {[
+                { route: '/exercises', icon: require('@/assets/icons/exercises-tab.png'), text: 'Exercises' },
+                { route: '/workout', icon: require('@/assets/icons/workout-tab.png'), text: 'Workout' },
+                { route: '/mental', icon: require('@/assets/icons/mental-tab.png'), text: 'Mental' },
+                { route: '/foodScreen', icon: require('@/assets/icons/food-tracker-tab.png'), text: 'Food Tracker' },
+                { route: '/settings', icon: tabIcons.settings, text: 'Settings' }
+              ].map((item, index) => (
+                <ModalItem
+                  key={index}
+                  index={index}
+                  onPress={() => {
+                    setIsMoreModalVisible(false);
+                    // Add a small delay to ensure the modal closes before navigation
+                    setTimeout(() => {
+                      router.push(item.route);
+                    }, 100);
+                  }}
+                  icon={item.icon}
+                  text={item.text}
                 />
-                <Text style={styles.modalText}>Exercises</Text>
-              </TouchableOpacity>
-              {/* Exercise Page End */}
-
-              {/* Workout Button Start */}
-              <TouchableOpacity
-                style={styles.modalItem}
-                onPress={() => {
-                  router.push('/workout');
-                  setIsMoreModalVisible(false);
-                }}
-              >
-                <Image
-                  source={require('@/assets/icons/workout-tab.png')}
-                  style={styles.modalIcon}
-                  resizeMode="contain"
-                />
-                <Text style={styles.modalText}>Workout</Text>
-              </TouchableOpacity>
-              {/* Workout Button End */}
-
-              {/* Mental Button Start */}
-              <TouchableOpacity
-                style={styles.modalItem}
-                onPress={() => {
-                  router.push('/mental');
-                  setIsMoreModalVisible(false);
-                }}
-              >
-                <Image
-                  source={require('@/assets/icons/mental-tab.png')}
-                  style={styles.modalIcon}
-                  resizeMode="contain"
-                />
-                <Text style={styles.modalText}>Mental</Text>
-              </TouchableOpacity>
-              {/* Mental Button End */}
-
-              {/* Food Tracker Button Start */}
-              <TouchableOpacity
-                style={styles.modalItem}
-                onPress={() => {
-                  router.push('/foodScreen');
-                  setIsMoreModalVisible(false);
-                }}
-              >
-                <Image
-                  source={require('@/assets/icons/food-tracker-tab.png')}
-                  style={styles.modalIcon}
-                  resizeMode="contain"
-                />
-                <Text style={styles.modalText}>Food Tracker</Text>
-              </TouchableOpacity>
-              {/* Food Tracker Button End */}
-
-              {/* Settings Button Start */}
-              <TouchableOpacity
-                style={styles.modalItem}
-                onPress={() => {
-                  router.push('/settings');
-                  setIsMoreModalVisible(false);
-                }}
-              >
-                <Image
-                  source={tabIcons.settings}
-                  style={styles.modalIcon}
-                  resizeMode="contain"
-                />
-                <Text style={styles.modalText}>Settings</Text>
-              </TouchableOpacity>
-              {/* Settings Button End */}
+              ))}
             </View>
           </View>
-
         </TouchableOpacity>
       </Modal>
       {/* More Modal End */}
@@ -428,15 +436,17 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 10,
     marginHorizontal: 10,
+    alignItems: 'center',
   },
   modalGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    alignSelf: 'center',
+    justifyContent: 'center',
     gap: 14,
+    width: '90%',
   },
   modalItem: {
-    width: '48%',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     boxShadow: '0 0 12px rgba(0, 0, 0, 1)',
     borderWidth: 1,
@@ -445,6 +455,9 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 12,
     alignItems: 'center',
+    marginHorizontal: 'auto',
+    display: 'flex',
+    justifyContent: 'center',
   },
   modalIcon: {
     width: 26,

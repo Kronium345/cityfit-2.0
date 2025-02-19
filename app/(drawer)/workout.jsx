@@ -124,22 +124,43 @@ const IconWithBlur = ({ children, intensity = 20, style = {}, backgroundColor = 
         {historyData.length ? (
           <View style={styles.historyList}>
             {historyData.map((item, index) => (
-              <View key={index} style={styles.historyItem}>
+              <TouchableOpacity 
+                key={index} 
+                style={styles.historyItem}
+                onPress={() => router.push({
+                  pathname: '/savedExerciseDetails',
+                  params: {
+                    id: item._id,
+                    name: item.exerciseName,
+                    sets: item.sets,
+                    reps: item.reps,
+                    weight: item.weight,
+                    date: item.date,
+                    isHistoryView: true
+                  }
+                })}
+              >
                 <View style={styles.dateWrapper}>
                   <Text style={styles.date}>{item.date}</Text>
                 </View>
 
                 <View style={styles.exerciseWrapper}>
                   <Image
-                    source={resistanceIcon} // Always using resistance icon
+                    source={resistanceIcon}
                     style={styles.icon}
                   />
-                  <View>
+                  <View style={styles.exerciseContent}>
                     <Text style={styles.exerciseName}>{item.exerciseName}</Text>
                     <Text style={styles.exerciseDetail}>{item.detail}</Text>
                   </View>
+                  <Ionicons 
+                    name="chevron-forward" 
+                    size={24} 
+                    color="rgba(255, 255, 255, 0.8)" 
+                    style={styles.chevron}
+                  />
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         ) : (
@@ -475,39 +496,52 @@ const styles = StyleSheet.create({
 
 
   historyList: {
-    marginTop: 20,
+    marginTop: 10,
+    paddingHorizontal: 10,
   },
   historyItem: {
-    marginBottom: 10,
-    padding: 15,
-    backgroundColor: '#f1f1f1',
-    borderRadius: 8,
+    marginBottom: 12,
+    padding: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: 16,
   },
   dateWrapper: {
-    marginBottom: 10,
+    marginBottom: 8,
   },
   date: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 14,
+    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.7)',
   },
   exerciseWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  exerciseContent: {
+    flex: 1,
+    marginRight: 12,
   },
   icon: {
     width: 24,
     height: 24,
-    marginRight: 10,
+    marginRight: 12,
+    tintColor: '#fff',
   },
   exerciseName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+    marginBottom: 2,
   },
   exerciseDetail: {
     fontSize: 14,
-    color: '#555',
+    color: 'rgba(255, 255, 255, 0.6)',
+  },
+  chevron: {
+    marginLeft: 'auto',
   },
 });
 

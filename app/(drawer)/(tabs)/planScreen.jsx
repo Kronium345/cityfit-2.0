@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Animated } from 'react-native';
 import axios from 'axios';
 import { MaterialIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 
+// Typewriter Effect Start
 const TypewriterText = ({ text, onComplete }) => {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -24,24 +25,74 @@ const TypewriterText = ({ text, onComplete }) => {
 
   return <Text style={styles.messageText}>{displayedText}</Text>;
 };
+// Typewriter Effect End
+
 
 const PlanScreen = () => {
   const [input, setInput] = useState('');  // User's fitness goal input
   const [plan, setPlan] = useState([]);  // Store the generated plans (multiple responses)
   const [loading, setLoading] = useState(false);  // Loading state
 
-  // Add new state for typing animation
+  // Typing Animation Initial State
   const [isTyping, setIsTyping] = useState(false);
 
-  // Add new state for input height
+  // Input Height Initial State
   const [inputHeight, setInputHeight] = useState(40);
 
-  // Welcome message
+  // Menu Expansion Initial State
+  const [isMenuExpanded, setIsMenuExpanded] = useState(false);
+
+  // Expandable Menu Animation States
+  const [menuAnimation] = useState(new Animated.Value(0));
+  const [firstIconAnimation] = useState(new Animated.Value(0));
+  const [secondIconAnimation] = useState(new Animated.Value(0));
+
+  // Welcome Message
+  const welcomeMessage = "Hello! I'm your personal fitness AI assistant. Tell me your fitness goals, and I'll create a customized workout plan for you. 🏋️‍♂️";
   React.useEffect(() => {
-    setPlan([
-      "Hello! I'm your personal fitness AI assistant. Tell me your fitness goals, and I'll create a customized workout plan for you. 🏋️‍♂️"
-    ]);
+    setPlan([welcomeMessage]);
   }, []);
+  
+
+  // Menu Toggle Function & Animation Initiation Start
+  const toggleMenu = () => {
+    if (!isMenuExpanded) {
+      // Opening animations - staggered
+      Animated.stagger(100, [
+        Animated.spring(firstIconAnimation, {
+          toValue: 1,
+          useNativeDriver: true,
+          friction: 6,
+          tension: 80,
+        }),
+        Animated.spring(secondIconAnimation, {
+          toValue: 1,
+          useNativeDriver: true,
+          friction: 6,
+          tension: 80,
+        }),
+      ]).start();
+      setIsMenuExpanded(true);
+    } else {
+      // Closing animations - reverse stagger
+      Animated.stagger(100, [
+        Animated.timing(secondIconAnimation, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(firstIconAnimation, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setIsMenuExpanded(false);
+      });
+    }
+  };
+  // Menu Toggle Function & Animation Initiation End
+
 
   const generatePlan = async () => {
     if (input.trim() === '') return;  // Prevent empty inputs
@@ -180,14 +231,108 @@ const PlanScreen = () => {
         </ScrollView>
 
         <View style={styles.inputContainer}>
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={() => setPlan([])}>
-            <Image
-              source={require('../../../assets/icons/broom.png')}
-              style={styles.clearIcon}
-            />
-          </TouchableOpacity>
+          <View style={styles.menuContainer}>
+            <TouchableOpacity
+              style={[styles.menuButton, isMenuExpanded && styles.menuButtonActive]}
+              onPress={toggleMenu}
+            >
+              <Image
+                source={require('../../../assets/icons/ai-more.png')}
+                style={styles.menuIcon}
+              />
+            </TouchableOpacity>
+            
+            {isMenuExpanded && (
+              <Animated.View 
+                style={[
+                  styles.expandedMenu,
+                ]}
+              >
+                <Animated.View
+                  style={{
+                    transform: [
+                      {
+                        scale: firstIconAnimation.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.5, 1],
+                        }),
+                      },
+                    ],
+                    opacity: firstIconAnimation,
+                  }}
+                >
+                  <TouchableOpacity
+                    style={styles.menuOption}
+                    onPress={() => {
+                      // Start closing animation before clearing chat
+                      Animated.stagger(100, [
+                        Animated.timing(secondIconAnimation, {
+                          toValue: 0,
+                          duration: 200,
+                          useNativeDriver: true,
+                        }),
+                        Animated.timing(firstIconAnimation, {
+                          toValue: 0,
+                          duration: 200,
+                          useNativeDriver: true,
+                        }),
+                      ]).start(() => {
+                        setPlan([welcomeMessage]);
+                        setIsMenuExpanded(false);
+                      });
+                    }}
+                  >
+                    <Image
+                      source={require('../../../assets/icons/broom.png')}
+                      style={styles.menuOptionIcon}
+                    />
+                  </TouchableOpacity>
+                </Animated.View>
+
+                <Animated.View
+                  style={{
+                    transform: [
+                      {
+                        scale: secondIconAnimation.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.5, 1],
+                        }),
+                      },
+                    ],
+                    opacity: secondIconAnimation,
+                  }}
+                >
+                  <TouchableOpacity
+                    style={styles.menuOption}
+                    onPress={() => {
+                      // Start closing animation before new chat action
+                      Animated.stagger(100, [
+                        Animated.timing(secondIconAnimation, {
+                          toValue: 0,
+                          duration: 200,
+                          useNativeDriver: true,
+                        }),
+                        Animated.timing(firstIconAnimation, {
+                          toValue: 0,
+                          duration: 200,
+                          useNativeDriver: true,
+                        }),
+                      ]).start(() => {
+                        // New chat functionality will go here
+                        setIsMenuExpanded(false);
+                      });
+                    }}
+                  >
+                    <Image
+                      source={require('../../../assets/icons/new-chat.png')}
+                      style={styles.menuOptionIcon}
+                    />
+                  </TouchableOpacity>
+                </Animated.View>
+              </Animated.View>
+            )}
+          </View>
+
           <TextInput
             value={input}
             onChangeText={(text) => {
@@ -213,6 +358,7 @@ const PlanScreen = () => {
               setInputHeight(Math.min(80, Math.max(40, contentHeight)));
             }}
           />
+
           <TouchableOpacity
             onPress={generatePlan}
             style={[styles.sendButton, !input.trim() && styles.sendButtonDisabled]}
@@ -307,12 +453,44 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 70,
   },
-  clearButton: {
-    marginRight: 10,
+  menuContainer: {
+    position: 'relative',
   },
-  clearIcon: {
+  menuButton: {
     width: 28,
     height: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  menuButtonActive: {
+    borderRadius: 14,
+  },
+  menuIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#fff',
+  },
+  expandedMenu: {
+    position: 'absolute',
+    bottom: 40,
+    left: -5,
+    flexDirection: 'row',
+    gap: 8,
+    zIndex: 1000,
+  },
+  menuOption: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuOptionIcon: {
+    width: 24,
+    height: 24,
+    tintColor: '#fff',
   },
   textInput: {
     flex: 1,

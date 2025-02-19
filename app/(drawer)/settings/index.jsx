@@ -141,7 +141,7 @@ const Settings = () => {
           {renderSettingItem('lock-closed-outline', 'Account', '/(drawer)/settings/account')}
           {renderSettingItem('card-outline', 'Manage Subscription', '/settings/subscription')}
           {renderSettingItem('notifications-outline', 'Notifications', '/(drawer)/settings/notifications')}
-          {renderSettingItem('star-outline', 'Rate Fitness One', '/(drawer)/settings/rate')}
+          {renderSettingItem('share-social-outline', 'Account Integrations', '/(drawer)/settings/integrations')}
         </View>
         {/* Account Settings Tab End*/}
 
@@ -184,6 +184,7 @@ const Settings = () => {
         {/* Information Tab Start*/}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Information</Text>
+          {renderSettingItem('star-outline', 'Rate Fitness One', '/(drawer)/settings/rate')}
           {renderSettingItem('barbell-outline', 'Workouts', '/workouts')}
           {renderSettingItem('shield-outline', 'Privacy & Social', '/privacy')}
           {renderSettingItem('options-outline', 'Units', '/units')}
