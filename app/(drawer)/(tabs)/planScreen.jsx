@@ -96,9 +96,10 @@ const PlanScreen = () => {
 
   const generatePlan = async () => {
     if (input.trim() === '') return;  // Prevent empty inputs
+    const cohereApiKey = Constants.expoConfig?.extra?.cohereApiKey || "";
 
     // Log API key to ensure it's being fetched correctly (for debugging)
-    // console.log("Cohere API Key:", Constants.expoConfig.extra.cohereApiKey);
+    console.log("Cohere API Key:", Constants.expoConfig?.extra?.cohereApiKey);
 
     // Add user message to chat
     setPlan(prevPlans => [...prevPlans, { type: 'user', text: input }]);
@@ -117,7 +118,7 @@ const PlanScreen = () => {
         },
         {
           headers: {
-            'Authorization': `Bearer ${Constants.expoConfig.extra.cohereApiKey}`,  // API key from environment
+            'Authorization': `Bearer ${cohereApiKey}`,  // API key from environment
             'Content-Type': 'application/json',
           },
         }
