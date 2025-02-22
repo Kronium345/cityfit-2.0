@@ -28,7 +28,7 @@ router.post('/save-chat', async (req, res) => {
 });
 
 
-// Get chat history for a user
+// Get chat entire history for a user
 router.get('/get-chat/:userId', async (req, res) => {
     const { userId } = req.params;
   
