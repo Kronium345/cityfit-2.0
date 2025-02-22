@@ -4,7 +4,7 @@ import axios from 'axios';
 import { MaterialIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { useSharedValue, useAnimatedStyle, withSpring, interpolate } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, interpolate, withDelay } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 
 // Typewriter Effect Start
@@ -59,49 +59,45 @@ const PlanScreen = () => {
   // Menu Toggle Function & Animation Initiation Start
   const toggleMenu = () => {
     if (!isMenuExpanded) {
-      firstIconAnimation.value = withSpring(1, {
+      // Opening animations - staggered
+      firstIconAnimation.value = withDelay(0, withSpring(1, {
         damping: 12,
         stiffness: 90
-      });
-      secondIconAnimation.value = withSpring(1, {
+      }));
+      secondIconAnimation.value = withDelay(100, withSpring(1, {
         damping: 12,
         stiffness: 90
-      });
-      thirdIconAnimation.value = withSpring(1, {
+      }));
+      thirdIconAnimation.value = withDelay(200, withSpring(1, {
         damping: 12,
         stiffness: 90
-      });
+      }));
       setIsMenuExpanded(true);
     } else {
-      firstIconAnimation.value = withSpring(0);
-      secondIconAnimation.value = withSpring(0);
-      thirdIconAnimation.value = withSpring(0);
+      // Closing animations - reverse stagger
+      thirdIconAnimation.value = withDelay(0, withSpring(0));
+      secondIconAnimation.value = withDelay(50, withSpring(0));
+      firstIconAnimation.value = withDelay(100, withSpring(0));
       setIsMenuExpanded(false);
     }
   };
   // Menu Toggle Function & Animation Initiation End
 
   // Menu Icon Styles Start
-  const firstIconStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: firstIconAnimation.value }],
-      opacity: firstIconAnimation.value,
-    };
-  });
+  const firstIconStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: firstIconAnimation.value }],
+    opacity: firstIconAnimation.value,
+  }));
 
-  const secondIconStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: secondIconAnimation.value }],
-      opacity: secondIconAnimation.value,
-    };
-  });
+  const secondIconStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: secondIconAnimation.value }],
+    opacity: secondIconAnimation.value,
+  }));
 
-  const thirdIconStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: thirdIconAnimation.value }],
-      opacity: thirdIconAnimation.value,
-    };
-  });
+  const thirdIconStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: thirdIconAnimation.value }],
+    opacity: thirdIconAnimation.value,
+  }));
   // Menu Icon Styles End
 
 
@@ -344,9 +340,9 @@ const PlanScreen = () => {
                   <TouchableOpacity
                     style={styles.menuOptionButton}
                     onPress={() => {
-                      firstIconAnimation.value = withSpring(0);
-                      secondIconAnimation.value = withSpring(0);
-                      thirdIconAnimation.value = withSpring(0);
+                      thirdIconAnimation.value = withDelay(0, withSpring(0));
+                      secondIconAnimation.value = withDelay(50, withSpring(0));
+                      firstIconAnimation.value = withDelay(100, withSpring(0));
                       setPlan([welcomeMessage]);
                       setIsMenuExpanded(false);
                     }}
@@ -362,9 +358,9 @@ const PlanScreen = () => {
                   <TouchableOpacity
                     style={styles.menuOptionButton}
                     onPress={() => {
-                      firstIconAnimation.value = withSpring(0);
-                      secondIconAnimation.value = withSpring(0);
-                      thirdIconAnimation.value = withSpring(0);
+                      thirdIconAnimation.value = withDelay(0, withSpring(0));
+                      secondIconAnimation.value = withDelay(50, withSpring(0));
+                      firstIconAnimation.value = withDelay(100, withSpring(0));
                       // New chat functionality will go here
                       setIsMenuExpanded(false);
                     }}
@@ -380,9 +376,9 @@ const PlanScreen = () => {
                   <TouchableOpacity
                     style={styles.menuOptionButton}
                     onPress={() => {
-                      firstIconAnimation.value = withSpring(0);
-                      secondIconAnimation.value = withSpring(0);
-                      thirdIconAnimation.value = withSpring(0);
+                      thirdIconAnimation.value = withDelay(0, withSpring(0));
+                      secondIconAnimation.value = withDelay(50, withSpring(0));
+                      firstIconAnimation.value = withDelay(100, withSpring(0));
                       setIsMenuExpanded(false);
                       setIsSaveModalVisible(true);
                     }}
@@ -677,7 +673,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: 'center',
   },
-  saveChatButtonDisabled: {
+  saveChatButtonDisabled: { 
     opacity: 0.5,
   },
   saveChatButtonText: {

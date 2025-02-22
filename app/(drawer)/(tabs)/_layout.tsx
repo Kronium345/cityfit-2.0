@@ -135,6 +135,93 @@ export default function _layout() {
 
   // AI Chat History Modal Start
   const HistoryModal = ({ isVisible, onClose }) => {
+    // Example hardcoded saved chats
+    const savedChats = [
+      { id: 1, title: "Weight Loss Plan", date: "2024-03-10" },
+      { id: 2, title: "HIIT Workout Routine", date: "2024-03-09" },
+      { id: 3, title: "Muscle Building Plan", date: "2024-03-08" },
+      { id: 4, title: "Cardio Program", date: "2024-03-07" },
+      { id: 5, title: "Flexibility Training", date: "2024-03-06" },
+    ];
+
+    const ChatCard = ({ title, date }) => {
+      const [isExpanded, setIsExpanded] = useState(false);
+      const rotateAnim = React.useRef(new Animated.Value(0)).current;
+      const heightAnim = React.useRef(new Animated.Value(0)).current;
+
+      const toggleExpand = () => {
+        setIsExpanded(!isExpanded);
+        Animated.parallel([
+          Animated.spring(rotateAnim, {
+            toValue: isExpanded ? 0 : 1,
+            friction: 4,
+            tension: 40,
+            useNativeDriver: true,
+          }),
+          Animated.spring(heightAnim, {
+            toValue: isExpanded ? 0 : 1,
+            friction: 4,
+            tension: 40,
+            useNativeDriver: false,
+          })
+        ]).start();
+      };
+
+      return (
+        <View style={styles.chatCard}>
+          <TouchableOpacity 
+            style={styles.chatCardContent}
+            onPress={toggleExpand}
+          >
+            <View>
+              <Text style={styles.chatCardTitle}>{title}</Text>
+              <Text style={styles.chatCardDate}>Created: {new Date(date).toLocaleDateString()}</Text>
+            </View>
+            <Animated.View 
+              style={[
+                styles.chevronContainer,
+                {
+                  transform: [{
+                    rotate: rotateAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0deg', '90deg']
+                    })
+                  }]
+                }
+              ]}
+            >
+              <Feather name="chevron-right" size={20} color="rgba(255,255,255,0.6)" />
+            </Animated.View>
+          </TouchableOpacity>
+
+          <Animated.View 
+            style={[
+              styles.expandedContent,
+              {
+                maxHeight: heightAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 70]
+                }),
+                opacity: heightAnim
+              }
+            ]}
+          >
+            <View style={styles.buttonRow}>
+              <TouchableOpacity style={[styles.actionButton, { flex: 1 }]}>
+                <Feather name="message-square" size={18} color="#fff" />
+                <Text style={styles.actionButtonText}>Open Chat</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={[styles.actionButton, styles.deleteButton, { flex: 1 }]}>
+                <Feather name="trash-2" size={18} color="#ff4444" />
+                <Text style={[styles.actionButtonText, styles.deleteButtonText]}>Delete Chat</Text>
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
+        </View>
+      );
+    };
+
     return (
       <Modal
         transparent
@@ -154,13 +241,16 @@ export default function _layout() {
             <Text style={styles.historyModalTitle}>Chat History</Text>
             <Text style={styles.historyModalSubtitle}>View your previous conversations</Text>
             
-            <ScrollView style={styles.historyList}>
-              {chatHistory.map((chat, index) => (
-                <View key={index} style={styles.historyItem}>
-                  <Text style={styles.historyText}>
-                    {typeof chat === 'string' ? chat : chat.text}
-                  </Text>
-                </View>
+            <ScrollView 
+              style={styles.historyList}
+              showsVerticalScrollIndicator={false}
+            >
+              {savedChats.map((chat) => (
+                <ChatCard 
+                  key={chat.id}
+                  title={chat.title}
+                  date={chat.date}
+                />
               ))}
             </ScrollView>
           </View>
@@ -512,17 +602,64 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   historyList: {
-    maxHeight: '70%',
+    maxHeight: '100%',
   },
-  historyItem: {
+  chatCard: {
     backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 16,
     marginBottom: 12,
+    overflow: 'hidden',
   },
-  historyText: {
+  chatCardContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+  },
+  chatCardTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  chatCardDate: {
+    color: 'rgba(255,255,255,0.5)',
+    fontSize: 12,
+  },
+  chevronContainer: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 20,
+    padding: 8,
+  },
+  expandedContent: {
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.1)',
+    overflow: 'hidden',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 8,
+    padding: 12,
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    padding: 12,
+    borderRadius: 12,
+    gap: 8,
+  },
+  actionButtonText: {
     color: '#fff',
     fontSize: 14,
+    fontWeight: '500',
+  },
+  deleteButton: {
+    backgroundColor: 'rgba(255,68,68,0.1)',
+  },
+  deleteButtonText: {
+    color: '#ff4444',
   },
   // AI Chat History Modal End
 });
