@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Animated } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Modal, Pressable } from 'react-native';
 import axios from 'axios';
 import { MaterialIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, interpolate } from 'react-native-reanimated';
+import { Feather } from '@expo/vector-icons';
 
 // Typewriter Effect Start
 const TypewriterText = ({ text, onComplete }) => {
@@ -43,9 +45,9 @@ const PlanScreen = () => {
   const [isMenuExpanded, setIsMenuExpanded] = useState(false);
 
   // Expandable Menu Animation States
-  const [menuAnimation] = useState(new Animated.Value(0));
-  const [firstIconAnimation] = useState(new Animated.Value(0));
-  const [secondIconAnimation] = useState(new Animated.Value(0));
+  const firstIconAnimation = useSharedValue(0);
+  const secondIconAnimation = useSharedValue(0);
+  const thirdIconAnimation = useSharedValue(0);
 
   // Welcome Message
   const welcomeMessage = "Hello! I'm your personal fitness AI assistant. Tell me your fitness goals, and I'll create a customized workout plan for you. 🏋️‍♂️";
@@ -57,41 +59,50 @@ const PlanScreen = () => {
   // Menu Toggle Function & Animation Initiation Start
   const toggleMenu = () => {
     if (!isMenuExpanded) {
-      // Opening animations - staggered
-      Animated.stagger(100, [
-        Animated.spring(firstIconAnimation, {
-          toValue: 1,
-          useNativeDriver: true,
-          friction: 6,
-          tension: 80,
-        }),
-        Animated.spring(secondIconAnimation, {
-          toValue: 1,
-          useNativeDriver: true,
-          friction: 6,
-          tension: 80,
-        }),
-      ]).start();
+      firstIconAnimation.value = withSpring(1, {
+        damping: 12,
+        stiffness: 90
+      });
+      secondIconAnimation.value = withSpring(1, {
+        damping: 12,
+        stiffness: 90
+      });
+      thirdIconAnimation.value = withSpring(1, {
+        damping: 12,
+        stiffness: 90
+      });
       setIsMenuExpanded(true);
     } else {
-      // Closing animations - reverse stagger
-      Animated.stagger(100, [
-        Animated.timing(secondIconAnimation, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(firstIconAnimation, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        setIsMenuExpanded(false);
-      });
+      firstIconAnimation.value = withSpring(0);
+      secondIconAnimation.value = withSpring(0);
+      thirdIconAnimation.value = withSpring(0);
+      setIsMenuExpanded(false);
     }
   };
   // Menu Toggle Function & Animation Initiation End
+
+  // Menu Icon Styles Start
+  const firstIconStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: firstIconAnimation.value }],
+      opacity: firstIconAnimation.value,
+    };
+  });
+
+  const secondIconStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: secondIconAnimation.value }],
+      opacity: secondIconAnimation.value,
+    };
+  });
+
+  const thirdIconStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: thirdIconAnimation.value }],
+      opacity: thirdIconAnimation.value,
+    };
+  });
+  // Menu Icon Styles End
 
 
   const generatePlan = async () => {
@@ -141,6 +152,90 @@ const PlanScreen = () => {
       setIsTyping(false);
     }
   };
+
+  // Save Chat Modal Start
+  const [isSaveModalVisible, setIsSaveModalVisible] = useState(false);
+
+  // Add SaveChatModal component before the return statement
+  const SaveChatModal = ({ isVisible, onClose }) => {
+    const [title, setTitle] = useState('');
+    const modalAnimation = useSharedValue(0);
+
+    useEffect(() => {
+      modalAnimation.value = withSpring(isVisible ? 1 : 0);
+    }, [isVisible]);
+
+    const modalStyle = useAnimatedStyle(() => {
+      return {
+        opacity: modalAnimation.value,
+        transform: [
+          {
+            translateY: interpolate(
+              modalAnimation.value,
+              [0, 1],
+              [100, 0]
+            )
+          }
+        ]
+      };
+    });
+
+    const overlayStyle = useAnimatedStyle(() => {
+      return {
+        opacity: modalAnimation.value * 0.5,
+      };
+    });
+
+    return (
+      <Modal
+        transparent
+        visible={isVisible}
+        onRequestClose={onClose}
+        animationType="none"
+      >
+        <View style={styles.modalContainer}>
+          <Animated.View style={[styles.modalOverlay, overlayStyle]}>
+            <Pressable style={{ flex: 1 }} onPress={onClose} />
+          </Animated.View>
+          
+          <Animated.View style={[styles.modalContent, modalStyle]}>
+            <TouchableOpacity 
+              style={styles.closeButton} 
+              onPress={onClose}
+            >
+              <Feather name="x" size={18} color="rgba(255,255,255,0.6)" />
+            </TouchableOpacity>
+
+            <Text style={styles.modalTitle}>Save chat</Text>
+            <Text style={styles.modalSubtitle}>Give your chat a title to find it later</Text>
+            
+            <TextInput
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Enter chat title"
+              placeholderTextColor="rgba(255, 255, 255, 0.5)"
+              style={styles.saveChatInput}
+            />
+
+            <TouchableOpacity 
+              style={[styles.saveChatButton, !title.trim() && styles.saveChatButtonDisabled]}
+              onPress={() => {
+                if (title.trim()) {
+                  // Save chat logic will go here
+                  onClose();
+                }
+              }}
+              disabled={!title.trim()}
+            >
+              <Text style={styles.saveChatButtonText}>Save Chat</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
+      </Modal>
+    );
+  };
+  // Save Chat Modal End
+
 
   return (
     <View style={styles.container}>
@@ -244,43 +339,16 @@ const PlanScreen = () => {
             </TouchableOpacity>
             
             {isMenuExpanded && (
-              <Animated.View 
-                style={[
-                  styles.expandedMenu,
-                ]}
-              >
-                <Animated.View
-                  style={{
-                    transform: [
-                      {
-                        scale: firstIconAnimation.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [0.5, 1],
-                        }),
-                      },
-                    ],
-                    opacity: firstIconAnimation,
-                  }}
-                >
+              <Animated.View style={[styles.expandedMenu]}>
+                <Animated.View style={[styles.menuOption, firstIconStyle]}>
                   <TouchableOpacity
-                    style={styles.menuOption}
+                    style={styles.menuOptionButton}
                     onPress={() => {
-                      // Start closing animation before clearing chat
-                      Animated.stagger(100, [
-                        Animated.timing(secondIconAnimation, {
-                          toValue: 0,
-                          duration: 200,
-                          useNativeDriver: true,
-                        }),
-                        Animated.timing(firstIconAnimation, {
-                          toValue: 0,
-                          duration: 200,
-                          useNativeDriver: true,
-                        }),
-                      ]).start(() => {
-                        setPlan([welcomeMessage]);
-                        setIsMenuExpanded(false);
-                      });
+                      firstIconAnimation.value = withSpring(0);
+                      secondIconAnimation.value = withSpring(0);
+                      thirdIconAnimation.value = withSpring(0);
+                      setPlan([welcomeMessage]);
+                      setIsMenuExpanded(false);
                     }}
                   >
                     <Image
@@ -290,42 +358,37 @@ const PlanScreen = () => {
                   </TouchableOpacity>
                 </Animated.View>
 
-                <Animated.View
-                  style={{
-                    transform: [
-                      {
-                        scale: secondIconAnimation.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [0.5, 1],
-                        }),
-                      },
-                    ],
-                    opacity: secondIconAnimation,
-                  }}
-                >
+                <Animated.View style={[styles.menuOption, secondIconStyle]}>
                   <TouchableOpacity
-                    style={styles.menuOption}
+                    style={styles.menuOptionButton}
                     onPress={() => {
-                      // Start closing animation before new chat action
-                      Animated.stagger(100, [
-                        Animated.timing(secondIconAnimation, {
-                          toValue: 0,
-                          duration: 200,
-                          useNativeDriver: true,
-                        }),
-                        Animated.timing(firstIconAnimation, {
-                          toValue: 0,
-                          duration: 200,
-                          useNativeDriver: true,
-                        }),
-                      ]).start(() => {
-                        // New chat functionality will go here
-                        setIsMenuExpanded(false);
-                      });
+                      firstIconAnimation.value = withSpring(0);
+                      secondIconAnimation.value = withSpring(0);
+                      thirdIconAnimation.value = withSpring(0);
+                      // New chat functionality will go here
+                      setIsMenuExpanded(false);
                     }}
                   >
                     <Image
                       source={require('../../../assets/icons/new-chat.png')}
+                      style={styles.menuOptionIcon}
+                    />
+                  </TouchableOpacity>
+                </Animated.View>
+
+                <Animated.View style={[styles.menuOption, thirdIconStyle]}>
+                  <TouchableOpacity
+                    style={styles.menuOptionButton}
+                    onPress={() => {
+                      firstIconAnimation.value = withSpring(0);
+                      secondIconAnimation.value = withSpring(0);
+                      thirdIconAnimation.value = withSpring(0);
+                      setIsMenuExpanded(false);
+                      setIsSaveModalVisible(true);
+                    }}
+                  >
+                    <Image
+                      source={require('../../../assets/icons/save-chat.png')}
                       style={styles.menuOptionIcon}
                     />
                   </TouchableOpacity>
@@ -375,6 +438,11 @@ const PlanScreen = () => {
           </TouchableOpacity>
         </View>
       </LinearGradient>
+
+      <SaveChatModal 
+        isVisible={isSaveModalVisible}
+        onClose={() => setIsSaveModalVisible(false)}
+      />
     </View>
   );
 };
@@ -483,6 +551,11 @@ const styles = StyleSheet.create({
   menuOption: {
     width: 40,
     height: 40,
+    marginHorizontal: 4,
+  },
+  menuOptionButton: {
+    width: 40,
+    height: 40,
     borderRadius: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     justifyContent: 'center',
@@ -541,6 +614,78 @@ const styles = StyleSheet.create({
   normalText: {
     color: '#fff',
   },
+
+  // Save Chat Modal Start
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+  },
+  modalOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#000',
+  },
+  modalContent: {
+    backgroundColor: '#003300',
+    borderRadius: 24,
+    padding: 24,
+    alignItems: 'center',
+    marginHorizontal: 16,
+    boxShadow: '0 0 24px rgba(0, 0, 0, 0.45)',
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 16,
+    top: 16,
+    width: 26,
+    height: 26,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#fff',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.7)',
+    marginBottom: 24,
+  },
+  saveChatInput: {
+    width: '100%',
+    height: 50,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    paddingHorizontal: 16,
+    color: '#fff',
+    fontSize: 16,
+    marginBottom: 24,
+    marginTop: 8,
+  },
+  saveChatButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    boxShadow: '0 0 8px rgba(0, 0, 0, 0.3)',
+    width: '100%',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 14,
+    alignItems: 'center',
+  },
+  saveChatButtonDisabled: {
+    opacity: 0.5,
+  },
+  saveChatButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  // Save Chat Modal End
 });
 
 export default PlanScreen;
