@@ -9,6 +9,10 @@ import Animated, { useAnimatedProps, useSharedValue, withTiming, useAnimatedStyl
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Pedometer } from 'expo-sensors';
+import { useWindowDimensions } from 'react-native';
+import { useKeepAwake } from 'expo-keep-awake';
+
+
 
 
 // IconWithBlur Component Start
@@ -51,29 +55,35 @@ const StepRingProgress = ({ radius = 150, strokeWidth = 8, progress = 0.7, daily
 
   // UseEffect created to incorporate Pedometer API
   useEffect(() => {
-    // Start tracking steps
+    let stepSubscription;
+  
     const startTracking = async () => {
+      const { granted } = await Pedometer.requestPermissionsAsync();
+      if (!granted) return;
+  
       const { isAvailable } = await Pedometer.isAvailableAsync();
       if (isAvailable) {
-        const stepSubscription = Pedometer.watchStepCount((result) => {
-          setStepCount(result.steps);
+        stepSubscription = Pedometer.watchStepCount((result) => {
+          setStepCount((prevCount) => {
+            if (prevCount !== result.steps) {
+              return result.steps;
+            }
+            return prevCount;
+          });
         });
         setIsTracking(true);
-  
-        // Clean up the subscription when component is unmounted
-        return () => stepSubscription.remove();
       }
     };
   
     startTracking();
   
-    // Cleanup function when the component is unmounted
     return () => {
-      if (isTracking) {
-        Pedometer.stopWatching();
+      if (stepSubscription) {
+        stepSubscription.remove();
       }
     };
   }, []);
+  
   
 
   return (
@@ -197,10 +207,23 @@ const GridTerrain = () => {
 
 // Main Component Start
 const StepCounter = () => {
+  useKeepAwake();
   const [dailyGoal, setDailyGoal] = useState(4500);
     // UseStates for step counts for tracking
     const [stepCount, setStepCount] = useState(0);
   const [isGoalModalVisible, setIsGoalModalVisible] = useState(false);
+
+  // Request pedometer permissions on mount
+  useEffect(() => {
+    const requestPermissions = async () => {
+        const { status } = await Pedometer.requestPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Permission to access pedometer was denied.');
+        }
+    };
+
+    requestPermissions();
+}, []);
 
   return (
     <LinearGradient
@@ -367,7 +390,12 @@ const WeekView = () => {
 
 
 // Expanded graph View Start
-const WeeklyGraph = ({ data }) => (
+const WeeklyGraph = ({ data }) => {
+
+  const { width } = useWindowDimensions(); // Get screen width
+
+
+  
   <View style={styles.graphOuterContainer}>
     {/* Background blur layer */}
     <BlurView 
@@ -394,7 +422,7 @@ const WeeklyGraph = ({ data }) => (
         {/* Connect points with lines */}
         <Path
           d={`
-            M ${data.map((_, i) => `${5 + (i * 90/6)}% ${80 - (data[i].steps / 10000 * 60)}`).join(' L ')}
+            M ${data.map((_, i) => `${(5 + (i * 90/6)) * (width / 100)} ${80 - (data[i].steps / 10000 * 60)}`).join(' L ')}
           `}
           stroke="white"
           strokeWidth={2}
@@ -431,7 +459,7 @@ const WeeklyGraph = ({ data }) => (
       </View>
     </View>
   </View>
-);
+};
 // Expanded graph View End
 
 

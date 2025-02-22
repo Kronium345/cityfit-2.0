@@ -120,10 +120,10 @@ const Login = () => {
         <TouchableOpacity 
           style={[
             styles.loginButton,
-            email && password ? styles.loginButtonActive : styles.loginButtonInactive
+            emailOrUsername && password ? styles.loginButtonActive : styles.loginButtonInactive
           ]}
           onPress={handleLogin}
-          disabled={!email || !password}
+          disabled={!emailOrUsername || !password}
         >
           <Text style={styles.loginButtonText}>Log In</Text>
         </TouchableOpacity>
