@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, interpolate, withDelay } from 'react-native-reanimated';
+import { useAuthContext } from '../../AuthProvider';
 import { Feather } from '@expo/vector-icons';
 
 // Typewriter Effect Start
@@ -34,6 +35,8 @@ const PlanScreen = () => {
   const [input, setInput] = useState('');  // User's fitness goal input
   const [plan, setPlan] = useState([]);  // Store the generated plans (multiple responses)
   const [loading, setLoading] = useState(false);  // Loading state
+  const { user } = useAuthContext();
+
 
   // Typing Animation Initial State
   const [isTyping, setIsTyping] = useState(false);
@@ -99,6 +102,40 @@ const PlanScreen = () => {
     opacity: thirdIconAnimation.value,
   }));
   // Menu Icon Styles End
+
+  // Save Chat Function
+  const handleSaveChat = async (title) => {
+    if (!title.trim()) return; // Prevent empty title
+    if (!user || !user._id) {
+      console.error('User not authenticated');
+      alert('You need to be logged in to save chats.');
+      return;
+    }
+  
+    // Ensure messages are structured correctly
+    const formattedMessages = plan.map((message) => {
+      if (typeof message === 'string') {
+        return { type: 'bot', text: message }; // Convert string messages to objects
+      }
+      return message; // Already in correct format
+    });
+  
+    try {
+      const response = await axios.post('https://fitness-one-server.onrender.com/chat/save-chat', {
+        userId: user._id, // Use user ID from context
+        title, // Chat title
+        messages: formattedMessages, // Send chat messages as objects
+      });
+  
+      console.log('Chat saved successfully:', response.data);
+      alert('Chat saved successfully!');
+      setIsSaveModalVisible(false);
+    } catch (error) {
+      console.error('Error saving chat:', error);
+      alert('Error saving chat. Please try again.');
+    }
+  };
+  
 
 
   const generatePlan = async () => {
@@ -218,6 +255,7 @@ const PlanScreen = () => {
               onPress={() => {
                 if (title.trim()) {
                   // Save chat logic will go here
+                  handleSaveChat(title);
                   onClose();
                 }
               }}

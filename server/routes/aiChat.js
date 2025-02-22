@@ -39,7 +39,7 @@ router.get('/get-chat/:userId', async (req, res) => {
       console.log('Chat:', chat);
   
       if (chat) {
-        res.status(200).json(chat.messages);  // Return the messages
+        res.status(200).json(chat);  // Return the messages
       } else {
         res.status(404).json({ message: 'No chat history found for this user.' });
       }
