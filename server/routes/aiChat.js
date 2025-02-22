@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Save a new chat message
 router.post('/save-chat', async (req, res) => {
-  const { userId, title, messages } = req.body; // Expect title from frontend
+  const { userId, title, messages } = req.body; // Expect title from the frontend
 
   try {
     let chat = await Chat.findOne({ userId, title });
