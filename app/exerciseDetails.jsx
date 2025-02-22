@@ -71,6 +71,32 @@ const BlobBackground = () => {
 // Blob Blurred Background End
 
 
+// Nav Bar Tab Icons Start
+const tabIcons = {
+  more: {
+    active: require('@/assets/icons/more-tab.png'),
+    default: require('@/assets/icons/more-tab.png')
+  },
+  trainer: {
+    active: require('@/assets/icons/trainer-tab.png'),
+    default: require('@/assets/icons/trainer-tab.png')
+  },
+  home: {
+    active: require('@/assets/icons/home-tab.png'),
+    default: require('@/assets/icons/home-tab.png')
+  },
+  steps: {
+    active: require('@/assets/icons/steps-tab.png'),
+    default: require('@/assets/icons/steps-tab.png')
+  },
+  profile: {
+    active: require('@/assets/icons/profile-tab.png'),
+    default: require('@/assets/icons/profile-tab.png')
+  }
+};
+// Nav Bar Tab Icons End
+
+
 const { width: screenWidth } = Dimensions.get('window');
 
 
@@ -384,10 +410,31 @@ const ExerciseDetail = () => {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Ionicons name="fitness" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/exercises-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Exercises</Text>
               </TouchableOpacity>
               {/* Exercise Page End */}
+
+              {/* Workout Page Start */}
+              <TouchableOpacity
+                style={styles.modalItem}
+                onPress={() => {
+                  router.push('/workout');
+                  setIsMoreModalVisible(false);
+                }}
+              >
+                <Image
+                  source={require('@/assets/icons/workout-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
+                <Text style={styles.modalText}>Workout</Text>
+              </TouchableOpacity>
+              {/* Workout Page End */}
 
               {/* Mental Button Start */}
               <TouchableOpacity
@@ -397,7 +444,11 @@ const ExerciseDetail = () => {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Feather name="activity" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/mental-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Mental</Text>
               </TouchableOpacity>
               {/* Mental Button End */}
@@ -410,7 +461,11 @@ const ExerciseDetail = () => {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Ionicons name="fast-food-outline" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/food-tracker-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Food Tracker</Text>
               </TouchableOpacity>
               {/* Food Tracker Button End */}
@@ -423,7 +478,11 @@ const ExerciseDetail = () => {
                   setIsMoreModalVisible(false);
                 }}
               >
-                <Ionicons name="settings-outline" size={24} color="#fff" style={styles.modalIcon} />
+                <Image
+                  source={require('@/assets/icons/settings-tab.png')}
+                  style={styles.modalIcon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.modalText}>Settings</Text>
               </TouchableOpacity>
               {/* Settings Button End */}
@@ -432,7 +491,7 @@ const ExerciseDetail = () => {
 
         </TouchableOpacity>
       </Modal>
-      {/* More Modal End */}
+      {/* More Modal End */} 
     </View>
   );
 };
@@ -454,39 +513,79 @@ const CustomTabBar = ({ setIsMoreModalVisible }) => {
           setIsMoreModalVisible(true);
         }}
       >
-        <Feather name="grid" size={25} color="#fff" />
-        <Text style={[styles.tabLabel, styles.modalActiveTab]}>More</Text>
+        <Image 
+          source={tabIcons.more.active}
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: '#fff'
+          }}
+          resizeMode="contain"
+        />
+        <Text style={[styles.tabLabel, styles.activeTab]}>More</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.tabItem}
         onPress={() => router.push('/(drawer)/(tabs)/planScreen')}
       >
-        <Feather name="plus" size={25} color="rgba(255, 255, 255, 0.6)" />
-        <Text style={styles.tabLabel}>Plan</Text>
+        <Image 
+          source={tabIcons.trainer.default}
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: 'rgba(255, 255, 255, 0.6)'
+          }}
+          resizeMode="contain"
+        />
+        <Text style={styles.tabLabel}>Trainer</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.tabItem}
         onPress={() => router.push('/(drawer)/(tabs)/home')}
       >
-        <Feather name="home" size={24} color="rgba(255, 255, 255, 0.6)" />
+        <Image 
+          source={tabIcons.home.default}
+          style={{
+            width: 24,
+            height: 24,
+            tintColor: 'rgba(255, 255, 255, 0.6)'
+          }}
+          resizeMode="contain"
+        />
         <Text style={styles.tabLabel}>Home</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.tabItem}
-        onPress={() => router.push('/(drawer)/(tabs)/workout')}
+        onPress={() => router.push('/(drawer)/(tabs)/stepCounter')}
       >
-        <Feather name="bar-chart" size={25} color="rgba(255, 255, 255, 0.6)" />
-        <Text style={styles.tabLabel}>Charts</Text>
+        <Image 
+          source={tabIcons.steps.default}
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: 'rgba(255, 255, 255, 0.6)'
+          }}
+          resizeMode="contain"
+        />
+        <Text style={styles.tabLabel}>Steps</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.tabItem}
         onPress={() => router.push('/(drawer)/(tabs)/profileScreen')}
       >
-        <Feather name="user" size={25} color="rgba(255, 255, 255, 0.6)" />
+        <Image 
+          source={tabIcons.profile.default}
+          style={{
+            width: 25,
+            height: 25,
+            tintColor: 'rgba(255, 255, 255, 0.6)'
+          }}
+          resizeMode="contain"
+        />
         <Text style={styles.tabLabel}>Profile</Text>
       </TouchableOpacity>
     </BlurView>
@@ -551,7 +650,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
   },
-  modalActiveTab: {
+  activeTab: {
     color: '#fff',
   },
   // Nav Bar End
@@ -586,6 +685,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalIcon: {
+    width: 26,
+    height: 26,
   },
   modalText: {
     color: '#fff',
