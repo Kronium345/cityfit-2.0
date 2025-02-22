@@ -10,6 +10,7 @@ import exerciseFetch from './routes/exerciseFetch.js'
 import caloriePreferences from './routes/caloriePreferences.js'
 import foodLog from './routes/foodLog.js';
 import quiz from './routes/quiz.js';
+import chat from './routes/aiChat.js'
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use('/exercise', exerciseFetch);
 app.use('/preferences', caloriePreferences);
 app.use('/food', foodLog);
 app.use('/quiz', quiz);
+app.use('/chat', chat);
 
 app.get('/', (req, res) => {
   res.send('Hello, world! Fitness One!.');
